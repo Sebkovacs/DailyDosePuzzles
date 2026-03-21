@@ -1,0 +1,52 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "A user of the puzzle app",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "The user's unique ID"
+        },
+        "email": {
+          "type": "string",
+          "description": "The user's email address"
+        },
+        "displayName": {
+          "type": "string",
+          "description": "The user's display name"
+        },
+        "photoURL": {
+          "type": "string",
+          "description": "The user's profile photo URL"
+        },
+        "currentStreak": {
+          "type": "number",
+          "description": "The user's current consecutive daily puzzle solve streak"
+        },
+        "longestStreak": {
+          "type": "number",
+          "description": "The user's longest consecutive daily puzzle solve streak"
+        },
+        "lastSolveDate": {
+          "type": "string",
+          "description": "The date of the user's last puzzle solve (YYYY-MM-DD)"
+        },
+        "createdAt": {
+          "type": "timestamp",
+          "description": "When the user profile was created"
+        }
+      },
+      "required": ["uid", "currentStreak", "longestStreak"]
+    }
+  },
+  "firestore": {
+    "users/{userId}": {
+      "schema": {
+        "$ref": "#/entities/User"
+      },
+      "description": "Stores user profiles and streak information"
+    }
+  }
+}

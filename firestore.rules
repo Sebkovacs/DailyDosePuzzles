@@ -1,0 +1,182 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: users
+    // Document ID: {userId}
+    // Fields:
+    //   - uid: string (required) - The user's unique ID
+    //   - email: string (optional) - The user's email address
+    //   - displayName: string (optional) - The user's display name
+    //   - photoURL: string (optional) - The user's profile photo URL
+    //   - currentStreak: number (required) - The user's current consecutive daily puzzle solve streak
+    //   - longestStreak: number (required) - The user's longest consecutive daily puzzle solve streak
+    //   - lastSolveDate: string (optional) - The date of the user's last puzzle solve (YYYY-MM-DD)
+    //   - createdAt: timestamp (optional) - When the user profile was created
+    //   - role: string (optional) - User role ('user', 'tester', 'admin')
+    //
+    // Collection: game_stats
+    // Document ID: auto-generated
+    // Fields:
+    //   - userId: string (required) - The user's unique ID or 'anonymous'
+    //   - gameName: string (required) - The name of the game
+    //   - date: string (required) - The date of the puzzle
+    //   - mode: string (required) - The difficulty mode
+    //   - won: boolean (required) - Whether the user won
+    //   - mistakes: number (required) - Number of mistakes made
+    //   - timeToComplete: number (optional) - Time taken in seconds
+    //   - attempts: number (optional) - Number of attempts (for games like Vault)
+    //   - timestamp: timestamp (required) - When the stats were recorded
+    //   - isPlayTest: boolean (optional) - Whether this was a playtest game
+    //
+    // Collection: feedback
+    // Document ID: auto-generated
+    // Fields:
+    //   - userId: string (required) - The user's unique ID
+    //   - text: string (required) - The feedback text
+    //   - gameName: string (optional) - The specific game this feedback is for
+    //   - timestamp: timestamp (required) - When the feedback was submitted
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && request.auth.token.email == "sebkovacs@gmail.com";
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    function uidUnchanged() {
+      return !('uid' in request.resource.data) || request.resource.data.uid == request.auth.uid;
+    }
+    
+    function uidNotModified() {
+      return !('uid' in request.resource.data) || request.resource.data.uid == resource.data.uid;
+    }
+    
+    function hasRequiredFields(fields) {
+      return request.resource.data.keys().hasAll(fields);
+    }
+    
+    function isValidEmail(email) {
+      return email is string && email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+    }
+    
+    function isValidUrl(url) {
+      return url is string && (url.matches("^https://.*") || url.matches("^http://.*"));
+    }
+
+    function isValidDateString(dateStr) {
+      return dateStr is string && dateStr.matches("^\\d{4}-\\d{2}-\\d{2}$");
+    }
+
+    function hasOnlyAllowedFields(fields) {
+      return request.resource.data.keys().hasOnly(fields);
+    }
+
+    // ===============================================================
+    // Domain Validators
+    // ===============================================================
+
+    function isValidUser(data) {
+      return hasOnlyAllowedFields(['uid', 'email', 'displayName', 'photoURL', 'currentStreak', 'longestStreak', 'lastSolveDate', 'createdAt', 'role']) &&
+             data.uid is string && data.uid.size() > 0 && data.uid.size() <= 128 &&
+             data.currentStreak is number && data.currentStreak >= 0 &&
+             data.longestStreak is number && data.longestStreak >= 0 &&
+             (!('email' in data) || (data.email is string && isValidEmail(data.email) && data.email.size() <= 254)) &&
+             (!('displayName' in data) || (data.displayName is string && data.displayName.size() <= 100)) &&
+             (!('photoURL' in data) || (data.photoURL is string && isValidUrl(data.photoURL) && data.photoURL.size() <= 2000)) &&
+             (!('lastSolveDate' in data) || isValidDateString(data.lastSolveDate)) &&
+             (!('createdAt' in data) || data.createdAt is timestamp) &&
+             (!('role' in data) || data.role in ['user', 'tester', 'admin']);
+    }
+
+    function isValidGameStat(data) {
+      return hasOnlyAllowedFields(['userId', 'gameName', 'date', 'mode', 'won', 'mistakes', 'timeToComplete', 'attempts', 'timestamp', 'isPlayTest']) &&
+             data.userId is string && data.userId.size() > 0 && data.userId.size() <= 128 &&
+             data.gameName is string && data.gameName.size() > 0 && data.gameName.size() <= 50 &&
+             data.date is string && isValidDateString(data.date) &&
+             data.mode is string && data.mode in ['easy', 'hard', 'standard'] &&
+             data.won is bool &&
+             data.mistakes is number && data.mistakes >= 0 &&
+             (!('timeToComplete' in data) || (data.timeToComplete is number && data.timeToComplete >= 0)) &&
+             (!('attempts' in data) || (data.attempts is number && data.attempts >= 0)) &&
+             data.timestamp is timestamp &&
+             (!('isPlayTest' in data) || data.isPlayTest is bool);
+    }
+
+    function isValidFeedback(data) {
+      return hasOnlyAllowedFields(['userId', 'text', 'gameName', 'timestamp']) &&
+             data.userId is string && data.userId.size() > 0 && data.userId.size() <= 128 &&
+             data.text is string && data.text.size() > 0 && data.text.size() <= 2000 &&
+             (!('gameName' in data) || (data.gameName is string && data.gameName.size() <= 50)) &&
+             data.timestamp is timestamp;
+    }
+
+    match /users/{userId} {
+      // Only the user or an admin can read the profile
+      allow read: if isOwner(userId) || isAdmin();
+      
+      // Only the user can create their own profile
+      allow create: if isOwner(userId) && 
+                       hasRequiredFields(['uid', 'currentStreak', 'longestStreak']) &&
+                       isValidUser(request.resource.data) &&
+                       uidUnchanged() &&
+                       (!('role' in request.resource.data) || request.resource.data.role == 'user' || isAdmin());
+                       
+      // Only the user or admin can update the profile
+      allow update: if (isOwner(userId) && 
+                       isValidUser(request.resource.data) &&
+                       uidNotModified() &&
+                       (!('createdAt' in request.resource.data) || request.resource.data.createdAt == resource.data.createdAt) &&
+                       (!('role' in request.resource.data) || request.resource.data.role == resource.data.role)) ||
+                       (isAdmin() && isValidUser(request.resource.data) && uidNotModified());
+                       
+      // Users cannot delete their profiles directly from the client for now
+      allow delete: if false;
+    }
+
+    match /game_stats/{statId} {
+      // Anyone can create a stat (even anonymous users)
+      allow create: if hasRequiredFields(['userId', 'gameName', 'date', 'mode', 'won', 'mistakes', 'timestamp']) &&
+                       isValidGameStat(request.resource.data) &&
+                       (request.resource.data.userId == 'anonymous' || (isAuthenticated() && request.auth.uid == request.resource.data.userId));
+      
+      // Allow reading if the user owns the stat or is an admin
+      allow read: if (isAuthenticated() && request.auth.uid == resource.data.userId) || isAdmin();
+      
+      // No updating or deleting stats from the client
+      allow update, delete: if false;
+    }
+
+    match /feedback/{feedbackId} {
+      // Authenticated users can submit feedback
+      allow create: if hasRequiredFields(['userId', 'text', 'timestamp']) &&
+                       isValidFeedback(request.resource.data) &&
+                       isAuthenticated() && request.auth.uid == request.resource.data.userId;
+      
+      // Only admins can read feedback
+      allow read: if isAdmin();
+      
+      // No updating or deleting feedback
+      allow update, delete: if false;
+    }
+    match /playtesters/{email} {
+      allow read: if isAuthenticated() && request.auth.token.email.lower() == email;
+      allow read, write: if isAdmin();
+    }
+  }
+}
