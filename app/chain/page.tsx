@@ -205,9 +205,11 @@ export default function Chain() {
           animate={isShaking ? { x: [-5, 5, -5, 5, 0] } : {}}
           transition={{ duration: 0.4 }}
         >
-          {activeGrid.map((word) => {
-            const selectedIndex = selectedChain.indexOf(word);
-            const isSelected = selectedIndex !== -1;
+          {(() => {
+            const selectedChainMap = new Map(selectedChain.map((word, index) => [word, index]));
+            return activeGrid.map((word) => {
+              const selectedIndex = selectedChainMap.has(word) ? selectedChainMap.get(word)! : -1;
+              const isSelected = selectedIndex !== -1;
             
             let bgClass = 'bg-white text-[#1A1A1A] border-[#1A1A1A] hover:bg-neutral-300 shadow-[3px_3px_0px_#1A1A1A] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none';
             if (isSelected) {
@@ -229,7 +231,8 @@ export default function Chain() {
                 )}
               </motion.button>
             );
-          })}
+          });
+          })()}
         </motion.div>
 
         <div className="w-full bg-[#1A1A1A] text-white rounded-sm py-2 text-center font-black text-base mb-2 shadow-[4px_4px_0px_#1A1A1A] border-[1.5px] border-[#1A1A1A]">
