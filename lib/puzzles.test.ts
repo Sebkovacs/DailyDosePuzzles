@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert';
-import { shuffleArray } from './puzzles.ts';
+import { shuffleArray } from './puzzles';
 
 describe('shuffleArray', () => {
   test('should not mutate the original array', () => {
