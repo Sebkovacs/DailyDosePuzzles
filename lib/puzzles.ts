@@ -1,4 +1,4 @@
-import { COMPOUND_WORDS } from './split-words.ts';
+import { COMPOUND_WORDS } from './split-words';
 
 export interface Puzzle {
   date: string;

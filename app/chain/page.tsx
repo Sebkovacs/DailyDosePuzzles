@@ -26,14 +26,13 @@ export default function Chain() {
   const [isPlayTest, setIsPlayTest] = useState(false);
   const [startTime, setStartTime] = useState<number>(0);
   const [wrongGuesses, setWrongGuesses] = useState<string[][]>([]);
-  const [bonusGamesPlayed, setBonusGamesPlayed] = useState(0);
   const { user, profile } = useAuth();
   const isTester = profile?.role === 'tester' || profile?.role === 'admin';
   
   const MAX_MISTAKES = 3;
 
   const handleShare = () => {
-    const title = bonusGamesPlayed > 0 ? `Chain (Bonus ${bonusGamesPlayed}/4)` : `Chain ${dateString}`;
+    const title = `Chain ${dateString}`;
 
     // Create emoji representation
     const emptySquares = MAX_MISTAKES - mistakes;
@@ -54,17 +53,6 @@ export default function Chain() {
     const randomDaily = generateRandomChain();
     setDailyPuzzle(randomDaily);
     setIsPlayTest(true);
-  };
-
-  const handlePlayMore = () => {
-    setBonusGamesPlayed(prev => prev + 1);
-    const randomDaily = generateRandomChain();
-    setDailyPuzzle(randomDaily);
-    setIsPlayTest(true); // Treat bonus games as playtests for now so they don't overwrite daily stats unless desired.
-    setIsWin(false);
-    setMistakes(0);
-    setSelectedChain([]);
-    setWrongGuesses([]);
   };
 
   useEffect(() => {
@@ -315,15 +303,6 @@ export default function Chain() {
                 </div>
 
                 <div className="flex flex-col gap-3">
-                  {isWin && bonusGamesPlayed < 4 && (
-                    <button
-                      onClick={handlePlayMore}
-                      className="w-full py-3.5 rounded-full bg-emerald-500 text-white text-sm font-bold hover:bg-emerald-600 transition-colors flex items-center justify-center gap-2 active:scale-95"
-                    >
-                      <Dices className="w-4 h-4" />
-                      Play 4 More ({bonusGamesPlayed}/4)
-                    </button>
-                  )}
                   <button 
                     onClick={handleShare}
                     className="w-full py-3.5 rounded-full bg-indigo-600 text-white text-sm font-bold hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2 active:scale-95"
