@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { getDailyPuzzle, generateRandomSplit, SplitPuzzle } from '@/lib/split';
+import { getDailyPuzzle, generateRandomSplit, SplitPuzzle, DailySplit } from '@/lib/split';
 import { shuffleArray } from '@/lib/puzzles';
 import { HelpCircle, RefreshCw, ChevronLeft, Share2, X, MessageSquare, Dices } from 'lucide-react';
 import Link from 'next/link';
@@ -13,7 +13,7 @@ import { FeedbackModal } from '@/components/FeedbackModal';
 export default function Split() {
   const [mounted, setMounted] = useState(false);
   const [dateString, setDateString] = useState('');
-  const [dailyPuzzle, setDailyPuzzle] = useState<any>(null); // eslint-disable-line @typescript-eslint/no-explicit-any
+  const [dailyPuzzle, setDailyPuzzle] = useState<DailySplit | null>(null);
   const [puzzle, setPuzzle] = useState<SplitPuzzle | null>(null);
   
   const [activeTiles, setActiveTiles] = useState<{id: string, word: string}[]>([]);
