@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { getDailyChain, generateRandomChain, ChainPuzzle } from '@/lib/chain';
+import { getDailyChain, generateRandomChain, ChainPuzzle, DailyChain } from '@/lib/chain';
 import { shuffleArray } from '@/lib/puzzles';
 import { ChevronLeft, HelpCircle, Share2, X, MessageSquare, Dices } from 'lucide-react';
 import Link from 'next/link';
@@ -13,7 +13,7 @@ import { FeedbackModal } from '@/components/FeedbackModal';
 export default function Chain() {
   const [mounted, setMounted] = useState(false);
   const [dateString, setDateString] = useState('');
-  const [dailyPuzzle, setDailyPuzzle] = useState<any>(null); // eslint-disable-line @typescript-eslint/no-explicit-any
+  const [dailyPuzzle, setDailyPuzzle] = useState<DailyChain | null>(null);
   const [puzzle, setPuzzle] = useState<ChainPuzzle | null>(null);
   const [activeGrid, setActiveGrid] = useState<string[]>([]);
   const [selectedChain, setSelectedChain] = useState<string[]>([]);
