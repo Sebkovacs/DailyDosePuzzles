@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { getDailySpectrum, generateRandomSpectrum, SpectrumPuzzle, SpectrumItem } from '@/lib/spectrum';
+import { getDailySpectrum, generateRandomSpectrum, SpectrumPuzzle, SpectrumItem, DailySpectrum } from '@/lib/spectrum';
 import { shuffleArray } from '@/lib/puzzles';
 import { ChevronLeft, HelpCircle, Share2, X, MessageSquare, Dices } from 'lucide-react';
 import Link from 'next/link';
@@ -13,7 +13,7 @@ import { FeedbackModal } from '@/components/FeedbackModal';
 export default function Spectrum() {
   const [mounted, setMounted] = useState(false);
   const [dateString, setDateString] = useState('');
-  const [dailyPuzzle, setDailyPuzzle] = useState<any>(null); // eslint-disable-line @typescript-eslint/no-explicit-any
+  const [dailyPuzzle, setDailyPuzzle] = useState<DailySpectrum | null>(null);
   const [puzzle, setPuzzle] = useState<SpectrumPuzzle | null>(null);
   const [currentOrder, setCurrentOrder] = useState<SpectrumItem[]>([]);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
