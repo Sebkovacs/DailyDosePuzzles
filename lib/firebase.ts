@@ -58,19 +58,27 @@ export const signInWithGoogle = async () => {
     const userSnap = await getDoc(userRef);
     
     if (!userSnap.exists()) {
-      // Check if email is in playtesters collection
+      // Check if email is in admins or playtesters collection
       let role = 'user';
-      if (user.email === 'sebkovacs@gmail.com') {
-        role = 'admin';
-      } else if (user.email) {
+      if (user.email) {
+        const emailLower = user.email.toLowerCase();
         try {
-          const playtesterRef = doc(db, 'playtesters', user.email.toLowerCase());
-          const playtesterSnap = await getDoc(playtesterRef);
-          if (playtesterSnap.exists()) {
-            role = 'tester';
+          // Check for admin status first
+          const adminRef = doc(db, 'admins', emailLower);
+          const adminSnap = await getDoc(adminRef);
+
+          if (adminSnap.exists()) {
+            role = 'admin';
+          } else {
+            // Check if email is in playtesters collection
+            const playtesterRef = doc(db, 'playtesters', emailLower);
+            const playtesterSnap = await getDoc(playtesterRef);
+            if (playtesterSnap.exists()) {
+              role = 'tester';
+            }
           }
         } catch (e) {
-          console.error('Error checking playtester status', e);
+          console.error('Error checking role status', e);
         }
       }
 
