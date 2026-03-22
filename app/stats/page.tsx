@@ -27,7 +27,7 @@ export default function StatsPage() {
   const [playtestStats, setPlaytestStats] = useState<StatItem[]>([]);
   const [statsLoading, setStatsLoading] = useState(true);
 
-  const isAdmin = user?.email === 'sebkovacs@gmail.com';
+  const isAdmin = profile?.role === 'admin';
 
   useEffect(() => {
     const fetchStats = async () => {

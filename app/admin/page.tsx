@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ChevronLeft, Shield, User as UserIcon, Beaker, Plus } from 'lucide-react';
+import { ChevronLeft, Shield, User as UserIcon, Beaker, Plus, Trash2 } from 'lucide-react';
 import { useAuth } from '@/lib/useAuth';
 import { db } from '@/lib/firebase';
-import { collection, getDocs, doc, updateDoc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, getDocs, doc, updateDoc, setDoc, deleteDoc, serverTimestamp } from 'firebase/firestore';
 
 interface UserProfile {
   uid: string;
@@ -16,15 +16,28 @@ interface UserProfile {
 }
 
 export default function AdminPage() {
-  const { user, loading } = useAuth();
+  const { user, profile, loading } = useAuth();
   const [users, setUsers] = useState<UserProfile[]>([]);
   const [fetching, setFetching] = useState(true);
   const [newTesterEmail, setNewTesterEmail] = useState('');
   const [addingTester, setAddingTester] = useState(false);
+  const [adminEmails, setAdminEmails] = useState<string[]>([]);
+  const [newAdminEmail, setNewAdminEmail] = useState('');
+  const [addingAdmin, setAddingAdmin] = useState(false);
 
-  const isAdmin = user?.email === 'sebkovacs@gmail.com';
+  const isAdmin = profile?.role === 'admin';
 
   useEffect(() => {
+    const fetchAdmins = async () => {
+      if (!isAdmin) return;
+      try {
+        const snapshot = await getDocs(collection(db, 'admins'));
+        setAdminEmails(snapshot.docs.map(doc => doc.id));
+      } catch (error) {
+        console.error('Error fetching admin emails:', error);
+      }
+    };
+
     const fetchUsers = async () => {
       if (!isAdmin) return;
       
@@ -44,18 +57,74 @@ export default function AdminPage() {
       }
     };
 
-    if (!loading) {
+    if (!loading && isAdmin) {
       fetchUsers();
+      fetchAdmins();
     }
   }, [loading, isAdmin]);
 
   const handleRoleChange = async (uid: string, newRole: 'user' | 'tester' | 'admin') => {
+    if (uid === user?.uid) {
+      alert("You cannot change your own role to avoid self-lockout.");
+      return;
+    }
+
     try {
       await updateDoc(doc(db, 'users', uid), { role: newRole });
       setUsers(users.map(u => u.uid === uid ? { ...u, role: newRole } : u));
     } catch (error) {
       console.error('Error updating role:', error);
       alert('Failed to update role. Check console for details.');
+    }
+  };
+
+  const handleAddAdmin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newAdminEmail || !newAdminEmail.includes('@')) return;
+
+    setAddingAdmin(true);
+    try {
+      const email = newAdminEmail.toLowerCase().trim();
+      await setDoc(doc(db, 'admins', email), {
+        addedAt: serverTimestamp(),
+        addedBy: user?.email
+      });
+
+      setAdminEmails(prev => [...prev.filter(e => e !== email), email]);
+
+      // Update role of existing user if found
+      const existingUser = users.find(u => u.email?.toLowerCase() === email);
+      if (existingUser && existingUser.role !== 'admin') {
+        await handleRoleChange(existingUser.uid, 'admin');
+      }
+
+      setNewAdminEmail('');
+      alert(`Added ${email} as an admin!`);
+    } catch (error) {
+      console.error('Error adding admin:', error);
+      alert('Failed to add admin.');
+    } finally {
+      setAddingAdmin(false);
+    }
+  };
+
+  const handleRemoveAdmin = async (email: string) => {
+    if (email === user?.email) {
+      alert("You cannot remove yourself from the admin list.");
+      return;
+    }
+
+    if (!confirm(`Are you sure you want to remove ${email} from the admin list?`)) return;
+
+    try {
+      await deleteDoc(doc(db, 'admins', email.toLowerCase()));
+      setAdminEmails(prev => prev.filter(e => e !== email));
+
+      // We don't automatically demote the user here to avoid complex state updates,
+      // but they won't be re-upped on next login.
+    } catch (error) {
+      console.error('Error removing admin:', error);
+      alert('Failed to remove admin.');
     }
   };
 
@@ -119,6 +188,46 @@ export default function AdminPage() {
 
       <main className="w-full max-w-md p-4 flex flex-col gap-6">
         <div className="bg-white border-[1.5px] border-[#1A1A1A] rounded-xl p-4 shadow-[4px_4px_0px_#1A1A1A]">
+          <h2 className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-4 border-b-[1.5px] border-neutral-200 pb-2 flex items-center gap-2">
+            <Shield className="w-4 h-4" /> Admin Access
+          </h2>
+          <form onSubmit={handleAddAdmin} className="flex gap-2 mb-4">
+            <input
+              type="email"
+              placeholder="Admin email"
+              value={newAdminEmail}
+              onChange={(e) => setNewAdminEmail(e.target.value)}
+              className="flex-1 px-3 py-2 text-sm border-[1.5px] border-[#1A1A1A] rounded-md focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]/20"
+              required
+            />
+            <button
+              type="submit"
+              disabled={addingAdmin || !newAdminEmail}
+              className="px-4 py-2 bg-[#1A1A1A] text-white text-sm font-bold rounded-md hover:bg-black disabled:opacity-50 flex items-center gap-1 transition-colors"
+            >
+              <Plus className="w-4 h-4" /> Add
+            </button>
+          </form>
+
+          <div className="space-y-2 max-h-40 overflow-y-auto pr-1">
+            {adminEmails.map(email => (
+              <div key={email} className="flex items-center justify-between py-1.5 px-2 bg-neutral-50 rounded border border-neutral-200">
+                <span className="text-xs font-medium truncate flex-1">{email}</span>
+                {email !== user?.email && (
+                  <button
+                    onClick={() => handleRemoveAdmin(email)}
+                    className="p-1 text-neutral-400 hover:text-red-500 transition-colors"
+                    title="Remove admin access"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="bg-white border-[1.5px] border-[#1A1A1A] rounded-xl p-4 shadow-[4px_4px_0px_#1A1A1A]">
           <h2 className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-4 border-b-[1.5px] border-neutral-200 pb-2">Add Playtester</h2>
           <form onSubmit={handleAddPlaytester} className="flex gap-2">
             <input
@@ -158,7 +267,7 @@ export default function AdminPage() {
                   </div>
                 </div>
                 
-                {u.email !== 'sebkovacs@gmail.com' && (
+                {u.uid !== user?.uid && (
                   <div className="flex gap-2 mt-2">
                     <button
                       onClick={() => handleRoleChange(u.uid, 'user')}
@@ -171,6 +280,12 @@ export default function AdminPage() {
                       className={`flex-1 py-1 text-xs font-bold rounded border-[1.5px] ${u.role === 'tester' ? 'bg-blue-500 text-white border-blue-600' : 'bg-white text-[#1A1A1A] border-neutral-300 hover:bg-neutral-100'}`}
                     >
                       Tester
+                    </button>
+                    <button
+                      onClick={() => handleRoleChange(u.uid, 'admin')}
+                      className={`flex-1 py-1 text-xs font-bold rounded border-[1.5px] ${u.role === 'admin' ? 'bg-red-500 text-white border-red-600' : 'bg-white text-[#1A1A1A] border-neutral-300 hover:bg-neutral-100'}`}
+                    >
+                      Admin
                     </button>
                   </div>
                 )}

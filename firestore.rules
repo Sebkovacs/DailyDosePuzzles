@@ -52,7 +52,10 @@ service cloud.firestore {
     }
     
     function isAdmin() {
-      return isAuthenticated() && request.auth.token.email == "sebkovacs@gmail.com";
+      return isAuthenticated() && (
+        exists(/databases/$(database)/documents/admins/$(request.auth.token.email.lower())) ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin')
+      );
     }
     
     function isOwner(userId) {
@@ -175,6 +178,11 @@ service cloud.firestore {
       allow update, delete: if false;
     }
     match /playtesters/{email} {
+      allow read: if isAuthenticated() && request.auth.token.email.lower() == email;
+      allow read, write: if isAdmin();
+    }
+
+    match /admins/{email} {
       allow read: if isAuthenticated() && request.auth.token.email.lower() == email;
       allow read, write: if isAdmin();
     }
