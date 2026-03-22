@@ -288,7 +288,7 @@ export default function Lexicon() {
           )}
         </AnimatePresence>
       </main>
-      <FeedbackModal isOpen={showFeedback} onClose={() => setShowFeedback(false)} gameName="Lexicon" />
+      <FeedbackModal isOpen={showFeedback} onClose={() => setShowFeedback(false)} gameName="Lexicon" userId={user?.uid} />
     </div>
   );
 }

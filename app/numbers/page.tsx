@@ -378,7 +378,7 @@ export default function NumbersGame() {
           </motion.div>
         )}
       </AnimatePresence>
-      <FeedbackModal isOpen={showFeedback} onClose={() => setShowFeedback(false)} gameName="Numbers" />
+      <FeedbackModal isOpen={showFeedback} onClose={() => setShowFeedback(false)} gameName="Numbers" userId={user?.uid} />
     </div>
   );
 }

@@ -332,7 +332,7 @@ export default function Chain() {
           )}
         </AnimatePresence>
       </main>
-      <FeedbackModal isOpen={showFeedback} onClose={() => setShowFeedback(false)} gameName="Chain" />
+      <FeedbackModal isOpen={showFeedback} onClose={() => setShowFeedback(false)} gameName="Chain" userId={user?.uid} />
     </div>
   );
 }

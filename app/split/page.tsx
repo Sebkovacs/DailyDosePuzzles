@@ -350,7 +350,7 @@ export default function Split() {
           )}
         </AnimatePresence>
       </main>
-      <FeedbackModal isOpen={showFeedback} onClose={() => setShowFeedback(false)} gameName="Split" />
+      <FeedbackModal isOpen={showFeedback} onClose={() => setShowFeedback(false)} gameName="Split" userId={user?.uid} />
     </div>
   );
 }

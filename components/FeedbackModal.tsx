@@ -3,28 +3,27 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, Send, MessageSquare } from 'lucide-react';
-import { useAuth } from '@/lib/useAuth';
 import { saveFeedback } from '@/lib/firebase';
 
 interface FeedbackModalProps {
   isOpen: boolean;
   onClose: () => void;
   gameName?: string;
+  userId?: string;
 }
 
-export function FeedbackModal({ isOpen, onClose, gameName }: FeedbackModalProps) {
-  const { user } = useAuth();
+export function FeedbackModal({ isOpen, onClose, gameName, userId }: FeedbackModalProps) {
   const [feedbackText, setFeedbackText] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user || !feedbackText.trim()) return;
+    if (!userId || !feedbackText.trim()) return;
 
     setIsSubmitting(true);
     try {
-      await saveFeedback(user.uid, feedbackText, gameName);
+      await saveFeedback(userId, feedbackText, gameName);
       setSubmitted(true);
       setTimeout(() => {
         setSubmitted(false);

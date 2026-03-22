@@ -434,7 +434,7 @@ export default function Layers() {
           )}
         </AnimatePresence>
       </main>
-      <FeedbackModal isOpen={showFeedback} onClose={() => setShowFeedback(false)} gameName="Layers" />
+      <FeedbackModal isOpen={showFeedback} onClose={() => setShowFeedback(false)} gameName="Layers" userId={user?.uid} />
     </div>
   );
 }
