@@ -354,7 +354,7 @@ export default function Shift() {
           )}
         </AnimatePresence>
       </main>
-      <FeedbackModal isOpen={showFeedback} onClose={() => setShowFeedback(false)} gameName="Shift" />
+      <FeedbackModal isOpen={showFeedback} onClose={() => setShowFeedback(false)} gameName="Shift" userId={user?.uid} />
     </div>
   );
 }

@@ -323,7 +323,7 @@ export default function Vault() {
           )}
         </AnimatePresence>
       </main>
-      <FeedbackModal isOpen={showFeedback} onClose={() => setShowFeedback(false)} gameName="Vault" />
+      <FeedbackModal isOpen={showFeedback} onClose={() => setShowFeedback(false)} gameName="Vault" userId={user?.uid} />
     </div>
   );
 }

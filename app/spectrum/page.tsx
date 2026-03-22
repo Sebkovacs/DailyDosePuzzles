@@ -368,7 +368,7 @@ export default function Spectrum() {
           )}
         </AnimatePresence>
       </main>
-      <FeedbackModal isOpen={showFeedback} onClose={() => setShowFeedback(false)} gameName="Spectrum" />
+      <FeedbackModal isOpen={showFeedback} onClose={() => setShowFeedback(false)} gameName="Spectrum" userId={user?.uid} />
     </div>
   );
 }
