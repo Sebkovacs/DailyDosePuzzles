@@ -409,26 +409,6 @@ export function getDailyPuzzle(dateStr: string): DailySplit {
   const puzzle = PUZZLES.find(p => p.date === dateStr);
   return puzzle || PUZZLES[0];
 }
-
-export function shuffleArray<T>(array: T[], seed: string): T[] {
-  let currentIndex = array.length, temporaryValue, randomIndex;
-  let seedNum = seed.split('').reduce((a, b) => a + b.charCodeAt(0), 0);
-
-  const random = () => {
-    const x = Math.sin(seedNum++) * 10000;
-    return x - Math.floor(x);
-  };
-
-  const newArray = [...array];
-  while (0 !== currentIndex) {
-    randomIndex = Math.floor(random() * currentIndex);
-    currentIndex -= 1;
-    temporaryValue = newArray[currentIndex];
-    newArray[currentIndex] = newArray[randomIndex];
-    newArray[randomIndex] = temporaryValue;
-  }
-  return newArray;
-}
 `;
 
 const spectrumContent = `export interface SpectrumItem {

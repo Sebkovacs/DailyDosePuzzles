@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { getDailyPuzzle, generateRandomSplit, SplitPuzzle } from '@/lib/split';
-import { shuffleArray } from '@/lib/puzzles';
+import { shuffleArray } from '@/lib/utils/shuffle';
 import { HelpCircle, RefreshCw, ChevronLeft, Share2, X, MessageSquare, Dices } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth } from '@/lib/useAuth';

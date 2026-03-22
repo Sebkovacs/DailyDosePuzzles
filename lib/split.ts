@@ -74,23 +74,3 @@ export function generateRandomSplit(): DailySplit {
   const randomIndex = Math.floor(Math.random() * PUZZLES.length);
   return PUZZLES[randomIndex];
 }
-
-export function shuffleArray<T>(array: T[], seed: string): T[] {
-  let currentIndex = array.length, temporaryValue, randomIndex;
-  let seedNum = seed.split('').reduce((a, b) => a + b.charCodeAt(0), 0);
-
-  const random = () => {
-    const x = Math.sin(seedNum++) * 10000;
-    return x - Math.floor(x);
-  };
-
-  const newArray = [...array];
-  while (0 !== currentIndex) {
-    randomIndex = Math.floor(random() * currentIndex);
-    currentIndex -= 1;
-    temporaryValue = newArray[currentIndex];
-    newArray[currentIndex] = newArray[randomIndex];
-    newArray[randomIndex] = temporaryValue;
-  }
-  return newArray;
-}
