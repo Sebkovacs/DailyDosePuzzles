@@ -60,7 +60,7 @@ export function FeedbackModal({ isOpen, onClose, gameName }: FeedbackModalProps)
               <h2 className="text-xl font-serif font-black uppercase flex items-center gap-2">
                 <MessageSquare className="w-5 h-5" /> Feedback
               </h2>
-              <button onClick={onClose} className="p-1 hover:bg-neutral-200 rounded-sm transition-colors">
+              <button onClick={onClose} aria-label="Close feedback modal" className="p-1 hover:bg-neutral-200 rounded-sm transition-colors">
                 <X className="w-6 h-6" />
               </button>
             </div>
