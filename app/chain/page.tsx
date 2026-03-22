@@ -26,13 +26,25 @@ export default function Chain() {
   const [isPlayTest, setIsPlayTest] = useState(false);
   const [startTime, setStartTime] = useState<number>(0);
   const [wrongGuesses, setWrongGuesses] = useState<string[][]>([]);
+  const [bonusGamesPlayed, setBonusGamesPlayed] = useState(0);
   const { user, profile } = useAuth();
   const isTester = profile?.role === 'tester' || profile?.role === 'admin';
   
   const MAX_MISTAKES = 3;
 
   const handleShare = () => {
-    const text = `Chain - ${dateString}\n${isWin ? 'Solved!' : 'Failed'}\nMistakes: ${mistakes}/${MAX_MISTAKES}`;
+    const title = bonusGamesPlayed > 0 ? `Chain (Bonus ${bonusGamesPlayed}/4)` : `Chain ${dateString}`;
+
+    // Create emoji representation
+    const emptySquares = MAX_MISTAKES - mistakes;
+    const mistakesEmojis = Array(mistakes).fill('❌').join('');
+    const emptyEmojis = Array(emptySquares).fill('⬜').join('');
+    const linksEmoji = '🔗'.repeat(puzzle?.chain.length || 0);
+
+    const resultText = isWin ? 'Solved' : 'Failed';
+
+    const text = `${title}\n${resultText}\n${linksEmoji}\n${mistakesEmojis}${emptyEmojis}`;
+
     navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -42,6 +54,17 @@ export default function Chain() {
     const randomDaily = generateRandomChain();
     setDailyPuzzle(randomDaily);
     setIsPlayTest(true);
+  };
+
+  const handlePlayMore = () => {
+    setBonusGamesPlayed(prev => prev + 1);
+    const randomDaily = generateRandomChain();
+    setDailyPuzzle(randomDaily);
+    setIsPlayTest(true); // Treat bonus games as playtests for now so they don't overwrite daily stats unless desired.
+    setIsWin(false);
+    setMistakes(0);
+    setSelectedChain([]);
+    setWrongGuesses([]);
   };
 
   useEffect(() => {
@@ -160,10 +183,10 @@ export default function Chain() {
   if (!mounted || !puzzle) return <div className="h-[100dvh] flex items-center justify-center bg-[#F5F2ED]">Loading...</div>;
 
   return (
-    <div className="h-[100dvh] overflow-hidden bg-[#F5F2ED] text-[#1A1A1A] font-sans flex flex-col items-center">
-      <header className="w-full max-w-md px-2 py-1 flex items-center justify-between border-b-[1.5px] border-[#1A1A1A] shrink-0">
+    <div className="h-[100dvh] overflow-hidden bg-white text-neutral-800 font-sans flex flex-col items-center">
+      <header className="w-full max-w-md px-4 py-3 flex items-center justify-between border-b border-neutral-100 shrink-0">
         <div className="flex items-center gap-1">
-          <Link href="/" className="p-1.5 hover:bg-neutral-300 rounded-sm transition-colors">
+          <Link href="/" className="p-2 hover:bg-neutral-100 text-neutral-400 hover:text-neutral-800 rounded-full transition-colors">
             <ChevronLeft className="w-5 h-5" />
           </Link>
           {isTester && (
@@ -173,35 +196,35 @@ export default function Chain() {
           )}
         </div>
         <div className="text-center">
-          <h1 className="text-6xl font-serif font-black tracking-tight leading-none">CHAIN</h1>
-          <p className="text-[10px] font-bold text-neutral-600 uppercase tracking-widest mt-0.5">
-            {isPlayTest ? 'PLAYTEST MODE' : dateString}
+          <h1 className="text-3xl font-serif font-bold tracking-tight text-neutral-900">Chain</h1>
+          <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest mt-1">
+            {isPlayTest ? 'Playtest' : dateString}
           </p>
         </div>
         <div className="flex items-center gap-1">
           {isTester && (
-            <button onClick={handleRandomPuzzle} className="p-1.5 hover:bg-neutral-300 rounded-sm transition-colors text-emerald-600" title="Random Puzzle">
+            <button onClick={handleRandomPuzzle} className="p-2 hover:bg-neutral-100 text-emerald-500 rounded-full transition-colors" title="Random Puzzle">
               <Dices className="w-5 h-5" />
             </button>
           )}
-          <button onClick={() => setShowHelp(true)} className="p-1.5 hover:bg-neutral-300 rounded-sm transition-colors">
+          <button onClick={() => setShowHelp(true)} className="p-2 hover:bg-neutral-100 text-neutral-400 hover:text-neutral-800 rounded-full transition-colors">
             <HelpCircle className="w-5 h-5" />
           </button>
         </div>
       </header>
 
-      <main className="flex-1 min-h-0 w-full max-w-md px-2 py-2 flex flex-col overflow-y-auto">
-        <div className="text-center mb-2">
-          <h2 className="text-base font-serif font-bold leading-tight">Connect the words.</h2>
-          <p className="text-[10px] text-neutral-600 mt-0.5">Find the {puzzle.chain.length + 1}-step path from Start to End.</p>
+      <main className="flex-1 min-h-0 w-full max-w-md px-4 py-6 flex flex-col overflow-y-auto">
+        <div className="text-center mb-8">
+          <h2 className="text-lg font-serif font-medium text-neutral-800">Connect the words.</h2>
+          <p className="text-xs text-neutral-500 mt-1">Find the {puzzle.chain.length + 1}-step path from Start to End.</p>
         </div>
 
-        <div className="w-full bg-[#1A1A1A] text-white rounded-sm py-2 text-center font-black text-base mb-2 shadow-[4px_4px_0px_#1A1A1A] border-[1.5px] border-[#1A1A1A]">
+        <div className="w-full bg-indigo-50 text-indigo-900 rounded-2xl py-4 text-center font-black text-lg mb-4">
           {puzzle.startWord}
         </div>
 
         <motion.div 
-          className="grid grid-cols-4 gap-1 mb-2 flex-1 content-start"
+          className="grid grid-cols-4 gap-2 mb-4 flex-1 content-start"
           animate={isShaking ? { x: [-5, 5, -5, 5, 0] } : {}}
           transition={{ duration: 0.4 }}
         >
@@ -209,17 +232,18 @@ export default function Chain() {
             const selectedIndex = selectedChain.indexOf(word);
             const isSelected = selectedIndex !== -1;
             
-            let bgClass = 'bg-white text-[#1A1A1A] border-[#1A1A1A] hover:bg-neutral-300 shadow-[3px_3px_0px_#1A1A1A] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none';
+            let bgClass = 'bg-neutral-50 text-neutral-800 border-neutral-200 hover:bg-neutral-100 hover:border-neutral-300';
             if (isSelected) {
-              bgClass = 'bg-neutral-800 text-white border-[#1A1A1A] shadow-[2px_2px_0px_#1A1A1A] translate-x-[1px] translate-y-[1px]';
+              bgClass = 'bg-indigo-600 text-white border-indigo-600 scale-95';
             }
 
             return (
               <motion.button
                 key={word}
+                whileTap={{ scale: 0.95 }}
                 onClick={() => handleWordClick(word)}
                 className={`
-                  aspect-square rounded-sm font-black text-[8px] sm:text-[10px] transition-all duration-200 flex flex-col items-center justify-center uppercase tracking-tight relative border-[1.5px]
+                  aspect-square rounded-xl font-bold text-[10px] sm:text-xs transition-all duration-200 flex flex-col items-center justify-center uppercase tracking-wider relative border
                   ${bgClass}
                 `}
               >
@@ -232,30 +256,30 @@ export default function Chain() {
           })}
         </motion.div>
 
-        <div className="w-full bg-[#1A1A1A] text-white rounded-sm py-2 text-center font-black text-base mb-2 shadow-[4px_4px_0px_#1A1A1A] border-[1.5px] border-[#1A1A1A]">
+        <div className="w-full bg-indigo-50 text-indigo-900 rounded-2xl py-4 text-center font-black text-lg mb-4">
           {puzzle.endWord}
         </div>
 
-        <div className="mt-auto flex flex-col items-center gap-2">
-          <div className="flex items-center gap-1">
-            <span className="text-[9px] font-black text-neutral-500 uppercase tracking-widest mr-1">Chances</span>
+        <div className="mt-auto flex flex-col items-center gap-4 pb-4">
+          <div className="flex items-center gap-1.5">
+            <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest mr-2">Mistakes Remaining</span>
             {[...Array(MAX_MISTAKES)].map((_, i) => (
-              <div key={i} className={`w-1.5 h-1.5 rounded-sm transition-colors duration-300 ${i < (MAX_MISTAKES - mistakes) ? 'bg-indigo-500' : 'bg-neutral-300'}`} />
+              <div key={i} className={`w-2 h-2 rounded-full transition-all duration-300 ${i < (MAX_MISTAKES - mistakes) ? 'bg-indigo-500 scale-100' : 'bg-neutral-200 scale-75'}`} />
             ))}
           </div>
           
-          <div className="flex gap-2 w-full">
+          <div className="flex gap-3 w-full">
             <button 
               onClick={() => setSelectedChain([])}
               disabled={selectedChain.length === 0 || isGameOver || isWin}
-              className="flex-1 py-1.5 rounded-sm border-[1.5px] border-[#1A1A1A] bg-white font-black text-[#1A1A1A] hover:bg-neutral-300 disabled:opacity-50 transition-colors shadow-[4px_4px_0px_#1A1A1A] active:translate-x-[1px] active:translate-y-[1px] active:shadow-[3px_3px_0px_#1A1A1A] text-base"
+              className="flex-1 py-3 rounded-full border border-neutral-200 bg-white font-bold text-neutral-600 hover:bg-neutral-50 disabled:opacity-50 transition-all text-sm active:scale-95"
             >
               Clear
             </button>
             <button 
               onClick={handleSubmit}
               disabled={selectedChain.length === 0 || isGameOver || isWin}
-              className="flex-1 py-1.5 rounded-sm bg-[#1A1A1A] text-white font-black hover:bg-black disabled:opacity-50 transition-colors border-[1.5px] border-[#1A1A1A] shadow-[4px_4px_0px_#1A1A1A] active:translate-x-[1px] active:translate-y-[1px] active:shadow-[3px_3px_0px_#1A1A1A] text-base"
+              className="flex-1 py-3 rounded-full bg-neutral-900 text-white font-bold hover:bg-black disabled:opacity-50 transition-all text-sm active:scale-95"
             >
               Submit
             </button>
@@ -265,41 +289,53 @@ export default function Chain() {
         <AnimatePresence>
           {(isGameOver || isWin) && (
             <motion.div 
-              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-              className="absolute inset-0 z-10 flex items-center justify-center bg-white/90 backdrop-blur-sm p-4"
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              className="absolute inset-0 z-10 flex items-center justify-center bg-white/95 backdrop-blur-sm p-4"
             >
-              <div className="bg-white p-6 rounded-lg shadow-[10px_10px_0px_#1A1A1A] text-center max-w-sm w-full border-2 border-[#1A1A1A]">
-                <h2 className="text-6xl font-serif font-black tracking-tight mb-1">{isWin ? 'Chain Linked!' : 'Broken Chain!'}</h2>
-                <p className="text-base text-neutral-600 font-bold mb-4">{isWin ? 'You found the correct path.' : 'You ran out of mistakes.'}</p>
+              <motion.div
+                initial={{ scale: 0.95, opacity: 0, y: 10 }} animate={{ scale: 1, opacity: 1, y: 0 }}
+                className="bg-white p-8 rounded-3xl shadow-2xl text-center max-w-sm w-full border border-neutral-100"
+              >
+                <h2 className="text-4xl font-serif font-bold tracking-tight mb-2 text-neutral-900">{isWin ? 'Chain Linked!' : 'Broken Chain!'}</h2>
+                <p className="text-sm text-neutral-500 mb-6">{isWin ? 'You found the correct path.' : 'You ran out of mistakes.'}</p>
                 
-                <div className="mb-5 w-full text-left bg-neutral-300 p-3 rounded-md border-2 border-neutral-300">
-                  <h3 className="font-black text-[10px] text-neutral-500 uppercase tracking-wider mb-2 text-center">Today&apos;s Chain</h3>
-                  <div className="flex flex-wrap items-center justify-center gap-1.5 text-[10px] font-black">
-                    <span className="bg-[#1A1A1A] text-white px-2 py-1 rounded-md border-2 border-[#1A1A1A] shadow-[2px_2px_0px_#1A1A1A]">{puzzle.startWord}</span>
+                <div className="mb-6 w-full text-left bg-neutral-50 p-4 rounded-2xl border border-neutral-100">
+                  <h3 className="font-bold text-[10px] text-neutral-400 uppercase tracking-widest mb-3 text-center">Today&apos;s Chain</h3>
+                  <div className="flex flex-wrap items-center justify-center gap-2 text-xs font-bold">
+                    <span className="bg-neutral-900 text-white px-3 py-1.5 rounded-lg">{puzzle.startWord}</span>
                     {puzzle.chain.map(word => (
-                      <div key={word} className="flex items-center gap-1.5">
-                        <span className="text-neutral-500">→</span>
-                        <span className="bg-white border-2 border-[#1A1A1A] px-2 py-1 rounded-md shadow-[2px_2px_0px_#1A1A1A]">{word}</span>
+                      <div key={word} className="flex items-center gap-2">
+                        <span className="text-neutral-300">→</span>
+                        <span className="bg-white border border-neutral-200 px-3 py-1.5 rounded-lg text-neutral-800">{word}</span>
                       </div>
                     ))}
-                    <span className="text-neutral-500">→</span>
-                    <span className="bg-[#1A1A1A] text-white px-2 py-1 rounded-md border-2 border-[#1A1A1A] shadow-[2px_2px_0px_#1A1A1A]">{puzzle.endWord}</span>
+                    <span className="text-neutral-300">→</span>
+                    <span className="bg-neutral-900 text-white px-3 py-1.5 rounded-lg">{puzzle.endWord}</span>
                   </div>
                 </div>
 
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-3">
+                  {isWin && bonusGamesPlayed < 4 && (
+                    <button
+                      onClick={handlePlayMore}
+                      className="w-full py-3.5 rounded-full bg-emerald-500 text-white text-sm font-bold hover:bg-emerald-600 transition-colors flex items-center justify-center gap-2 active:scale-95"
+                    >
+                      <Dices className="w-4 h-4" />
+                      Play 4 More ({bonusGamesPlayed}/4)
+                    </button>
+                  )}
                   <button 
                     onClick={handleShare}
-                    className="w-full py-2.5 rounded-md bg-[#00FF00] text-[#1A1A1A] text-base font-black hover:bg-emerald-500 transition-colors flex items-center justify-center gap-2 border-2 border-[#1A1A1A] shadow-[4px_4px_0px_#1A1A1A] active:translate-y-[2px] active:shadow-none"
+                    className="w-full py-3.5 rounded-full bg-indigo-600 text-white text-sm font-bold hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2 active:scale-95"
                   >
                     <Share2 className="w-4 h-4" />
                     {copied ? 'Copied to Clipboard!' : 'Share Result'}
                   </button>
-                  <Link href="/" className="block w-full py-2.5 rounded-md bg-neutral-300 text-[#1A1A1A] text-base font-black hover:bg-neutral-300 transition-colors border-2 border-[#1A1A1A] shadow-[4px_4px_0px_#1A1A1A] active:translate-y-[2px] active:shadow-none">
+                  <Link href="/" className="block w-full py-3.5 rounded-full bg-neutral-100 text-neutral-600 text-sm font-bold hover:bg-neutral-200 transition-colors active:scale-95">
                     Back to Menu
                   </Link>
                 </div>
-              </div>
+              </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
@@ -309,23 +345,23 @@ export default function Chain() {
           {showHelp && (
             <motion.div 
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="absolute inset-0 z-50 flex items-center justify-center bg-[#1A1A1A]/50 backdrop-blur-sm p-4"
+              className="absolute inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-sm p-4"
             >
               <motion.div 
-                initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
-                className="bg-white p-6 rounded-lg shadow-[10px_10px_0px_#1A1A1A] max-w-sm w-full relative border-2 border-[#1A1A1A]"
+                initial={{ scale: 0.95, opacity: 0, y: 10 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.95, opacity: 0, y: 10 }}
+                className="bg-white p-8 rounded-3xl shadow-xl max-w-sm w-full relative"
               >
-                <button onClick={() => setShowHelp(false)} className="absolute top-3 right-3 p-1.5 text-[#1A1A1A] hover:bg-neutral-300 rounded-sm transition-colors">
-                  <X className="w-4 h-4" />
+                <button onClick={() => setShowHelp(false)} className="absolute top-4 right-4 p-2 text-neutral-400 hover:bg-neutral-100 rounded-full transition-colors">
+                  <X className="w-5 h-5" />
                 </button>
-                <h2 className="text-6xl font-serif font-black mb-3">How to Play</h2>
-                <div className="space-y-3 text-base text-neutral-600">
-                  <p>Find the {puzzle.chain.length + 1}-step path from the Start word to the End word.</p>
-                  <p>Each word in the chain must be strongly associated with the previous one.</p>
-                  <p>Select words in the correct sequence to build your chain and submit to check.</p>
+                <h2 className="text-3xl font-serif font-black mb-4">How to Play</h2>
+                <div className="space-y-4 text-sm text-neutral-600 leading-relaxed">
+                  <p>Find the {puzzle.chain.length + 1}-step path from the <span className="font-bold text-neutral-900">Start</span> word to the <span className="font-bold text-neutral-900">End</span> word.</p>
+                  <p>Each word in the chain must be strongly associated with the previous one to form a common compound word or phrase.</p>
+                  <p>Select words in the correct sequence to build your chain and submit to check your answer.</p>
                 </div>
-                <button onClick={() => setShowHelp(false)} className="mt-6 w-full py-2.5 rounded-md bg-[#1A1A1A] text-white text-base font-black hover:bg-black transition-colors border-2 border-[#1A1A1A] shadow-[4px_4px_0px_#1A1A1A] active:translate-y-[2px] active:shadow-none">
-                  Got it
+                <button onClick={() => setShowHelp(false)} className="mt-8 w-full py-3.5 rounded-full bg-neutral-900 text-white text-sm font-bold hover:bg-black transition-colors active:scale-95">
+                  Play
                 </button>
               </motion.div>
             </motion.div>
