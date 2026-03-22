@@ -158,19 +158,18 @@ export default function Vault() {
         </div>
       </header>
 
-      <main className="flex-1 min-h-0 w-full max-w-md px-2 py-2 flex flex-col items-center overflow-y-auto">
-        {/* Mode Toggle */}
-        <div className="flex justify-center mb-4 w-full">
-          <div className="bg-neutral-300 p-0.5 rounded-sm flex gap-1 border-[1.5px] border-[#1A1A1A] shadow-[3px_3px_0px_#1A1A1A] w-full max-w-[200px]">
+      <main className="flex-1 min-h-0 w-full max-w-md px-4 py-6 flex flex-col items-center overflow-y-auto relative">
+        <div className="flex justify-center mb-6 shrink-0 w-full">
+          <div className="bg-neutral-100 p-1 rounded-full flex gap-1 border border-neutral-200 w-full max-w-[200px]">
             <button 
               onClick={() => setMode('easy')}
-              className={`flex-1 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider transition-colors ${mode === 'easy' ? 'bg-white text-black border-[1.5px] border-[#1A1A1A] shadow-[3px_3px_0px_#1A1A1A]' : 'text-neutral-600 hover:text-[#1A1A1A] border-[1.5px] border-transparent'}`}
+              className={`flex-1 py-1.5 rounded-full text-xs font-bold transition-all ${mode === 'easy' ? 'bg-white text-neutral-900 shadow-sm border border-neutral-200' : 'text-neutral-500 hover:text-neutral-700 border border-transparent'}`}
             >
               Easy
             </button>
             <button 
               onClick={() => setMode('hard')}
-              className={`flex-1 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider transition-colors ${mode === 'hard' ? 'bg-white text-black border-[1.5px] border-[#1A1A1A] shadow-[3px_3px_0px_#1A1A1A]' : 'text-neutral-600 hover:text-[#1A1A1A] border-[1.5px] border-transparent'}`}
+              className={`flex-1 py-1.5 rounded-full text-xs font-bold transition-all ${mode === 'hard' ? 'bg-white text-neutral-900 shadow-sm border border-neutral-200' : 'text-neutral-500 hover:text-neutral-700 border border-transparent'}`}
             >
               Hard
             </button>
@@ -179,49 +178,49 @@ export default function Vault() {
 
         {!isGameOver ? (
           <>
-            <div className="text-center mb-4">
-              <h2 className="text-base font-serif font-bold leading-tight">Crack the code.</h2>
-              <p className="text-[10px] text-neutral-600 mt-0.5">Follow the security protocols.</p>
+            <div className="text-center mb-6">
+              <h2 className="text-lg font-serif font-medium text-neutral-800">Crack the code.</h2>
+              <p className="text-xs text-neutral-500 mt-1">Follow the security protocols.</p>
             </div>
 
-            <div className="mb-4 bg-white border-[1.5px] border-[#1A1A1A] p-3 rounded-sm shadow-[4px_4px_0px_#1A1A1A] w-full max-w-[340px]">
-              <h2 className="text-[10px] font-black text-neutral-500 uppercase tracking-widest mb-2 border-b-[1.5px] border-[#1A1A1A] pb-1">Security Protocols</h2>
-              <ul className="space-y-1.5">
+            <div className="mb-6 bg-slate-50 border border-slate-200 p-5 rounded-2xl w-full max-w-[340px]">
+              <h2 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 text-center border-b border-slate-200 pb-2">Security Protocols</h2>
+              <ul className="space-y-3">
                 {puzzle.rules.map((rule, idx) => (
-                  <li key={idx} className="text-xs font-bold flex items-start gap-2">
-                    <span className="text-[#00FF00] mt-0.5 text-xs leading-none">■</span>
-                    <span className="leading-tight text-[#1A1A1A]/90">{rule}</span>
+                  <li key={idx} className="text-xs font-medium flex items-start gap-2 text-slate-700">
+                    <span className="text-slate-400 mt-[3px] text-[8px] leading-none">■</span>
+                    <span className="leading-snug">{rule}</span>
                   </li>
                 ))}
               </ul>
             </div>
 
-            <div className="flex flex-col items-center mb-4 w-full max-w-[340px]">
+            <div className="flex flex-col items-center mb-6 w-full max-w-[340px]">
               <motion.div 
                 animate={shake ? { x: [-10, 10, -10, 10, 0] } : {}}
                 transition={{ duration: 0.4 }}
-                className="flex gap-2 mb-3"
+                className="flex gap-3 mb-4"
               >
                 {Array.from({ length: puzzle.code.length }).map((_, idx) => (
                   <div 
                     key={idx} 
-                    className={`w-12 h-14 flex items-center justify-center text-2xl font-mono font-black border-[1.5px] border-[#1A1A1A] rounded-sm shadow-[2px_2px_0px_#1A1A1A] transition-colors ${
-                      input[idx] ? 'bg-white text-[#1A1A1A]' : 'bg-neutral-200 text-transparent'
-                    } ${isWin ? 'bg-[#00FF00] text-[#1A1A1A]' : ''}`}
+                    className={`w-14 h-16 flex items-center justify-center text-3xl font-mono font-bold border-2 rounded-xl transition-colors ${
+                      input[idx] ? 'bg-white border-slate-900 text-slate-900' : 'bg-slate-50 border-slate-200 text-transparent'
+                    } ${isWin ? 'bg-emerald-500 border-emerald-500 text-white' : ''}`}
                   >
                     {input[idx] || '0'}
                   </div>
                 ))}
               </motion.div>
               
-              <div className="w-full flex justify-between items-center bg-white border-[1.5px] border-[#1A1A1A] p-2 rounded-sm shadow-[2px_2px_0px_#1A1A1A]">
-                <span className="text-[9px] font-black text-neutral-500 uppercase tracking-widest">Chances</span>
-                <div className="flex gap-1">
+              <div className="w-full flex justify-between items-center px-2">
+                <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">Mistakes Remaining</span>
+                <div className="flex gap-1.5">
                   {[...Array(MAX_ATTEMPTS)].map((_, i) => (
                     <div 
                       key={i} 
-                      className={`w-1.5 h-1.5 rounded-sm transition-colors duration-300 ${
-                        i < (MAX_ATTEMPTS - attempts) ? 'bg-emerald-500' : 'bg-neutral-300'
+                      className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                        i < (MAX_ATTEMPTS - attempts) ? 'bg-slate-500 scale-100' : 'bg-neutral-200 scale-75'
                       }`}
                     />
                   ))}
@@ -229,13 +228,13 @@ export default function Vault() {
               </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-1.5 mt-auto w-full max-w-[340px] pb-2">
+            <div className="grid grid-cols-3 gap-2 mt-auto w-full max-w-[340px] pb-4">
               {['1', '2', '3', '4', '5', '6', '7', '8', '9'].map((num) => (
                 <button
                   key={num}
                   onClick={() => handleKeyPress(num)}
                   disabled={input.length >= puzzle.code.length || isWin}
-                  className="bg-white border-[1.5px] border-[#1A1A1A] py-2 text-xl font-mono font-black rounded-sm shadow-[3px_3px_0px_#1A1A1A] hover:translate-y-[1px] hover:translate-x-[1px] hover:shadow-[2px_2px_0px_#1A1A1A] active:translate-y-[3px] active:translate-x-[3px] active:shadow-none transition-all disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:translate-x-0 disabled:hover:shadow-[3px_3px_0px_#1A1A1A]"
+                  className="bg-white border border-neutral-200 py-3 text-xl font-mono font-bold rounded-2xl hover:bg-neutral-50 hover:border-neutral-300 active:scale-95 transition-all disabled:opacity-50 text-neutral-800"
                 >
                   {num}
                 </button>
@@ -243,55 +242,58 @@ export default function Vault() {
               <button
                 onClick={() => handleKeyPress('delete')}
                 disabled={input.length === 0 || isWin}
-                className="bg-neutral-200 border-[1.5px] border-[#1A1A1A] py-2 flex items-center justify-center rounded-sm shadow-[3px_3px_0px_#1A1A1A] hover:translate-y-[1px] hover:translate-x-[1px] hover:shadow-[2px_2px_0px_#1A1A1A] active:translate-y-[3px] active:translate-x-[3px] active:shadow-none transition-all disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:translate-x-0 disabled:hover:shadow-[3px_3px_0px_#1A1A1A]"
+                className="bg-neutral-100 border border-transparent py-3 flex items-center justify-center rounded-2xl hover:bg-neutral-200 active:scale-95 transition-all disabled:opacity-50 text-neutral-600"
               >
                 <Delete className="w-5 h-5" />
               </button>
               <button
                 onClick={() => handleKeyPress('0')}
                 disabled={input.length >= puzzle.code.length || isWin}
-                className="bg-white border-[1.5px] border-[#1A1A1A] py-2 text-xl font-mono font-black rounded-sm shadow-[3px_3px_0px_#1A1A1A] hover:translate-y-[1px] hover:translate-x-[1px] hover:shadow-[2px_2px_0px_#1A1A1A] active:translate-y-[3px] active:translate-x-[3px] active:shadow-none transition-all disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:translate-x-0 disabled:hover:shadow-[3px_3px_0px_#1A1A1A]"
+                className="bg-white border border-neutral-200 py-3 text-xl font-mono font-bold rounded-2xl hover:bg-neutral-50 hover:border-neutral-300 active:scale-95 transition-all disabled:opacity-50 text-neutral-800"
               >
                 0
               </button>
               <button
                 onClick={() => handleKeyPress('submit')}
                 disabled={input.length !== puzzle.code.length || isWin}
-                className="bg-[#00FF00] border-[1.5px] border-[#1A1A1A] py-2 flex items-center justify-center rounded-sm shadow-[3px_3px_0px_#1A1A1A] hover:translate-y-[1px] hover:translate-x-[1px] hover:shadow-[2px_2px_0px_#1A1A1A] active:translate-y-[3px] active:translate-x-[3px] active:shadow-none transition-all disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:translate-x-0 disabled:hover:shadow-[3px_3px_0px_#1A1A1A]"
+                className="bg-slate-900 border border-transparent py-3 flex items-center justify-center rounded-2xl hover:bg-black active:scale-95 transition-all disabled:opacity-50 text-white"
               >
-                <span className="font-black text-[10px] uppercase tracking-widest">Enter</span>
+                <span className="font-bold text-xs uppercase tracking-widest">Enter</span>
               </button>
             </div>
           </>
         ) : (
           <motion.div 
-            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-            className="absolute inset-0 z-10 flex items-center justify-center bg-white/90 backdrop-blur-sm p-4"
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="absolute inset-0 z-10 flex items-center justify-center bg-white/95 backdrop-blur-sm p-4"
           >
-            <div className="bg-white p-6 rounded-lg shadow-[10px_10px_0px_#1A1A1A] text-center max-w-sm w-full border-2 border-[#1A1A1A]">
-              <h2 className="text-6xl font-serif font-black tracking-tight mb-1">{isWin ? 'UNLOCKED!' : 'LOCKED OUT'}</h2>
-              <p className="text-base font-bold text-neutral-600 mb-4">{isWin ? `You cracked the code in ${attempts} attempt${attempts === 1 ? '' : 's'}.` : 'Security protocols triggered.'}</p>
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0, y: 10 }} animate={{ scale: 1, opacity: 1, y: 0 }}
+              className="bg-white p-8 rounded-3xl shadow-2xl text-center max-w-sm w-full border border-neutral-100"
+            >
+              <h2 className="text-4xl font-serif font-bold tracking-tight mb-2 text-neutral-900">{isWin ? 'Unlocked!' : 'Locked Out'}</h2>
+              <p className="text-sm text-neutral-500 mb-6">{isWin ? `You cracked the code in ${attempts} attempt${attempts === 1 ? '' : 's'}.` : 'Security protocols triggered.'}</p>
               
-              <div className="mb-5 w-full text-left bg-neutral-300 p-3 rounded-md border-2 border-neutral-300">
-                <h3 className="font-black text-[10px] text-neutral-500 uppercase tracking-wider mb-2 text-center">The Code Was</h3>
-                <div className="bg-white border-2 border-[#1A1A1A] p-3 rounded-md shadow-[3px_3px_0px_#1A1A1A] flex justify-center">
-                  <div className="text-4xl font-mono font-black text-[#1A1A1A] tracking-[0.2em] ml-2">{puzzle.code}</div>
+              <div className="mb-6 w-full text-left bg-neutral-50 p-4 rounded-2xl border border-neutral-100">
+                <h3 className="font-bold text-[10px] text-neutral-400 uppercase tracking-widest mb-3 text-center">The Code Was</h3>
+                <div className="bg-white border border-neutral-200 p-4 rounded-xl flex justify-center">
+                  <div className="text-4xl font-mono font-bold text-neutral-900 tracking-[0.3em] ml-3">{puzzle.code}</div>
                 </div>
               </div>
 
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-3">
                 <button 
                   onClick={handleShare}
-                  className="w-full py-2.5 rounded-md bg-[#00FF00] text-[#1A1A1A] text-base font-black hover:bg-emerald-500 transition-colors flex items-center justify-center gap-2 border-2 border-[#1A1A1A] shadow-[4px_4px_0px_#1A1A1A] active:translate-y-[2px] active:shadow-none"
+                  className="w-full py-3.5 rounded-full bg-slate-800 text-white text-sm font-bold hover:bg-slate-900 transition-colors flex items-center justify-center gap-2 active:scale-95"
                 >
                   <Share2 className="w-4 h-4" />
                   {copied ? 'Copied to Clipboard!' : 'Share Result'}
                 </button>
-                <Link href="/" className="block w-full py-2.5 rounded-md bg-neutral-300 text-[#1A1A1A] text-base font-black hover:bg-neutral-300 transition-colors border-2 border-[#1A1A1A] shadow-[4px_4px_0px_#1A1A1A] active:translate-y-[2px] active:shadow-none">
+                <Link href="/" className="block w-full py-3.5 rounded-full bg-neutral-100 text-neutral-600 text-sm font-bold hover:bg-neutral-200 transition-colors active:scale-95 text-center">
                   Back to Menu
                 </Link>
               </div>
-            </div>
+            </motion.div>
           </motion.div>
         )}
 
