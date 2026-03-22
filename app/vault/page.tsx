@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { getDailyVault, generateRandomVault, VaultPuzzle } from '@/lib/vault';
+import { getDailyVault, generateRandomVault, VaultPuzzle, DailyVault } from '@/lib/vault';
 import { ChevronLeft, HelpCircle, Share2, X, Delete, MessageSquare, Dices } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth } from '@/lib/useAuth';
@@ -13,7 +13,7 @@ export default function Vault() {
   const [mounted, setMounted] = useState(false);
   const [dateString, setDateString] = useState('');
   const [mode, setMode] = useState<'easy' | 'hard'>('easy');
-  const [dailyPuzzle, setDailyPuzzle] = useState<any>(null); // eslint-disable-line @typescript-eslint/no-explicit-any
+  const [dailyPuzzle, setDailyPuzzle] = useState<DailyVault | null>(null);
   const [puzzle, setPuzzle] = useState<VaultPuzzle | null>(null);
   
   const [input, setInput] = useState<string>('');
