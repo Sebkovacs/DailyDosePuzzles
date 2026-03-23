@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ChevronLeft, BarChart2 } from 'lucide-react';
+import { ChevronLeft, BarChart2, Target, Clock, AlertTriangle } from 'lucide-react';
 import { useAuth } from '@/lib/useAuth';
-import { dataConnect } from '@/lib/firebase';
-import { getAllGameStats } from '@/lib/dataconnect';
-import styles from '../Analytics.module.css';
+import { db } from '@/lib/firebase';
+import { collection, getDocs, query, orderBy } from 'firebase/firestore';
+import styles from './Analytics.module.css';
 
 interface GameStat {
   id: string;
@@ -17,12 +17,16 @@ interface GameStat {
   mistakes: number;
   attempts: number;
   isPlayTest: boolean;
+  timeToFirstAction?: number;
+  wrongGuesses?: any[];
+  timeToComplete?: number;
 }
 
 export default function AdminAnalyticsPage() {
   const { profile, loading } = useAuth();
   const [stats, setStats] = useState<GameStat[]>([]);
   const [fetching, setFetching] = useState(true);
+  const [selectedGame, setSelectedGame] = useState<string | null>(null);
 
   const isAdmin = profile?.role === 'admin';
 
@@ -30,8 +34,11 @@ export default function AdminAnalyticsPage() {
     const fetchGlobalStats = async () => {
       if (!isAdmin) return;
       try {
-        const response = await getAllGameStats(dataConnect);
-        setStats(response.data.gameStats as GameStat[]);
+        // Fetch high-fidelity telemetry from NoSQL Firestore instead of strict Data Connect
+        const q = query(collection(db, 'gameStats'));
+        const snapshot = await getDocs(q);
+        const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as GameStat[];
+        setStats(data);
       } catch (error) {
         console.error('Error fetching global stats:', error);
       } finally {
@@ -80,6 +87,64 @@ export default function AdminAnalyticsPage() {
     avgMistakes: (gameMap[name].mistakes / gameMap[name].plays).toFixed(1)
   })).sort((a, b) => b.plays - a.plays);
 
+  // Render specific game drill-down
+  if (selectedGame) {
+    const specificStats = stats.filter(s => s.gameName === selectedGame);
+    const statsWithFirstAction = specificStats.filter(s => typeof s.timeToFirstAction === 'number');
+    const avgFirstAction = statsWithFirstAction.length > 0 
+      ? Math.round(statsWithFirstAction.reduce((acc, s) => acc + s.timeToFirstAction!, 0) / statsWithFirstAction.length) 
+      : 0;
+
+    const trapCounts: Record<string, number> = {};
+    specificStats.forEach(s => {
+      if (s.wrongGuesses && Array.isArray(s.wrongGuesses)) {
+        s.wrongGuesses.forEach(guess => {
+          let guessStr = '';
+          if (typeof guess === 'string') guessStr = guess;
+          else if (Array.isArray(guess)) guessStr = guess.join(' ➔ ');
+          else guessStr = JSON.stringify(guess);
+          
+          if (guessStr) {
+            trapCounts[guessStr] = (trapCounts[guessStr] || 0) + 1;
+          }
+        });
+      }
+    });
+    const topTraps = Object.entries(trapCounts).sort((a, b) => b[1] - a[1]).slice(0, 10);
+
+    return (
+      <div className={styles.appContainer}>
+        <header className={styles.header}>
+          <button onClick={() => setSelectedGame(null)} className={styles.iconBtn}><ChevronLeft size={20} /></button>
+          <h1 className={styles.headerTitle}><Target size={20} /> {selectedGame} Insights</h1>
+          <div className={styles.headerSpacer}></div>
+        </header>
+        <main className={styles.main}>
+          <section>
+            <h2 className={styles.sectionTitle} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Clock size={18} /> Telemetry</h2>
+            <div className={styles.kpiGrid}>
+              <div className={styles.kpiCard}><div className={styles.kpiValue}>{avgFirstAction}s</div><div className={styles.kpiLabel}>Avg. Comprehension Time</div></div>
+              <div className={styles.kpiCard}><div className={styles.kpiValue}>{specificStats.length}</div><div className={styles.kpiLabel}>Total Plays Analyzed</div></div>
+            </div>
+          </section>
+          <section>
+            <h2 className={styles.sectionTitle} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><AlertTriangle size={18} /> The "Trap" Metric</h2>
+            <div className={styles.tableWrapper}>
+              <table className={styles.table}>
+                <thead><tr><th>Path / Guess</th><th>Users Trapped</th></tr></thead>
+                <tbody>
+                  {topTraps.length > 0 ? topTraps.map(([trap, count]) => (
+                    <tr key={trap}><td style={{ fontFamily: 'var(--font-mono)' }}>{trap}</td><td><span className={`${styles.badge} ${styles.badgeLoss}`}>{count}</span></td></tr>
+                  )) : <tr><td colSpan={2} style={{ textAlign: 'center', padding: '24px' }}>No traps recorded yet.</td></tr>}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.appContainer}>
       <header className={styles.header}>
@@ -115,7 +180,7 @@ export default function AdminAnalyticsPage() {
               </thead>
               <tbody>
                 {aggregatedGames.map(g => (
-                  <tr key={g.name}>
+                  <tr key={g.name} onClick={() => setSelectedGame(g.name)} style={{ cursor: 'pointer' }} title={`View ${g.name} insights`}>
                     <td>{g.name}</td>
                     <td>{g.plays}</td>
                     <td><span className={`${styles.badge} ${g.winRate >= 50 ? styles.badgeWin : styles.badgeLoss}`}>{g.winRate}%</span></td>

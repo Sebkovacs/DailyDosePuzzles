@@ -4,10 +4,11 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { getDailyChain, generateRandomChain, ChainPuzzle } from '@/lib/chain';
 import { shuffleArray } from '@/lib/puzzles';
-import { HelpCircle, Share2, X, MessageSquare, Dices } from 'lucide-react';
+import { HelpCircle, Share2, X, MessageSquare, Dices, Star } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth } from '@/lib/useAuth';
 import { updateStreak, saveGameStats } from '@/lib/firebase';
+import { getNextArenaPuzzle, submitArenaFeedback } from '@/lib/arena';
 import { FeedbackModal } from '@/components/FeedbackModal';
 import { GameLayout } from '@/components/GameLayout';
 import styles from './Chain.module.css';
@@ -28,6 +29,10 @@ export default function Chain() {
   const [isPlayTest, setIsPlayTest] = useState(false);
   const [startTime, setStartTime] = useState<number>(0);
   const [wrongGuesses, setWrongGuesses] = useState<string[][]>([]);
+  const [actionTimeline, setActionTimeline] = useState<any[]>([]);
+  const [arenaPuzzleId, setArenaPuzzleId] = useState<string | null>(null);
+  const [arenaRating, setArenaRating] = useState<number>(0);
+  const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
   const { user, profile } = useAuth();
   const isTester = profile?.role === 'tester' || profile?.role === 'admin';
   
@@ -51,10 +56,27 @@ export default function Chain() {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleRandomPuzzle = () => {
-    const randomDaily = generateRandomChain();
-    setDailyPuzzle(randomDaily);
+  const handleRandomPuzzle = async () => {
+    const nextArena = await getNextArenaPuzzle('Chain');
+    if (nextArena) {
+      setDailyPuzzle({ puzzle: nextArena.data }); // Wrap back into daily format
+      setArenaPuzzleId(nextArena.id!);
+    } else {
+      alert('Arena queue empty! Falling back to local random generation.');
+      setDailyPuzzle(generateRandomChain());
+      setArenaPuzzleId(null);
+    }
     setIsPlayTest(true);
+    setFeedbackSubmitted(false);
+    setArenaRating(0);
+  };
+
+  const handleSubmitRating = async (rating: number) => {
+    setArenaRating(rating);
+    if (arenaPuzzleId) {
+      await submitArenaFeedback(arenaPuzzleId, { rating, won: isWin, mistakes, timeToComplete: Math.floor((Date.now() - startTime) / 1000) });
+      setFeedbackSubmitted(true);
+    }
   };
 
   useEffect(() => {
@@ -101,12 +123,15 @@ export default function Chain() {
       setIsWin(false);
       setIsShaking(false);
       setStartTime(Date.now());
+      setActionTimeline([]);
     }
   }, [dailyPuzzle, dateString, isPlayTest]);
 
   const handleWordClick = (word: string) => {
     if (isWin || mistakes >= MAX_MISTAKES) return;
     
+    setActionTimeline(prev => [...prev, { time: Date.now() - startTime, type: 'select', word }]);
+
     if (selectedChain.includes(word)) {
       // If clicking the last selected word, remove it
       if (selectedChain[selectedChain.length - 1] === word) {
@@ -122,6 +147,9 @@ export default function Chain() {
     
     const isCorrect = selectedChain.length === puzzle.chain.length && 
                       selectedChain.every((val, index) => val === puzzle.chain[index]);
+
+    const currentTimeline = [...actionTimeline, { time: Date.now() - startTime, type: 'submit', guess: selectedChain, isCorrect }];
+    setActionTimeline(currentTimeline);
                       
     if (isCorrect) {
       setIsWin(true);
@@ -134,7 +162,9 @@ export default function Chain() {
         attempts: mistakes + 1,
         timeToComplete: Math.floor((Date.now() - startTime) / 1000),
         isPlayTest,
-        wrongGuesses
+        wrongGuesses,
+        actionTimeline: currentTimeline,
+        timeToFirstAction: currentTimeline.length > 0 ? Math.floor(currentTimeline[0].time / 1000) : 0
       });
     } else {
       setIsShaking(true);
@@ -153,7 +183,9 @@ export default function Chain() {
             attempts: newMistakes,
             timeToComplete: Math.floor((Date.now() - startTime) / 1000),
             isPlayTest,
-            wrongGuesses: newWrongGuesses
+            wrongGuesses: newWrongGuesses,
+            actionTimeline: currentTimeline,
+            timeToFirstAction: currentTimeline.length > 0 ? Math.floor(currentTimeline[0].time / 1000) : 0
           });
         }
         setIsShaking(false);
@@ -295,16 +327,28 @@ export default function Chain() {
                 </div>
 
                 <div className={styles.modalActions}>
-                  <button 
-                    onClick={handleShare}
-                    className={`${styles.actionBtn} ${styles.actionBtnPrimary}`}
-                  >
-                    <Share2 className="w-4 h-4" />
-                    {copied ? 'Copied to Clipboard!' : 'Share Result'}
-                  </button>
-                  <Link href="/" className={`${styles.actionBtn} ${styles.actionBtnSecondary}`}>
-                    Back to Menu
-                  </Link>
+                  {arenaPuzzleId && !feedbackSubmitted ? (
+                    <div style={{ width: '100%', padding: '16px', backgroundColor: 'var(--bg-paper)', borderRadius: 'var(--radius-md)', border: 'var(--border-ink)' }}>
+                      <p style={{ fontSize: '14px', fontWeight: 700, marginBottom: '12px', textAlign: 'center', color: 'var(--ink-main)' }}>Rate this Arena Variant</p>
+                      <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+                        {[1, 2, 3, 4, 5].map(star => (
+                          <button key={star} onClick={() => handleSubmitRating(star)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--ink-main)' }}>
+                            <Star size={28} fill={arenaRating >= star ? 'var(--ink-main)' : 'none'} />
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <button onClick={handleShare} className={`${styles.actionBtn} ${styles.actionBtnPrimary}`}>
+                        <Share2 size={16} />
+                        {copied ? 'Copied to Clipboard!' : 'Share Result'}
+                      </button>
+                      <Link href="/" className={`${styles.actionBtn} ${styles.actionBtnSecondary}`}>
+                        Back to Menu
+                      </Link>
+                    </>
+                  )}
                 </div>
               </motion.div>
             </motion.div>
@@ -323,7 +367,7 @@ export default function Chain() {
                 className={styles.modalCard}
               >
                 <button onClick={() => setShowHelp(false)} className={styles.closeBtn}>
-                  <X className="w-5 h-5" />
+                  <X size={20} />
                 </button>
                 <h2 className={styles.modalTitle}>How to Play</h2>
                 <div className={styles.modalDesc} style={{textAlign: 'left', marginBottom: '32px'}}>

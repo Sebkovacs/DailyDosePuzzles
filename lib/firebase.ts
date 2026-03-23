@@ -35,12 +35,14 @@ export interface GameStats {
   timeToComplete?: number;
   attempts?: number;
   isPlayTest?: boolean;
-  wrongGuesses?: string[][];
+  wrongGuesses?: any[];
+  timeToFirstAction?: number;
+  actionTimeline?: any[];
 }
 
 export const saveGameStats = async (uid: string | null, stats: GameStats) => {
+  // 1. Save strict, relational KPI data to PostgreSQL via Data Connect
   try {
-    // Save directly to PostgreSQL via Data Connect
     await addGameStat(dataConnect, {
       userId: uid || 'anonymous',
       gameName: stats.gameName,
@@ -53,7 +55,18 @@ export const saveGameStats = async (uid: string | null, stats: GameStats) => {
       isPlayTest: stats.isPlayTest || false
     });
   } catch (error) {
-    console.error('Error saving game stats:', error);
+    console.error('Error saving strictly-typed game stats to Data Connect:', error);
+  }
+
+  // 2. Save flexible, high-fidelity AI telemetry data directly to NoSQL Firestore
+  try {
+    await addDoc(collection(db, 'gameStats'), {
+      ...stats,
+      userId: uid || 'anonymous',
+      createdAt: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error("Failed to save high-fidelity game telemetry to Firestore:", error);
   }
 };
 
@@ -145,7 +158,7 @@ export const logout = async () => {
     console.error('Error signing out:', error);
     throw error;
   }
-};
+}
 
 export const updateStreak = async (uid: string) => {
   try {

@@ -17,8 +17,7 @@ const DEFAULT_GAMES = [
   { id: 'vault', href: '/vault', title: 'Vault', desc: 'Crack the code using logic rules.', themeClass: styles.themeVault },
   { id: 'shift', href: '/shift', title: 'Shift', desc: 'Slide columns to reveal the words.', themeClass: styles.themeShift },
   { id: 'lexicon', href: '/lexicon', title: 'Lexicon', desc: 'Build words from the falling letters.', themeClass: styles.themeLexicon },
-  { id: 'roots', href: '/roots', title: 'Roots', desc: 'Deduce the word from its ancient literal translation.', themeClass: styles.themeRoots },
-  { id: 'weave', href: '/weave', title: 'Weave', desc: 'Draw continuous paths to connect the nodes.', themeClass: styles.themeWeave }
+  { id: 'roots', href: '/roots', title: 'Roots', desc: 'Deduce the word from its ancient literal translation.', themeClass: styles.themeRoots }
 ];
 
 export default function Menu() {
@@ -57,7 +56,7 @@ export default function Menu() {
                 </Link>
                 <div className={styles.streakPill}>
                   <Flame size={14} color="#F9EAE7" fill="#F9EAE7" />
-                  <span>{profile?.streak || 0}</span>
+                  <span>{(profile as any)?.streak || 0}</span>
                 </div>
                 <button onClick={logout} className={styles.iconBtn} title="Sign Out">
                   <LogOut size={18} />
@@ -72,24 +71,24 @@ export default function Menu() {
           )}
         </div>
         
-        <h1 className={styles.title}>Da Vinci</h1>
+        <h1 className={styles.title}>Daily Dose</h1>
         <p className={styles.subtitle}>Classical Logic & Deduction</p>
 
         {user && (
           <div className={styles.streakStats}>
             <div className={styles.streakStatItem}>
               <span>Streak</span>
-              <span className={styles.streakStatNumber}>{profile?.streak || 0}</span>
+              <span className={styles.streakStatNumber}>{(profile as any)?.streak || 0}</span>
             </div>
             <div className={styles.streakStatItem}>
               <span>Max</span>
-              <span className={styles.streakStatNumber}>{profile?.maxStreak || 0}</span>
+              <span className={styles.streakStatNumber}>{(profile as any)?.maxStreak || 0}</span>
             </div>
           </div>
         )}
       </header>
 
-      <main className={styles.main}>
+      <main className={styles.gameList}>
         {games.map((game) => (
           <Link key={game.id} href={game.href} className={`${styles.gameCard} ${game.themeClass}`}>
             <div className={styles.gameCardStrip}></div>

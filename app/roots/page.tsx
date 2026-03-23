@@ -77,7 +77,7 @@ export default function Roots() {
         won: true,
         mistakes,
         attempts: mistakes + 1,
-        timeToCompleteSeconds: Math.floor((Date.now() - startTime) / 1000),
+        timeToComplete: Math.floor((Date.now() - startTime) / 1000),
         isPlayTest
       });
     } else {
@@ -96,7 +96,7 @@ export default function Roots() {
           won: false,
           mistakes: newMistakes,
           attempts: newMistakes,
-          timeToCompleteSeconds: Math.floor((Date.now() - startTime) / 1000),
+          timeToComplete: Math.floor((Date.now() - startTime) / 1000),
           isPlayTest
         });
       }

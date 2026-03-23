@@ -84,9 +84,9 @@ export default function Stab() {
     
     if (normalizedGuess === puzzle.targetWord) {
       setIsWin(true);
-      saveGameStats(user?.uid || null, { gameName: 'Stab', date: dateString, mode: 'standard', won: true, mistakes: newGuesses.length - 1, attempts: newGuesses.length, timeToCompleteSeconds: Math.floor((Date.now() - startTime) / 1000), isPlayTest });
+      saveGameStats(user?.uid || null, { gameName: 'Stab', date: dateString, mode: 'standard', won: true, mistakes: newGuesses.length - 1, attempts: newGuesses.length, timeToComplete: Math.floor((Date.now() - startTime) / 1000), isPlayTest });
     } else if (newGuesses.length >= MAX_GUESSES) {
-      saveGameStats(user?.uid || null, { gameName: 'Stab', date: dateString, mode: 'standard', won: false, mistakes: newGuesses.length, attempts: newGuesses.length, timeToCompleteSeconds: Math.floor((Date.now() - startTime) / 1000), isPlayTest });
+      saveGameStats(user?.uid || null, { gameName: 'Stab', date: dateString, mode: 'standard', won: false, mistakes: newGuesses.length, attempts: newGuesses.length, timeToComplete: Math.floor((Date.now() - startTime) / 1000), isPlayTest });
     }
   };
 

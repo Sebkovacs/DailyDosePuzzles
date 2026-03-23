@@ -1,0 +1,349 @@
+.appContainer {
+  min-height: 100vh;
+  background-color: var(--bg-paper);
+  color: var(--ink-main);
+  font-family: var(--font-official);
+  padding: 24px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 32px;
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.iconBtn {
+  background: transparent;
+  border: none;
+  color: var(--ink-main);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.iconBtn:hover {
+  background-color: var(--bg-card);
+}
+
+.headerTitle {
+  font-size: 24px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+}
+
+.main {
+  max-width: 1000px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+}
+
+@media (min-width: 1024px) {
+  .main {
+    grid-template-columns: 1fr 2fr;
+  }
+}
+
+.generatorSection {
+  background-color: var(--bg-card);
+  padding: 24px;
+  border-radius: var(--radius-lg);
+  border: var(--border-ink);
+  box-shadow: var(--shadow-ink);
+  height: fit-content;
+}
+
+.sectionTitle {
+  font-size: 20px;
+  font-weight: 700;
+  margin-top: 0;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  background-color: var(--bg-paper);
+  padding: 4px;
+  border-radius: var(--radius-md);
+  border: var(--border-ink);
+}
+
+.tabBtn {
+  flex: 1;
+  padding: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: var(--radius-sm);
+  border: none;
+  cursor: pointer;
+  background: transparent;
+  color: var(--ink-light);
+  transition: all 0.2s;
+}
+
+.tabBtnActive {
+  background-color: var(--ink-main);
+  color: var(--bg-paper);
+}
+
+.inputGroup {
+  margin-bottom: 24px;
+}
+
+.label {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--ink-main);
+}
+
+.input, .textarea {
+  width: 100%;
+  background-color: var(--bg-paper);
+  border: var(--border-ink);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  font-size: 14px;
+  color: var(--ink-main);
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.generateBtn {
+  width: 100%;
+  padding: 14px;
+  background-color: var(--ink-main);
+  color: var(--bg-paper);
+  border: none;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  transition: transform 0.1s;
+}
+
+.generateBtn:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.generateBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.queueSection {
+  display: flex;
+  flex-direction: column;
+}
+
+.queueHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.queueTitle {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.refreshBtn {
+  background: transparent;
+  border: none;
+  color: var(--ink-main);
+  font-weight: 700;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: var(--radius-sm);
+}
+
+.refreshBtn:hover {
+  background-color: var(--bg-card);
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.emptyQueue {
+  background-color: var(--bg-card);
+  padding: 48px;
+  border-radius: var(--radius-lg);
+  border: 1px dashed var(--ink-light);
+  text-align: center;
+  color: var(--ink-light);
+  font-weight: 600;
+}
+
+.queueList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.queueItem {
+  background-color: var(--bg-card);
+  padding: 20px;
+  border-radius: var(--radius-lg);
+  border: var(--border-ink);
+  box-shadow: var(--shadow-ink);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+@media (min-width: 768px) {
+  .queueItem {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
+.itemContent {
+  overflow: hidden;
+  width: 100%;
+}
+
+.batchId {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink-light);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+
+.jsonPreview {
+  font-size: 12px;
+  background-color: var(--bg-paper);
+  color: var(--ink-main);
+  padding: 12px;
+  border-radius: var(--radius-md);
+  overflow-x: auto;
+  border: 1px solid var(--ink-light);
+  max-height: 200px;
+  white-space: pre-wrap;
+  font-family: var(--font-mono);
+  margin: 0;
+}
+
+.itemActions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+@media (min-width: 768px) {
+  .itemActions {
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+}
+
+.actionBtn {
+  flex: 1;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: var(--radius-sm);
+  border: var(--border-ink);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+
+.btnGraduate {
+  background-color: var(--bg-card);
+  color: var(--ink-main);
+}
+
+.btnGraduate:hover {
+  background-color: var(--bg-paper);
+}
+
+.btnReject {
+  background-color: var(--bg-paper);
+  color: var(--ink-light);
+}
+
+.btnReject:hover {
+  background-color: var(--bg-card);
+  color: var(--ink-main);
+}
+
+.deniedContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  text-align: center;
+  background-color: var(--bg-paper);
+  color: var(--ink-main);
+}
+
+.deniedTitle {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.deniedText {
+  margin-bottom: 24px;
+}
+
+.returnHomeBtn {
+  padding: 12px 24px;
+  background-color: var(--bg-card);
+  color: var(--ink-main);
+  border: var(--border-ink);
+  border-radius: var(--radius-sharp);
+  text-decoration: none;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  box-shadow: var(--shadow-ink);
+  display: inline-block;
+}
