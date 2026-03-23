@@ -1,0 +1,50 @@
+.container { flex: 1; padding: 24px 20px; display: flex; flex-direction: column; min-height: 100%; }
+
+.iconBtn { padding: 8px; border-radius: var(--radius-sharp); border: var(--border-ink); background: transparent; color: var(--ink-main); cursor: pointer; transition: all 0.1s ease; display: flex; align-items: center; justify-content: center; box-shadow: 2px 2px 0px var(--ink-main); }
+.iconBtn:active { transform: translate(2px, 2px); box-shadow: var(--shadow-ink-pressed); }
+
+.originCard { background-color: var(--wash-pine); border: var(--border-ink); border-radius: var(--radius-sharp); padding: 32px 24px; margin-bottom: 24px; text-align: center; box-shadow: var(--shadow-ink); flex-shrink: 0; }
+.originLanguage { font-family: var(--font-mono); font-size: 10px; font-weight: 700; color: var(--accent-pine); text-transform: uppercase; letter-spacing: 0.15em; margin: 0 0 12px 0; }
+.originTranslation { font-family: var(--font-official); font-size: 36px; font-weight: 700; font-style: italic; color: var(--ink-main); margin: 0; line-height: 1.1; }
+
+.cluesArea { flex: 1; display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; overflow-y: auto; padding-right: 4px; }
+.clueItem { display: flex; gap: 12px; align-items: flex-start; background-color: var(--bg-card); border: var(--border-ink); border-radius: var(--radius-sharp); padding: 16px; box-shadow: 2px 2px 0 rgba(0,0,0,0.05); }
+.clueNumber { font-family: var(--font-mono); font-size: 14px; font-weight: 700; color: var(--accent-pine); }
+.clueText { font-family: var(--font-ui); font-size: 14px; font-weight: 500; color: var(--ink-main); line-height: 1.4; margin: 0; }
+.clueHidden { background-color: transparent; border: 2px dashed var(--ink-light); box-shadow: none; justify-content: center; align-items: center; padding: 12px; }
+.clueHiddenText { font-family: var(--font-mono); font-size: 10px; font-weight: 600; color: var(--ink-light); text-transform: uppercase; letter-spacing: 0.1em; margin: 0; }
+
+.inputRow { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+.wordInput { border: var(--border-ink); border-radius: var(--radius-sharp); padding: 16px; font-family: var(--font-mono); font-size: 18px; font-weight: 700; text-transform: uppercase; text-align: center; color: var(--ink-main); background-color: var(--bg-paper); outline: none; transition: all 0.2s ease; box-shadow: inset 2px 2px 0px rgba(0,0,0,0.05); width: 100%; letter-spacing: 0.1em; }
+.wordInput:focus { background-color: var(--bg-card); border-color: var(--accent-pine); box-shadow: inset 0 0 0 rgba(0,0,0,0); }
+
+.bottomArea { margin-top: auto; display: flex; flex-direction: column; gap: 16px; padding-bottom: 16px; }
+.mistakesContainer { display: flex; align-items: center; justify-content: center; gap: 8px; }
+.mistakesLabel { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; font-weight: 600; color: var(--ink-light); margin-right: 4px; }
+.mistakeDot { width: 10px; height: 10px; border-radius: 50%; border: var(--border-ink); background-color: var(--bg-card); transition: all 0.3s ease; }
+.mistakeDotActive { background-color: var(--accent-pine); border-color: var(--accent-pine); }
+
+.actionsRow { display: flex; gap: 12px; }
+.actionBtn { box-sizing: border-box; text-decoration: none; flex: 1; padding: 14px; border: var(--border-ink); border-radius: var(--radius-sharp); font-family: var(--font-mono); font-size: 14px; font-weight: 600; text-transform: uppercase; cursor: pointer; box-shadow: var(--shadow-ink); transition: all 0.1s ease; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; }
+.actionBtn:active:not(:disabled) { transform: translate(4px, 4px); box-shadow: var(--shadow-ink-pressed); }
+.actionBtn:disabled { opacity: 0.5; pointer-events: none; box-shadow: var(--shadow-ink-pressed); transform: translate(4px, 4px); }
+.actionBtnPrimary { background-color: var(--ink-main); color: var(--bg-paper); }
+.actionBtnSecondary { background-color: var(--bg-card); color: var(--ink-main); }
+.actionBtnSuccess { background-color: var(--accent-pine); color: var(--bg-paper); border-color: var(--accent-pine); }
+
+.modalOverlay { position: absolute; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; background-color: rgba(242, 239, 233, 0.85); backdrop-filter: blur(4px); padding: 20px; }
+.modalCard { width: 100%; max-width: 380px; background-color: var(--bg-card); border: var(--border-ink); border-radius: var(--radius-sharp); box-shadow: var(--shadow-ink); padding: 32px 24px; text-align: center; position: relative; max-height: 90vh; overflow-y: auto; }
+.closeBtn { position: absolute; top: 12px; right: 12px; background: transparent; border: none; cursor: pointer; color: var(--ink-light); padding: 4px; transition: color 0.2s ease; }
+.closeBtn:hover { color: var(--ink-main); }
+
+.modalTitle { font-family: var(--font-official); font-size: 32px; font-weight: 700; margin: 0 0 8px 0; color: var(--ink-main); letter-spacing: -0.02em; }
+.modalDesc { font-size: 14px; color: var(--ink-light); margin: 0 0 24px 0; line-height: 1.5; font-family: var(--font-ui); }
+
+.solutionBox { background-color: var(--wash-pine); border: var(--border-ink); border-radius: var(--radius-sharp); padding: 16px; margin-bottom: 24px; display: flex; flex-direction: column; gap: 8px; text-align: center; }
+.solutionHeader { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; font-weight: 600; color: var(--accent-pine); letter-spacing: 0.1em; margin: 0 0 4px 0; }
+.solutionWord { font-family: var(--font-mono); font-size: 24px; font-weight: 700; color: var(--ink-main); letter-spacing: 0.1em; margin: 0; }
+
+.starsRow { display: flex; justify-content: center; gap: 4px; margin-bottom: 24px; font-size: 28px; }
+.bigScore { font-family: var(--font-mono); font-size: 48px; font-weight: 700; color: var(--accent-pine); margin: 8px 0 24px 0; line-height: 1; }
+
+.modalActions { display: flex; flex-direction: column; gap: 12px; }

@@ -1,13 +1,30 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
 import { getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp, collection, addDoc } from 'firebase/firestore';
-import firebaseConfig from '../firebase-applet-config.json';
+import { getDataConnect, connectDataConnectEmulator } from 'firebase/data-connect';
+import { connectorConfig, addGameStat, upsertUser } from './dataconnect';
+
+const firebaseConfig = {
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+};
 
 // Initialize Firebase SDK
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
+export const db = getFirestore(app);
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
+
+// Initialize Data Connect
+export const dataConnect = getDataConnect(app, connectorConfig);
+if (process.env.NODE_ENV === 'development') {
+  // Connect to local Data Connect Emulator (default FDC port is 9399)
+  connectDataConnectEmulator(dataConnect, 'localhost', 9399);
+}
 
 export interface GameStats {
   gameName: string;
@@ -23,11 +40,17 @@ export interface GameStats {
 
 export const saveGameStats = async (uid: string | null, stats: GameStats) => {
   try {
-    const statsRef = collection(db, 'game_stats');
-    await addDoc(statsRef, {
-      ...stats,
+    // Save directly to PostgreSQL via Data Connect
+    await addGameStat(dataConnect, {
       userId: uid || 'anonymous',
-      timestamp: serverTimestamp()
+      gameName: stats.gameName,
+      date: stats.date,
+      mode: stats.mode,
+      won: stats.won,
+      mistakes: stats.mistakes,
+      attempts: stats.attempts || 1,
+      timeToCompleteSeconds: stats.timeToComplete || null,
+      isPlayTest: stats.isPlayTest || false
     });
   } catch (error) {
     console.error('Error saving game stats:', error);
@@ -57,9 +80,10 @@ export const signInWithGoogle = async () => {
     const userRef = doc(db, 'users', user.uid);
     const userSnap = await getDoc(userRef);
     
+    let role = 'user';
+
     if (!userSnap.exists()) {
       // Check if email is in admins or playtesters collection
-      let role = 'user';
       if (user.email) {
         const emailLower = user.email.toLowerCase();
         try {
@@ -93,8 +117,20 @@ export const signInWithGoogle = async () => {
         createdAt: serverTimestamp(),
         role: role
       });
+    } else {
+      role = userSnap.data()?.role || 'user';
     }
     
+    // Sync the user to PostgreSQL via Data Connect on every login
+    try {
+      await upsertUser(dataConnect, {
+        id: user.uid,
+        email: user.email || '',
+        displayName: user.displayName || '',
+        role: role
+      });
+    } catch (err) { console.error("Error syncing to postgres:", err); }
+
     return user;
   } catch (error) {
     console.error('Error signing in with Google:', error);

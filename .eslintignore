@@ -1,0 +1,3 @@
+# Ignore Firebase Data Connect generated SDKs
+lib/dataconnect/
+src/dataconnect-generated/

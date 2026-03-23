@@ -1,0 +1,33 @@
+.appContainer { min-height: 100dvh; background-color: var(--bg-paper); color: var(--ink-main); font-family: var(--font-ui); display: flex; flex-direction: column; align-items: center; padding-bottom: 48px; }
+.loading { height: 100dvh; display: flex; align-items: center; justify-content: center; background-color: var(--bg-paper); font-family: var(--font-official); font-style: italic; color: var(--ink-light); }
+.deniedContainer { height: 100dvh; display: flex; flex-direction: column; align-items: center; justify-content: center; background-color: var(--bg-paper); color: var(--ink-main); padding: 20px; text-align: center; }
+.deniedTitle { font-family: var(--font-official); font-size: 32px; font-weight: 700; margin-bottom: 12px; }
+.deniedText { font-size: 14px; margin-bottom: 24px; color: var(--ink-light); }
+
+.header { width: 100%; max-width: 800px; padding: max(3vh, 20px) 24px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: var(--border-ink); background-color: var(--bg-paper); position: sticky; top: 0; z-index: 10; box-shadow: 0 4px 20px rgba(24, 22, 20, 0.04); }
+.headerTitle { font-family: var(--font-official); font-size: 24px; font-weight: 700; text-transform: uppercase; display: flex; align-items: center; gap: 8px; margin: 0; color: var(--ink-main); letter-spacing: -0.01em; }
+.iconBtn { padding: 8px; border-radius: var(--radius-sharp); border: var(--border-ink); background: transparent; color: var(--ink-main); cursor: pointer; transition: all 0.1s ease; display: flex; align-items: center; justify-content: center; box-shadow: 2px 2px 0px var(--ink-main); }
+.iconBtn:active { transform: translate(2px, 2px); box-shadow: var(--shadow-ink-pressed); }
+.headerSpacer { width: 40px; }
+
+.main { width: 100%; max-width: 800px; padding: 24px 20px; display: flex; flex-direction: column; gap: 32px; }
+
+.kpiGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; }
+.kpiCard { background-color: var(--bg-card); border: var(--border-ink); border-radius: var(--radius-sharp); padding: 20px; text-align: center; box-shadow: var(--shadow-ink); }
+.kpiCardHighlight { background-color: var(--ink-main); color: var(--bg-paper); }
+.kpiValue { font-family: var(--font-mono); font-size: 32px; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.05em; line-height: 1; }
+.kpiLabel { font-family: var(--font-mono); font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--ink-light); letter-spacing: 0.1em; }
+.kpiCardHighlight .kpiLabel { color: var(--bg-paper); opacity: 0.8; }
+
+.sectionTitle { font-family: var(--font-official); font-size: 24px; font-weight: 700; color: var(--ink-main); margin: 0 0 16px 0; border-bottom: var(--border-ink); padding-bottom: 8px; }
+
+.tableWrapper { width: 100%; overflow-x: auto; background-color: var(--bg-card); border: var(--border-ink); border-radius: var(--radius-sharp); box-shadow: var(--shadow-ink); }
+.table { width: 100%; border-collapse: collapse; text-align: left; font-family: var(--font-mono); font-size: 12px; }
+.table th { background-color: var(--wash-slate); color: var(--ink-main); font-weight: 700; padding: 12px 16px; border-bottom: var(--border-ink); text-transform: uppercase; letter-spacing: 0.05em; }
+.table td { padding: 12px 16px; border-bottom: 1px solid rgba(0,0,0,0.05); color: var(--ink-main); font-weight: 600; }
+.table tr:last-child td { border-bottom: none; }
+.table tr:hover td { background-color: rgba(0,0,0,0.02); }
+
+.badge { padding: 4px 8px; border-radius: var(--radius-sharp); font-size: 10px; font-weight: 700; text-transform: uppercase; border: var(--border-ink); }
+.badgeWin { background-color: var(--wash-viridian); color: var(--accent-viridian); border-color: var(--accent-viridian); }
+.badgeLoss { background-color: var(--wash-crimson); color: var(--accent-crimson); border-color: var(--accent-crimson); }

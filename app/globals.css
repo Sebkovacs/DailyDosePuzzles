@@ -1,1 +1,58 @@
-@import "tailwindcss";
+:root {
+  /* 1. Typography: Classical elegance meets underlying machine intelligence */
+  --font-official: var(--font-serif, "Georgia", serif);
+  --font-ui: var(--font-sans, system-ui, sans-serif);
+  --font-mono: var(--font-mono, monospace);
+
+  /* 2. Renaissance Ink & Paper */
+  --bg-paper: #F2EFE9; /* Slightly deeper, warmer parchment */
+  --bg-card: #FCFAF5; /* Slightly brighter for depth */
+  --ink-main: #181614; /* Maximum contrast warm charcoal */
+  --ink-light: #5A534A; /* Aged, faded ink */
+
+  /* 3. Muted Classical Accents (Da Vinci Palette) */
+  --accent-sanguine: #8A3626;  /* Terracotta / Rust */
+  --accent-viridian: #2C4A38;  /* Deep Olive / Green */
+  --accent-crimson:  #781D26;  /* Venetian Red */
+  --accent-slate:    #3C4A5A;  /* Blue-grey */
+  --accent-indigo:   #232F4C;  /* Lapis / Dark Blue */
+  --accent-ochre:    #A36F21;  /* Gold / Mustard */
+  --accent-umber:    #543D2A;  /* Brown / Bronze */
+  --accent-teal:     #195C5E;  /* Deep Teal / Cyan */
+  --accent-plum:     #4A2B4D;  /* Deep Purple / Plum */
+  --accent-pine:     #2D5A27;  /* Deep Pine / Forest */
+  --accent-copper:   #B85C38;  /* Copper / Orange */
+
+  /* 4. Classical Ink Washes (Tinted Backgrounds for Prowess) */
+  --wash-sanguine: #F9EAE7;
+  --wash-viridian: #E7F0EB;
+  --wash-crimson:  #F4E8E9;
+  --wash-slate:    #EAECEF;
+  --wash-indigo:   #E6E9F0;
+  --wash-ochre:    #F9EFE3;
+  --wash-umber:    #EFECE9;
+  --wash-teal:     #E7F3F1;
+  --wash-plum:     #EFE8F0;
+  --wash-pine:     #E8F0E7;
+  --wash-copper:   #F5E9E4;
+
+  /* 5. Heavy "Letterpress" Borders & Sharp Shadows */
+  --border-ink: 2px solid var(--ink-main);
+  --radius-sharp: 4px; /* Slightly softened but structured */
+  
+  /* Harsh, structural shadows like a physical ledger */
+  --shadow-ink: 4px 4px 0px var(--ink-main);
+  --shadow-ink-pressed: 0px 0px 0px var(--ink-main);
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-paper);
+  color: var(--ink-main);
+  font-family: var(--font-ui);
+}
+
+* {
+  box-sizing: border-box;
+}

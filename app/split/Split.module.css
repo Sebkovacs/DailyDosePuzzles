@@ -1,0 +1,49 @@
+.container { flex: 1; padding: 24px 20px; display: flex; flex-direction: column; min-height: 100%; }
+
+.iconBtn { padding: 8px; border-radius: var(--radius-sharp); border: var(--border-ink); background: transparent; color: var(--ink-main); cursor: pointer; transition: all 0.1s ease; display: flex; align-items: center; justify-content: center; box-shadow: 2px 2px 0px var(--ink-main); }
+.iconBtn:active { transform: translate(2px, 2px); box-shadow: var(--shadow-ink-pressed); }
+
+.instructions { text-align: center; margin-bottom: 24px; flex-shrink: 0; }
+.instructionTitle { font-family: var(--font-official); font-size: 20px; font-weight: 600; margin: 0 0 4px 0; color: var(--ink-main); }
+.instructionDesc { font-family: var(--font-ui); font-size: 13px; color: var(--ink-light); margin: 0; }
+
+.solvedArea { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 24px; flex-shrink: 0; }
+.solvedPair { background-color: var(--wash-viridian); border: var(--border-ink); border-radius: var(--radius-sharp); padding: 12px 8px; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-weight: 700; font-size: 11px; text-transform: uppercase; color: var(--accent-viridian); box-shadow: var(--shadow-ink); }
+@media (min-width: 360px) { .solvedPair { font-size: 12px; } }
+.plusSign { opacity: 0.5; margin: 0 4px; color: var(--accent-viridian); }
+
+.grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; flex: 1; align-content: start; }
+
+.tileBtn { aspect-ratio: 4/3; border: var(--border-ink); border-radius: var(--radius-sharp); background-color: var(--bg-card); box-shadow: var(--shadow-ink); font-family: var(--font-mono); font-size: 11px; font-weight: 600; text-transform: uppercase; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.1s ease; color: var(--ink-main); word-break: break-word; padding: 4px; }
+@media (min-width: 360px) { .tileBtn { font-size: 13px; aspect-ratio: auto; padding: 12px 4px; } }
+.tileBtnSelected { background-color: var(--accent-viridian); color: var(--bg-paper); transform: translate(4px, 4px); box-shadow: var(--shadow-ink-pressed); border-color: var(--accent-viridian); }
+
+.bottomArea { margin-top: auto; display: flex; flex-direction: column; gap: 16px; padding-bottom: 16px; }
+
+.mistakesContainer { display: flex; align-items: center; justify-content: center; gap: 8px; }
+.mistakesLabel { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; font-weight: 600; color: var(--ink-light); margin-right: 4px; }
+.mistakeDot { width: 10px; height: 10px; border-radius: 50%; border: var(--border-ink); background-color: var(--bg-card); transition: all 0.3s ease; }
+.mistakeDotActive { background-color: var(--accent-viridian); border-color: var(--accent-viridian); }
+
+.actionsRow { display: flex; gap: 12px; }
+.actionBtn { box-sizing: border-box; text-decoration: none; flex: 1; padding: 14px; border: var(--border-ink); border-radius: var(--radius-sharp); font-family: var(--font-mono); font-size: 14px; font-weight: 600; text-transform: uppercase; cursor: pointer; box-shadow: var(--shadow-ink); transition: all 0.1s ease; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; }
+.actionBtn:active:not(:disabled) { transform: translate(4px, 4px); box-shadow: var(--shadow-ink-pressed); }
+.actionBtn:disabled { opacity: 0.5; pointer-events: none; box-shadow: var(--shadow-ink-pressed); transform: translate(4px, 4px); }
+.actionBtnPrimary { background-color: var(--ink-main); color: var(--bg-paper); }
+.actionBtnSecondary { background-color: var(--bg-card); color: var(--ink-main); }
+.actionBtnSuccess { background-color: var(--accent-viridian); color: var(--bg-paper); border-color: var(--accent-viridian); }
+
+.modalOverlay { position: absolute; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; background-color: rgba(242, 239, 233, 0.85); backdrop-filter: blur(4px); padding: 20px; }
+.modalCard { width: 100%; max-width: 380px; background-color: var(--bg-card); border: var(--border-ink); border-radius: var(--radius-sharp); box-shadow: var(--shadow-ink); padding: 32px 24px; text-align: center; position: relative; max-height: 90vh; overflow-y: auto; }
+.closeBtn { position: absolute; top: 12px; right: 12px; background: transparent; border: none; cursor: pointer; color: var(--ink-light); padding: 4px; transition: color 0.2s ease; }
+.closeBtn:hover { color: var(--ink-main); }
+
+.modalTitle { font-family: var(--font-official); font-size: 32px; font-weight: 700; margin: 0 0 8px 0; color: var(--ink-main); letter-spacing: -0.02em; }
+.modalDesc { font-size: 14px; color: var(--ink-light); margin: 0 0 24px 0; line-height: 1.5; font-family: var(--font-ui); }
+
+.solutionBox { background-color: var(--wash-viridian); border: var(--border-ink); border-radius: var(--radius-sharp); padding: 16px; margin-bottom: 24px; display: flex; flex-direction: column; gap: 12px; }
+.solutionHeader { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; font-weight: 600; color: var(--accent-viridian); letter-spacing: 0.1em; margin: 0; }
+.solutionGrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+.solutionItem { background-color: var(--bg-card); border: var(--border-ink); padding: 8px; border-radius: var(--radius-sharp); font-family: var(--font-mono); font-size: 11px; font-weight: 600; color: var(--ink-main); display: flex; align-items: center; justify-content: center; }
+
+.modalActions { display: flex; flex-direction: column; gap: 12px; }

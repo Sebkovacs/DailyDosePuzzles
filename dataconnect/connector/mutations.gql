@@ -1,0 +1,44 @@
+# dataconnect/connector/mutations.gql
+
+# Upsert a user profile when they log in
+mutation UpsertUser($id: String!, $email: String, $displayName: String, $role: String!) @auth(expr: "auth.uid == id") {
+  user_upsert(
+    data: {
+      id: $id, 
+      email: $email, 
+      displayName: $displayName, 
+      role: $role
+    }
+  )
+}
+
+# Save a completed game's stats
+mutation AddGameStat(
+  $userId: String!,
+  $gameName: String!,
+  $date: Date!,
+  $mode: String!,
+  $won: Boolean!,
+  $mistakes: Int!,
+  $attempts: Int!,
+  $timeToCompleteSeconds: Int,
+  $isPlayTest: Boolean!
+) @auth(expr: "auth.uid == userId") {
+  gameStat_insert(data: {
+    userId: $userId,
+    gameName: $gameName,
+    date: $date,
+    mode: $mode,
+    won: $won,
+    mistakes: $mistakes,
+    attempts: $attempts,
+    timeToCompleteSeconds: $timeToCompleteSeconds,
+    isPlayTest: $isPlayTest
+  })
+}
+
+# Only admins can change someone's role
+mutation UpdateUserRole($targetUid: String!, $newRole: String!) 
+  @auth(expr: "auth.token.role == 'admin'") {
+  user_update(id: $targetUid, data: { role: $newRole })
+}

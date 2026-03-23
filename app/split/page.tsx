@@ -4,11 +4,13 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { getDailyPuzzle, generateRandomSplit, SplitPuzzle, DailySplit } from '@/lib/split';
 import { shuffleArray } from '@/lib/puzzles';
-import { HelpCircle, RefreshCw, ChevronLeft, Share2, X, MessageSquare, Dices } from 'lucide-react';
+import { HelpCircle, RefreshCw, Share2, X, MessageSquare, Dices } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth } from '@/lib/useAuth';
 import { updateStreak, saveGameStats } from '@/lib/firebase';
 import { FeedbackModal } from '@/components/FeedbackModal';
+import { GameLayout } from '@/components/GameLayout';
+import styles from './Split.module.css';
 
 export default function Split() {
   const [mounted, setMounted] = useState(false);
@@ -166,57 +168,52 @@ export default function Split() {
   }, [isWin, user, isPlayTest]);
 
   if (!mounted || !puzzle) {
-    return <div className="h-[100dvh] flex items-center justify-center bg-[#F5F2ED]">Loading...</div>;
+    return <div style={{ height: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--bg-paper)', fontFamily: 'var(--font-official)' }}>Loading...</div>;
   }
 
+  const leftActions = isTester ? (
+    <button onClick={() => setShowFeedback(true)} className={styles.iconBtn} title="Give Feedback">
+      <MessageSquare size={18} />
+    </button>
+  ) : null;
+
+  const rightActions = (
+    <>
+      {isTester && (
+        <button onClick={handleRandomPuzzle} className={styles.iconBtn} title="Random Puzzle">
+          <Dices size={18} />
+        </button>
+      )}
+      <button onClick={() => setShowHelp(true)} className={styles.iconBtn} title="Help">
+        <HelpCircle size={18} />
+      </button>
+    </>
+  );
+
   return (
-    <div className="h-[100dvh] overflow-hidden bg-white text-neutral-800 font-sans flex flex-col items-center">
-      <header className="w-full max-w-md px-4 py-3 flex items-center justify-between border-b border-neutral-100 shrink-0">
-        <div className="flex items-center gap-1">
-          <Link href="/" className="p-2 hover:bg-neutral-100 text-neutral-400 hover:text-neutral-800 rounded-full transition-colors">
-            <ChevronLeft className="w-5 h-5" />
-          </Link>
-          {isTester && (
-            <button onClick={() => setShowFeedback(true)} className="p-1.5 hover:bg-neutral-300 rounded-sm transition-colors text-blue-600" title="Give Feedback">
-              <MessageSquare className="w-5 h-5" />
-            </button>
-          )}
-        </div>
-        <div className="text-center">
-          <h1 className="text-3xl font-serif font-bold tracking-tight text-neutral-900">Split</h1>
-          <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest mt-1">
-            {isPlayTest ? 'Playtest' : dateString}
-          </p>
-        </div>
-        <div className="flex items-center gap-1">
-          {isTester && (
-            <button onClick={handleRandomPuzzle} className="p-2 hover:bg-neutral-100 text-emerald-500 rounded-full transition-colors" title="Random Puzzle">
-              <Dices className="w-5 h-5" />
-            </button>
-          )}
-          <button onClick={() => setShowHelp(true)} className="p-2 hover:bg-neutral-100 text-neutral-400 hover:text-neutral-800 rounded-full transition-colors">
-            <HelpCircle className="w-5 h-5" />
-          </button>
-        </div>
-      </header>
-
-      <main className="flex-1 min-h-0 w-full max-w-md px-4 py-6 flex flex-col overflow-y-auto">
-        <div className="text-center mb-8 shrink-0">
-          <h2 className="text-lg font-serif font-medium text-neutral-800">Create 8 compound words.</h2>
-          <p className="text-xs text-neutral-500 mt-1">Tap two halves to combine them.</p>
+    <GameLayout
+      title="Split"
+      subtitle={isPlayTest ? 'Playtest' : dateString}
+      leftActions={leftActions}
+      rightActions={rightActions}
+    >
+      <div className={styles.container}>
+        <div className={styles.instructions}>
+          <h2 className={styles.instructionTitle}>Create 8 compound words.</h2>
+          <p className={styles.instructionDesc}>Tap two halves to combine them.</p>
         </div>
 
-        <div className="grid grid-cols-2 gap-2 mb-4 shrink-0">
+        <div className={styles.solvedArea}>
           <AnimatePresence>
             {solvedPairs.map((pair) => (
               <motion.div
                 key={pair.join('-')}
                 initial={{ opacity: 0, y: 10, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
-                className="w-full bg-emerald-50 border border-emerald-200 rounded-xl py-2 flex items-center justify-center"
+                className={styles.solvedPair}
               >
-                <span className="font-bold text-emerald-800 tracking-wide text-xs sm:text-sm">
-                  {pair[0]}<span className="opacity-50 mx-1 text-emerald-500">+</span>{pair[1]}
+                <span>
+                  {pair[0]}<span className={styles.plusSign}>+</span>{pair[1]}
                 </span>
               </motion.div>
             ))}
@@ -224,18 +221,13 @@ export default function Split() {
         </div>
 
         <motion.div 
-          className="grid grid-cols-4 gap-2 mb-4 flex-1 content-start"
+          className={styles.grid}
           animate={isShaking ? { x: [-5, 5, -5, 5, 0] } : {}}
           transition={{ duration: 0.4 }}
         >
           <AnimatePresence mode="popLayout">
             {activeTiles.map((tile) => {
               const isSelected = selectedTiles.includes(tile.id);
-
-              let bgClass = 'bg-neutral-50 text-neutral-800 border-neutral-200 hover:bg-neutral-100 hover:border-neutral-300';
-              if (isSelected) {
-                bgClass = 'bg-emerald-600 text-white border-emerald-600 scale-95';
-              }
 
               return (
                 <motion.button
@@ -246,10 +238,7 @@ export default function Split() {
                   exit={{ opacity: 0, scale: 0.9 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => handleTileClick(tile.id)}
-                  className={`
-                    py-2 sm:py-3 rounded-xl font-bold text-[10px] sm:text-xs transition-all duration-200 flex items-center justify-center uppercase tracking-wider relative border
-                    ${bgClass}
-                  `}
+                  className={`${styles.tileBtn} ${isSelected ? styles.tileBtnSelected : ''}`}
                 >
                   {tile.word}
                 </motion.button>
@@ -258,32 +247,30 @@ export default function Split() {
           </AnimatePresence>
         </motion.div>
 
-        <div className="mt-auto flex flex-col items-center gap-4 pb-4">
-          <div className="flex items-center gap-1.5">
-            <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest mr-2">Mistakes Remaining</span>
+        <div className={styles.bottomArea}>
+          <div className={styles.mistakesContainer}>
+            <span className={styles.mistakesLabel}>Mistakes Remaining</span>
             {[...Array(MAX_MISTAKES)].map((_, i) => (
               <div 
                 key={i} 
-                className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                  i < (MAX_MISTAKES - mistakes) ? 'bg-emerald-500 scale-100' : 'bg-neutral-200 scale-75'
-                }`}
+                className={`${styles.mistakeDot} ${i < (MAX_MISTAKES - mistakes) ? styles.mistakeDotActive : ''}`}
               />
             ))}
           </div>
 
-          <div className="flex gap-3 w-full">
+          <div className={styles.actionsRow}>
             <button 
               onClick={handleShuffle}
               disabled={isGameOver || isWin || activeTiles.length === 0}
-              className="flex-1 flex items-center justify-center gap-2 py-3 rounded-full border border-neutral-200 bg-white font-bold text-neutral-600 hover:bg-neutral-50 disabled:opacity-50 transition-all text-sm active:scale-95"
+              className={`${styles.actionBtn} ${styles.actionBtnSecondary}`}
             >
-              <RefreshCw className="w-4 h-4" />
+              <RefreshCw size={16} />
               Shuffle
             </button>
             <button 
               onClick={() => setSelectedTiles([])}
               disabled={selectedTiles.length === 0 || isGameOver || isWin}
-              className="flex-1 py-3 rounded-full bg-neutral-900 text-white font-bold hover:bg-black disabled:opacity-50 transition-all text-sm active:scale-95"
+              className={`${styles.actionBtn} ${styles.actionBtnPrimary}`}
             >
               Deselect
             </button>
@@ -296,43 +283,43 @@ export default function Split() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 z-10 flex items-center justify-center bg-white/95 backdrop-blur-sm p-4"
+              className={styles.modalOverlay}
             >
               <motion.div
                 initial={{ scale: 0.95, opacity: 0, y: 10 }} animate={{ scale: 1, opacity: 1, y: 0 }}
-                className="bg-white p-8 rounded-3xl shadow-2xl text-center max-w-sm w-full border border-neutral-100"
+                className={styles.modalCard}
               >
-                <h2 className="text-4xl font-serif font-bold tracking-tight mb-2 text-neutral-900">
+                <h2 className={styles.modalTitle}>
                   {isWin ? 'Great Job!' : 'Next Time!'}
                 </h2>
-                <p className="text-sm text-neutral-500 mb-6">
+                <p className={styles.modalDesc}>
                   {isWin 
                     ? 'You found all the compound words.' 
                     : 'You ran out of mistakes. Try again tomorrow!'}
                 </p>
                 
-                <div className="mb-6 w-full text-left bg-neutral-50 p-4 rounded-2xl border border-neutral-100">
-                  <h3 className="font-bold text-[10px] text-neutral-400 uppercase tracking-widest mb-3 text-center">Today&apos;s Solution</h3>
-                  <div className="grid grid-cols-2 gap-2">
+                <div className={styles.solutionBox}>
+                  <h3 className={styles.solutionHeader}>Today&apos;s Solution</h3>
+                  <div className={styles.solutionGrid}>
                     {puzzle.pairs.map(p => (
-                      <div key={p.join('')} className="bg-white border border-neutral-200 px-3 py-2 rounded-xl text-sm font-bold text-center text-neutral-800">
-                        {p[0]}<span className="text-neutral-300 mx-1">+</span>{p[1]}
+                      <div key={p.join('')} className={styles.solutionItem}>
+                        {p[0]}<span className={styles.plusSign}>+</span>{p[1]}
                       </div>
                     ))}
                   </div>
                 </div>
 
-                <div className="flex flex-col gap-3">
+                <div className={styles.modalActions}>
                   <button 
                     onClick={handleShare}
-                    className="w-full py-3.5 rounded-full bg-emerald-600 text-white text-sm font-bold hover:bg-emerald-700 transition-colors flex items-center justify-center gap-2 active:scale-95"
+                    className={`${styles.actionBtn} ${styles.actionBtnSuccess}`}
                   >
-                    <Share2 className="w-4 h-4" />
+                    <Share2 size={18} />
                     {copied ? 'Copied to Clipboard!' : 'Share Result'}
                   </button>
                   <Link 
                     href="/"
-                    className="block w-full py-3.5 rounded-full bg-neutral-100 text-neutral-600 text-sm font-bold hover:bg-neutral-200 transition-colors active:scale-95 text-center"
+                    className={`${styles.actionBtn} ${styles.actionBtnSecondary}`}
                   >
                     Back to Menu
                   </Link>
@@ -347,30 +334,30 @@ export default function Split() {
           {showHelp && (
             <motion.div 
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="absolute inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-sm p-4"
+              className={styles.modalOverlay}
             >
               <motion.div 
                 initial={{ scale: 0.95, opacity: 0, y: 10 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.95, opacity: 0, y: 10 }}
-                className="bg-white p-8 rounded-3xl shadow-xl max-w-sm w-full relative"
+                className={styles.modalCard}
               >
-                <button onClick={() => setShowHelp(false)} className="absolute top-4 right-4 p-2 text-neutral-400 hover:bg-neutral-100 rounded-full transition-colors">
-                  <X className="w-5 h-5" />
+                <button onClick={() => setShowHelp(false)} className={styles.closeBtn}>
+                  <X size={20} />
                 </button>
-                <h2 className="text-3xl font-serif font-black mb-4">How to Play</h2>
-                <div className="space-y-4 text-sm text-neutral-600 leading-relaxed">
-                  <p>Combine the word halves to form valid compound words.</p>
-                  <p>Select two tiles to merge them. If they form a valid word, they will be locked in.</p>
+                <h2 className={styles.modalTitle}>How to Play</h2>
+                <div className={styles.modalDesc} style={{textAlign: 'left', marginBottom: '32px'}}>
+                  <p style={{marginBottom: '12px'}}>Combine the word halves to form valid compound words.</p>
+                  <p style={{marginBottom: '12px'}}>Select two tiles to merge them. If they form a valid word, they will be locked in.</p>
                   <p>Find all 8 compound words to win!</p>
                 </div>
-                <button onClick={() => setShowHelp(false)} className="mt-8 w-full py-3.5 rounded-full bg-neutral-900 text-white text-sm font-bold hover:bg-black transition-colors active:scale-95">
+                <button onClick={() => setShowHelp(false)} className={`${styles.actionBtn} ${styles.actionBtnPrimary}`}>
                   Play
                 </button>
               </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
-      </main>
+      </div>
       <FeedbackModal isOpen={showFeedback} onClose={() => setShowFeedback(false)} gameName="Split" userId={user?.uid} />
-    </div>
+    </GameLayout>
   );
 }

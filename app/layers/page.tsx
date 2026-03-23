@@ -4,11 +4,13 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { getDailyLayers, generateRandomLayers, LayersPuzzle, DailyLayers } from '@/lib/layers';
 import { shuffleArray } from '@/lib/puzzles';
-import { ChevronLeft, HelpCircle, Share2, X, MessageSquare, Dices } from 'lucide-react';
+import { HelpCircle, Share2, X, MessageSquare, Dices } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth } from '@/lib/useAuth';
 import { updateStreak, saveGameStats } from '@/lib/firebase';
 import { FeedbackModal } from '@/components/FeedbackModal';
+import { GameLayout } from '@/components/GameLayout';
+import styles from './Layers.module.css';
 
 export default function Layers() {
   const [mounted, setMounted] = useState(false);
@@ -70,7 +72,8 @@ export default function Layers() {
       setActiveWords(shuffleArray(allItems, seedStr + (isEasyMode ? 'easy' : 'hard')));
       
       // Prepare meta letters
-      const letters = puzzleForMode.metaAnswer.split('').map((letter: string, i: number) => ({ id: `meta-${i}`, letter }));
+      const answerNoSpaces = puzzleForMode.metaAnswer.replace(/\s/g, '');
+      const letters = answerNoSpaces.split('').map((letter: string, i: number) => ({ id: `meta-${i}`, letter }));
       setMetaLetters(shuffleArray(letters, seedStr + (isEasyMode ? 'easy' : 'hard')));
       
       setSelectedWords([]);
@@ -143,8 +146,10 @@ export default function Layers() {
     const newInput = [...metaInput, item];
     setMetaInput(newInput);
     
-    if (newInput.length === puzzle?.metaAnswer.length) {
-      if (newInput.map(x => x.letter).join('') === puzzle.metaAnswer) {
+    const answerNoSpaces = puzzle?.metaAnswer.replace(/\s/g, '') || '';
+
+    if (newInput.length === answerNoSpaces.length) {
+      if (newInput.map(x => x.letter).join('') === answerNoSpaces) {
         setIsMetaWin(true);
         saveGameStats(user?.uid || null, {
           gameName: 'Layers',
@@ -160,7 +165,7 @@ export default function Layers() {
         // Wrong meta guess
         setIsShaking(true);
         setTimeout(() => {
-          const letters = puzzle.metaAnswer.split('').map((letter, i) => ({ id: `meta-retry-${Date.now()}-${i}`, letter }));
+          const letters = answerNoSpaces.split('').map((letter: string, i: number) => ({ id: `meta-retry-${Date.now()}-${i}`, letter }));
           setMetaLetters(shuffleArray(letters, Date.now().toString()));
           setMetaInput([]);
           setIsShaking(false);
@@ -186,92 +191,80 @@ export default function Layers() {
     }
   }, [isMetaWin, user, isPlayTest]);
 
-  if (!mounted || !puzzle) return <div className="h-[100dvh] flex items-center justify-center bg-white">Loading...</div>;
+  if (!mounted || !puzzle) return <div style={{ height: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--bg-paper)', fontFamily: 'var(--font-official)' }}>Loading...</div>;
+
+  const leftActions = isTester ? (
+    <button onClick={() => setShowFeedback(true)} className={styles.iconBtn} title="Give Feedback">
+      <MessageSquare size={18} />
+    </button>
+  ) : null;
+
+  const rightActions = (
+    <>
+      {isTester && (
+        <button onClick={handleRandomPuzzle} className={styles.iconBtn} title="Random Puzzle">
+          <Dices size={18} />
+        </button>
+      )}
+      <button onClick={() => setShowHelp(true)} className={styles.iconBtn} title="Help">
+        <HelpCircle size={18} />
+      </button>
+    </>
+  );
 
   return (
-    <div className="h-[100dvh] overflow-hidden bg-white text-neutral-800 font-sans flex flex-col items-center">
-      <header className="w-full max-w-md px-4 py-3 flex items-center justify-between border-b border-neutral-100 shrink-0">
-        <div className="flex items-center gap-1">
-          <Link href="/" className="p-2 hover:bg-neutral-100 text-neutral-400 hover:text-neutral-800 rounded-full transition-colors">
-            <ChevronLeft className="w-5 h-5" />
-          </Link>
-          {isTester && (
-            <button onClick={() => setShowFeedback(true)} className="p-1.5 hover:bg-neutral-100 rounded-full transition-colors text-blue-600" title="Give Feedback">
-              <MessageSquare className="w-5 h-5" />
-            </button>
-          )}
-        </div>
-        <div className="text-center">
-          <h1 className="text-3xl font-serif font-bold tracking-tight text-neutral-900">Layers</h1>
-          <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest mt-1">
-            {isPlayTest ? 'Playtest' : dateString}
-          </p>
-        </div>
-        <div className="flex items-center gap-1">
-          {isTester && (
-            <button onClick={handleRandomPuzzle} className="p-2 hover:bg-neutral-100 text-rose-500 rounded-full transition-colors" title="Random Puzzle">
-              <Dices className="w-5 h-5" />
-            </button>
-          )}
-          <button onClick={() => setShowHelp(true)} className="p-2 hover:bg-neutral-100 text-neutral-400 hover:text-neutral-800 rounded-full transition-colors">
-            <HelpCircle className="w-5 h-5" />
-          </button>
-        </div>
-      </header>
-
-      <main className="flex-1 min-h-0 w-full max-w-md px-4 py-6 flex flex-col overflow-y-auto relative">
+    <GameLayout
+      title="Layers"
+      subtitle={isPlayTest ? 'Playtest' : dateString}
+      leftActions={leftActions}
+      rightActions={rightActions}
+    >
+      <div className={styles.container}>
         {!isGroupsSolved ? (
           <>
-            <div className="flex justify-center mb-6">
-              <div className="bg-neutral-100 p-1 rounded-full flex gap-1 border border-neutral-200">
-                <button 
-                  onClick={() => { setIsEasyMode(true); setMistakes(0); setSelectedWords([]); setSolvedGroups([]); setMetaInput([]); setIsMetaWin(false); }}
-                  className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${isEasyMode ? 'bg-white text-neutral-900 shadow-sm border border-neutral-200' : 'text-neutral-500 hover:text-neutral-700 border border-transparent'}`}
-                >
-                  Easy
-                </button>
-                <button 
-                  onClick={() => { setIsEasyMode(false); setMistakes(0); setSelectedWords([]); setSolvedGroups([]); setMetaInput([]); setIsMetaWin(false); }}
-                  className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${!isEasyMode ? 'bg-white text-neutral-900 shadow-sm border border-neutral-200' : 'text-neutral-500 hover:text-neutral-700 border border-transparent'}`}
-                >
-                  Hard
-                </button>
-              </div>
+            <div className={styles.modeToggle}>
+              <button 
+                onClick={() => { setIsEasyMode(true); setMistakes(0); setSelectedWords([]); setSolvedGroups([]); setMetaInput([]); setIsMetaWin(false); }}
+                className={`${styles.modeBtn} ${isEasyMode ? styles.modeBtnActive : ''}`}
+              >
+                Easy
+              </button>
+              <button 
+                onClick={() => { setIsEasyMode(false); setMistakes(0); setSelectedWords([]); setSolvedGroups([]); setMetaInput([]); setIsMetaWin(false); }}
+                className={`${styles.modeBtn} ${!isEasyMode ? styles.modeBtnActive : ''}`}
+              >
+                Hard
+              </button>
             </div>
 
-            <div className="text-center mb-6">
-              <h2 className="text-lg font-serif font-medium text-neutral-800">Find 4 groups of 4.</h2>
+            <div className={styles.instructions}>
+              <h2 className={styles.instructionTitle}>Find 4 groups of 4.</h2>
             </div>
 
-            <div className="flex flex-col gap-2 mb-4">
+            <div className={styles.solvedGroups}>
               <AnimatePresence>
                 {solvedGroups.map((group) => (
                   <motion.div
                     key={group.theme}
                     initial={{ opacity: 0, y: 10, scale: 0.95 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
-                    className="w-full bg-rose-50 border border-rose-200 rounded-xl py-3 flex flex-col items-center justify-center"
+                    className={styles.solvedGroup}
                   >
-                    <span className="font-bold text-rose-800 tracking-wider uppercase text-[10px] mb-1">{group.theme}</span>
-                    <span className="text-xs font-medium text-rose-600">{group.items.join(', ')}</span>
+                    <span className={styles.solvedGroupTheme}>{group.theme}</span>
+                    <span className={styles.solvedGroupItems}>{group.items.join(', ')}</span>
                   </motion.div>
                 ))}
               </AnimatePresence>
             </div>
 
             <motion.div 
-              className="grid grid-cols-4 gap-2 mb-4 flex-1 content-start"
+              className={styles.grid}
               animate={isShaking ? { x: [-5, 5, -5, 5, 0] } : {}}
               transition={{ duration: 0.4 }}
             >
               <AnimatePresence mode="popLayout">
                 {activeWords.map((word) => {
                   const isSelected = selectedWords.includes(word);
-
-                  let bgClass = 'bg-neutral-50 text-neutral-800 border-neutral-200 hover:bg-neutral-100 hover:border-neutral-300';
-                  if (isSelected) {
-                    bgClass = 'bg-rose-600 text-white border-rose-600 scale-95';
-                  }
 
                   return (
                     <motion.button
@@ -282,29 +275,26 @@ export default function Layers() {
                       exit={{ opacity: 0, scale: 0.9 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={() => handleWordClick(word)}
-                      className={`
-                        aspect-[4/3] rounded-xl font-bold text-[10px] sm:text-xs transition-all duration-200 flex items-center justify-center uppercase tracking-wider relative border
-                        ${bgClass}
-                      `}
+                      className={`${styles.wordBtn} ${isSelected ? styles.wordBtnSelected : ''}`}
                     >
-                      <span className="break-words px-1 text-center leading-tight">{word}</span>
+                      <span>{word}</span>
                     </motion.button>
                   );
                 })}
               </AnimatePresence>
             </motion.div>
 
-            <div className="mt-auto flex flex-col items-center gap-4 pb-4">
-              <div className="flex items-center gap-1.5">
-                <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest mr-2">Mistakes Remaining</span>
+            <div className={styles.bottomArea}>
+              <div className={styles.mistakesContainer}>
+                <span className={styles.mistakesLabel}>Mistakes Remaining</span>
                 {[...Array(MAX_MISTAKES)].map((_, i) => (
-                  <div key={i} className={`w-2 h-2 rounded-full transition-all duration-300 ${i < (MAX_MISTAKES - mistakes) ? 'bg-rose-500 scale-100' : 'bg-neutral-200 scale-75'}`} />
+                  <div key={i} className={`${styles.mistakeDot} ${i < (MAX_MISTAKES - mistakes) ? styles.mistakeDotActive : ''}`} />
                 ))}
               </div>
               <button 
                 onClick={() => setSelectedWords([])}
                 disabled={selectedWords.length === 0 || isGameOver}
-                className="w-full py-3 rounded-full border border-neutral-200 bg-white font-bold text-neutral-600 hover:bg-neutral-50 disabled:opacity-50 transition-all text-sm active:scale-95 uppercase tracking-wider"
+                className={`${styles.actionBtn} ${styles.actionBtnSecondary}`}
               >
                 Deselect All
               </button>
@@ -314,43 +304,51 @@ export default function Layers() {
           <motion.div 
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex flex-col items-center h-full pt-4"
+            className={styles.metaArea}
           >
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-serif font-bold text-neutral-900 tracking-tight mb-2">Groups Found!</h2>
-              <p className="text-xs font-medium text-neutral-500">Now, what connects these four groups?</p>
+            <div className={styles.instructions} style={{marginBottom: '32px'}}>
+              <h2 className={styles.instructionTitle}>Groups Found!</h2>
+              <p className={styles.instructionDesc}>Now, what connects these four groups?</p>
             </div>
 
-            <div className="flex flex-col gap-2 w-full mb-8">
+            <div className={styles.solvedGroups} style={{width: '100%', marginBottom: '32px'}}>
               {solvedGroups.map((group) => (
-                <div key={group.theme} className="w-full bg-neutral-50 border border-neutral-200 rounded-xl py-3 flex flex-col items-center justify-center">
-                  <span className="font-bold text-neutral-700 tracking-wider uppercase text-[10px]">{group.theme}</span>
+                <div key={group.theme} className={styles.solvedGroup}>
+                  <span className={styles.solvedGroupTheme}>{group.theme}</span>
                 </div>
               ))}
             </div>
 
             <motion.div 
-              className="flex gap-2 mb-8 flex-wrap justify-center"
+              className={styles.metaInputRow}
               animate={isShaking ? { x: [-5, 5, -5, 5, 0] } : {}}
               transition={{ duration: 0.4 }}
             >
-              {/* Input slots */}
-              {[...Array(puzzle.metaAnswer.length)].map((_, i) => (
-                <button
-                  key={`input-${i}`}
-                  onClick={() => metaInput[i] && handleMetaInputClick(metaInput[i], i)}
-                  className={`w-12 h-14 sm:w-14 sm:h-16 rounded-xl flex items-center justify-center text-xl font-bold border transition-all
-                    ${metaInput[i] ? 'bg-neutral-900 text-white border-neutral-900' : 'bg-neutral-50 border-neutral-200 border-dashed text-neutral-400'}
-                    ${isMetaWin ? 'bg-rose-500 border-rose-500 text-white' : ''}
-                  `}
-                >
-                  {metaInput[i]?.letter || ''}
-                </button>
-              ))}
+              {(() => {
+                let slotIdx = 0;
+                return puzzle.metaAnswer.split('').map((char, i) => {
+                  if (char === ' ') {
+                    return <div key={`space-${i}`} className={styles.metaSpace} />;
+                  }
+                  const currentSlot = slotIdx++;
+                  const item = metaInput[currentSlot];
+                  return (
+                    <button
+                      key={`input-${currentSlot}`}
+                      onClick={() => item && handleMetaInputClick(item, currentSlot)}
+                      className={`${styles.metaSlot} 
+                        ${item ? styles.metaSlotFilled : styles.metaSlotEmpty} 
+                        ${isMetaWin ? styles.metaSlotWin : ''}
+                      `}
+                    >
+                      {item?.letter || ''}
+                    </button>
+                  );
+                });
+              })()}
             </motion.div>
 
-            <div className="flex flex-wrap justify-center gap-2">
-              {/* Letter bank */}
+            <div className={styles.metaLetters}>
               <AnimatePresence>
                 {metaLetters.map((item, i) => (
                   <motion.button
@@ -361,7 +359,7 @@ export default function Layers() {
                     exit={{ opacity: 0, scale: 0.9 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => handleMetaLetterClick(item, i)}
-                    className="w-12 h-14 sm:w-14 sm:h-16 bg-white border border-neutral-200 rounded-xl flex items-center justify-center text-xl font-bold hover:bg-neutral-50 hover:border-neutral-300 transition-all text-neutral-800"
+                    className={styles.metaLetterBtn}
                   >
                     {item.letter}
                   </motion.button>
@@ -375,40 +373,40 @@ export default function Layers() {
           {(isGameOver || isMetaWin) && (
             <motion.div 
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="absolute inset-0 z-10 flex items-center justify-center bg-white/95 backdrop-blur-sm p-4"
+              className={styles.modalOverlay}
             >
               <motion.div
                 initial={{ scale: 0.95, opacity: 0, y: 10 }} animate={{ scale: 1, opacity: 1, y: 0 }}
-                className="bg-white p-8 rounded-3xl shadow-2xl text-center max-w-sm w-full border border-neutral-100"
+                className={styles.modalCard}
               >
-                <h2 className="text-4xl font-serif font-bold tracking-tight mb-2 text-neutral-900">{isMetaWin ? 'Mind Blown!' : 'Game Over!'}</h2>
-                <p className="text-sm text-neutral-500 mb-6">{isMetaWin ? 'You solved the meta-connection.' : 'You ran out of mistakes.'}</p>
+                <h2 className={styles.modalTitle}>{isMetaWin ? 'Mind Blown!' : 'Game Over!'}</h2>
+                <p className={styles.modalDesc}>{isMetaWin ? 'You solved the meta-connection.' : 'You ran out of mistakes.'}</p>
                 
-                <div className="mb-6 w-full text-left bg-neutral-50 p-4 rounded-2xl border border-neutral-100 max-h-64 overflow-y-auto">
-                  <h3 className="font-bold text-[10px] text-neutral-400 uppercase tracking-widest mb-3 text-center">Today&apos;s Solution</h3>
-                  <div className="flex flex-col gap-2">
+                <div className={styles.solutionBox}>
+                  <h3 className={styles.solutionHeader}>Today&apos;s Solution</h3>
+                  <div>
                     {puzzle.groups.map(g => (
-                      <div key={g.theme} className="bg-white border border-neutral-200 p-3 rounded-xl">
-                        <div className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-1">{g.theme}</div>
-                        <div className="text-xs font-medium text-neutral-700">{g.items.join(', ')}</div>
+                      <div key={g.theme} className={styles.solutionGroup}>
+                        <div className={styles.solutionTheme}>{g.theme}</div>
+                        <div className={styles.solutionItems}>{g.items.join(', ')}</div>
                       </div>
                     ))}
-                    <div className="mt-2 bg-rose-50 border border-rose-200 p-3 rounded-xl text-center">
-                      <div className="text-[10px] font-bold text-rose-500 uppercase tracking-wider mb-1">Meta Connection</div>
-                      <div className="text-sm font-bold text-rose-900 tracking-widest">{puzzle.metaAnswer}</div>
+                    <div className={styles.solutionMeta}>
+                      <div className={styles.solutionMetaLabel}>Meta Connection</div>
+                      <div className={styles.solutionMetaAnswer}>{puzzle.metaAnswer}</div>
                     </div>
                   </div>
                 </div>
 
-                <div className="flex flex-col gap-3">
+                <div className={styles.modalActions}>
                   <button 
                     onClick={handleShare}
-                    className="w-full py-3.5 rounded-full bg-rose-600 text-white text-sm font-bold hover:bg-rose-700 transition-colors flex items-center justify-center gap-2 active:scale-95"
+                    className={`${styles.actionBtn} ${styles.actionBtnSuccess}`}
                   >
                     <Share2 className="w-4 h-4" />
                     {copied ? 'Copied to Clipboard!' : 'Share Result'}
                   </button>
-                  <Link href="/" className="block w-full py-3.5 rounded-full bg-neutral-100 text-neutral-600 text-sm font-bold hover:bg-neutral-200 transition-colors active:scale-95 text-center">
+                  <Link href="/" className={`${styles.actionBtn} ${styles.actionBtnSecondary}`}>
                     Back to Menu
                   </Link>
                 </div>
@@ -422,30 +420,30 @@ export default function Layers() {
           {showHelp && (
             <motion.div 
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="absolute inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-sm p-4"
+              className={styles.modalOverlay}
             >
               <motion.div 
                 initial={{ scale: 0.95, opacity: 0, y: 10 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.95, opacity: 0, y: 10 }}
-                className="bg-white p-8 rounded-3xl shadow-xl max-w-sm w-full relative"
+                className={styles.modalCard}
               >
-                <button onClick={() => setShowHelp(false)} className="absolute top-4 right-4 p-2 text-neutral-400 hover:bg-neutral-100 rounded-full transition-colors">
-                  <X className="w-5 h-5" />
+                <button onClick={() => setShowHelp(false)} className={styles.closeBtn}>
+                  <X size={20} />
                 </button>
-                <h2 className="text-3xl font-serif font-black mb-4">How to Play</h2>
-                <div className="space-y-4 text-sm text-neutral-600 leading-relaxed">
-                  <p>First, find 4 groups of 4 related words.</p>
-                  <p>Then, use the names of those 4 groups to solve the final anagram.</p>
+                <h2 className={styles.modalTitle}>How to Play</h2>
+                <div className={styles.modalDesc} style={{textAlign: 'left', marginBottom: '32px'}}>
+                  <p style={{marginBottom: '12px'}}>First, find 4 groups of 4 related words.</p>
+                  <p style={{marginBottom: '12px'}}>Then, use the names of those 4 groups to solve the final anagram.</p>
                   <p>Watch out for words that might belong to multiple categories!</p>
                 </div>
-                <button onClick={() => setShowHelp(false)} className="mt-8 w-full py-3.5 rounded-full bg-neutral-900 text-white text-sm font-bold hover:bg-black transition-colors active:scale-95">
+                <button onClick={() => setShowHelp(false)} className={`${styles.actionBtn} ${styles.actionBtnPrimary}`}>
                   Play
                 </button>
               </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
-      </main>
+      </div>
       <FeedbackModal isOpen={showFeedback} onClose={() => setShowFeedback(false)} gameName="Layers" userId={user?.uid} />
-    </div>
+    </GameLayout>
   );
 }

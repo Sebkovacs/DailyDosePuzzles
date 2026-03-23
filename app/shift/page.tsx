@@ -3,13 +3,13 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { getDailyShift, generateRandomShift, ShiftPuzzle } from '@/lib/shift';
-import { ChevronLeft, HelpCircle, ChevronUp, ChevronDown, Share2, X, MessageSquare, Dices } from 'lucide-react';
+import { HelpCircle, ChevronUp, ChevronDown, Share2, X, MessageSquare, Dices } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth } from '@/lib/useAuth';
 import { updateStreak, saveGameStats } from '@/lib/firebase';
 import { FeedbackModal } from '@/components/FeedbackModal';
+import { GameLayout } from '@/components/GameLayout';
 import styles from './Shift.module.css';
-import { Button } from '@/components/Button';
 
 const MAX_MISTAKES = 3;
 
@@ -167,40 +167,35 @@ export default function Shift() {
     }
   }, [isWin, user, isPlayTest]);
 
-  if (!mounted || !puzzle) return <div className={styles.loading}>Loading...</div>;
+  if (!mounted || !puzzle) return <div style={{ height: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--bg-paper)', fontFamily: 'var(--font-official)' }}>Loading...</div>;
+
+  const leftActions = isTester ? (
+    <button onClick={() => setShowFeedback(true)} className={styles.iconBtn} title="Give Feedback">
+      <MessageSquare size={18} />
+    </button>
+  ) : null;
+
+  const rightActions = (
+    <>
+      {isTester && (
+        <button onClick={handleRandomPuzzle} className={styles.iconBtn} title="Random Puzzle">
+          <Dices size={18} />
+        </button>
+      )}
+      <button onClick={() => setShowHelp(true)} className={styles.iconBtn} title="Help">
+        <HelpCircle size={18} />
+      </button>
+    </>
+  );
 
   return (
-    <div className={styles.appContainer}>
-      <header className={styles.header}>
-        <div className={styles.headerIconGroup}>
-          <Link href="/" className={styles.iconBtn}>
-            <ChevronLeft size={20} />
-          </Link>
-          {isTester && (
-            <button onClick={() => setShowFeedback(true)} className={styles.iconBtn} title="Give Feedback">
-              <MessageSquare size={20} />
-            </button>
-          )}
-        </div>
-        <div className={styles.titleGroup}>
-          <h1 className={styles.title}>Shift</h1>
-          <p className={styles.subtitle}>
-            {isPlayTest ? 'PLAYTEST MODE' : dateString}
-          </p>
-        </div>
-        <div className={styles.headerIconGroup}>
-          {isTester && (
-            <button onClick={handleRandomPuzzle} className={styles.iconBtn} title="Random Puzzle">
-              <Dices size={20} />
-            </button>
-          )}
-          <button onClick={() => setShowHelp(true)} className={styles.iconBtn}>
-            <HelpCircle size={20} />
-          </button>
-        </div>
-      </header>
-
-      <main className={styles.main}>
+    <GameLayout
+      title="Shift"
+      subtitle={isPlayTest ? 'Playtest' : dateString}
+      leftActions={leftActions}
+      rightActions={rightActions}
+    >
+      <div className={styles.container}>
         <div className={styles.modeToggle}>
             <button 
               onClick={() => setMode('easy')}
@@ -216,9 +211,9 @@ export default function Shift() {
             </button>
         </div>
 
-        <div className={styles.instruction}>
-          <h2>Align the letters.</h2>
-          <p>Every row must form a valid word.</p>
+        <div className={styles.instructions}>
+          <h2 className={styles.instructionTitle}>Align the letters.</h2>
+          <p className={styles.instructionDesc}>Every row must form a valid word.</p>
         </div>
 
         <div className={styles.gridContainer}>
@@ -257,27 +252,28 @@ export default function Shift() {
           ))}
         </div>
 
-        <div className={styles.footer}>
-          <div className={styles.chances}>
-            <span className={styles.chancesText}>Chances</span>
+        <div className={styles.bottomArea}>
+          <div className={styles.mistakesContainer}>
+            <span className={styles.mistakesLabel}>Mistakes Remaining</span>
             <div className={styles.dotsGroup}>
               {[...Array(MAX_MISTAKES)].map((_, i) => (
                 <div 
                   key={i} 
-                  className={`${styles.dot} ${i < (MAX_MISTAKES - mistakes) ? styles.dotActive : styles.dotInactive}`}
+                  className={`${styles.mistakeDot} ${i < (MAX_MISTAKES - mistakes) ? styles.mistakeDotActive : ''}`}
                 />
               ))}
             </div>
           </div>
 
-          <Button
-            variant="primary"
-            fullWidth
-            onClick={handleSubmit}
-            disabled={isWin || isLoss}
-          >
-            Submit
-          </Button>
+          <div className={styles.actionsRow}>
+            <button 
+              onClick={handleSubmit}
+              disabled={isWin || isLoss}
+              className={`${styles.actionBtn} ${styles.actionBtnPrimary}`}
+            >
+              Submit
+            </button>
+          </div>
         </div>
 
         <AnimatePresence>
@@ -286,31 +282,30 @@ export default function Shift() {
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
               className={styles.modalOverlay}
             >
-              <div className={styles.modalContent}>
+              <div className={styles.modalCard}>
                 <h2 className={styles.modalTitle}>
                   {isWin ? 'Unlocked!' : 'Locked Out'}
                 </h2>
-                <p className={styles.modalSubtitle}>
+                <p className={styles.modalDesc}>
                   {isWin ? 'You aligned all the words.' : 'Out of chances!'}
                 </p>
                 
-                <div className={styles.targetWordsBox}>
-                  <h3 className={styles.targetWordsHeader}>Target Words</h3>
-                  <div className={styles.targetWordsList}>
-                    {puzzle.words.map(word => (
-                      <div key={word} className={styles.targetWord}>
-                        {word}
-                      </div>
-                    ))}
-                  </div>
+                <div className={styles.solutionBox}>
+                  <h3 className={styles.solutionHeader}>Target Words</h3>
+                  {puzzle.words.map(word => (
+                    <div key={word} className={styles.targetWord}>
+                      {word}
+                    </div>
+                  ))}
                 </div>
 
                 <div className={styles.modalActions}>
-                  <Button variant="success" fullWidth icon={<Share2 size={18} />} onClick={handleShare}>
+                  <button onClick={handleShare} className={`${styles.actionBtn} ${styles.actionBtnSuccess}`}>
+                    <Share2 size={18} />
                     {copied ? 'Copied to Clipboard!' : 'Share Result'}
-                  </Button>
-                  <Link href="/" style={{ textDecoration: 'none', display: 'block' }}>
-                    <Button variant="secondary" fullWidth>Back to Menu</Button>
+                  </button>
+                  <Link href="/" className={`${styles.actionBtn} ${styles.actionBtnSecondary}`}>
+                    Back to Menu
                   </Link>
                 </div>
               </div>
@@ -327,25 +322,28 @@ export default function Shift() {
             >
               <motion.div 
                 initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
-                className={styles.modalContent}
+                className={styles.modalCard}
               >
-                <button onClick={() => setShowHelp(false)} className={`${styles.iconBtn} ${styles.closeBtn}`}>
+                <button onClick={() => setShowHelp(false)} className={styles.closeBtn}>
                   <X size={20} />
                 </button>
                 <h2 className={styles.modalTitle}>How to Play</h2>
-                <div className={styles.modalSubtitle} style={{ textAlign: 'left', marginTop: '16px', lineHeight: '1.6' }}>
-                  <p>Slide the columns up and down to align the letters.</p>
-                  <p>Every row must form a valid word.</p>
-                  <p>Click Submit to check your answer.</p>
+                <div className={styles.modalDesc} style={{ textAlign: 'left', marginTop: '16px', marginBottom: '32px' }}>
+                  <p style={{marginBottom: '12px'}}>Slide the columns up and down to align the letters.</p>
+                  <p style={{marginBottom: '12px'}}>Every row must form a valid word.</p>
+                  <p style={{marginBottom: '12px'}}>Click Submit to check your answer.</p>
                   <p>You have 3 chances to get it right!</p>
                 </div>
-                <Button variant="primary" fullWidth onClick={() => setShowHelp(false)}>
+                <button className={`${styles.actionBtn} ${styles.actionBtnPrimary}`} onClick={() => setShowHelp(false)}>
                   Got it
-                </Button>
+                </button>
               </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
-      </main>
+      </div>
       <FeedbackModal isOpen={showFeedback} onClose={() => setShowFeedback(false)} gameName="Shift" userId={user?.uid} />
+    </GameLayout>
+  );
+}
   

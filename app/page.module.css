@@ -1,25 +1,27 @@
 .appContainer {
-  min-height: 100dvh;
-  background-color: #FCFCF9;
-  color: #111;
-  font-family: system-ui, -apple-system, sans-serif;
+  height: 100dvh;
+  overflow: hidden;
+  background-color: var(--bg-paper);
+  color: var(--ink-main);
+  font-family: var(--font-ui);
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-bottom: 48px;
 }
 
 .header {
   width: 100%;
   max-width: 480px;
-  padding: 40px 24px;
+  padding: max(3vh, 20px) 24px 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  border-bottom: 1px solid #EAEAEA;
-  margin-bottom: 32px;
-  background-color: #FFFFFF;
+  border-bottom: var(--border-ink);
+  background-color: var(--bg-paper);
   position: relative;
+  flex-shrink: 0;
+  z-index: 10;
+  box-shadow: 0 4px 20px rgba(24, 22, 20, 0.04);
 }
 
 .topActions {
@@ -35,30 +37,37 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
-  color: #666;
-  background-color: #F5F5F5;
-  padding: 6px 12px;
-  border-radius: 99px;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  color: var(--ink-main);
+  background-color: transparent;
+  border: var(--border-ink);
+  border-radius: var(--radius-sharp);
+  padding: 4px 10px;
   transition: all 0.2s ease;
   text-decoration: none;
+  box-shadow: 2px 2px 0px var(--ink-main);
 }
 .statsPill:hover {
-  background-color: #EAEAEA;
-  color: #111;
+  background-color: var(--ink-main);
+  color: var(--bg-paper);
 }
 
 .streakPill {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
-  color: #EA580C;
-  background-color: #FFF7ED;
-  padding: 6px 12px;
-  border-radius: 99px;
+  font-family: var(--font-mono);
+  color: var(--bg-paper);
+  background-color: var(--ink-main);
+  border: var(--border-ink);
+  border-radius: var(--radius-sharp);
+  padding: 4px 10px;
+  box-shadow: 2px 2px 0px var(--ink-main);
 }
 
 .iconBtn {
@@ -66,7 +75,7 @@
   border-radius: 50%;
   border: none;
   background: transparent;
-  color: #666;
+  color: var(--ink-light);
   cursor: pointer;
   transition: all 0.2s ease;
   display: flex;
@@ -74,57 +83,61 @@
   justify-content: center;
 }
 .iconBtn:hover {
-  background-color: #F5F5F5;
-  color: #111;
+  background-color: var(--ink-main);
+  color: var(--bg-paper);
 }
 
 .signInBtn {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 600;
-  background-color: #111;
-  color: #FFF;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  background-color: var(--ink-main);
+  color: var(--bg-paper);
   padding: 8px 20px;
-  border-radius: 99px;
-  border: none;
+  border: var(--border-ink);
+  border-radius: var(--radius-sharp);
+  box-shadow: var(--shadow-ink);
   cursor: pointer;
   transition: all 0.2s ease;
 }
-.signInBtn:hover {
-  background-color: #333;
-}
 .signInBtn:active {
-  transform: scale(0.95);
+  transform: translate(2px, 2px);
+  box-shadow: var(--shadow-ink-pressed);
 }
 
 .title {
-  font-family: "Georgia", serif;
-  font-size: 40px;
-  font-weight: 400;
+  font-family: var(--font-official);
+  font-size: 44px;
+  font-weight: 600;
+  font-style: italic;
   letter-spacing: -0.02em;
-  color: #111;
-  margin: 40px 0 0 0;
+  color: var(--ink-main);
+  margin: 24px 0 0 0;
   line-height: 1;
 }
 
 .subtitle {
-  font-size: 14px;
-  color: #666;
-  margin: 8px 0 0 0;
+  font-size: 13px;
+  color: var(--ink-light);
+  margin: 6px 0 0 0;
   font-weight: 500;
+  font-family: var(--font-ui);
+  letter-spacing: 0.02em;
 }
 
 .streakStats {
-  margin-top: 32px;
+  margin-top: 20px;
   display: flex;
   gap: 48px;
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.15em;
-  color: #888;
+  color: var(--ink-light);
 }
 
 .streakStatItem {
@@ -135,52 +148,80 @@
 }
 
 .streakStatNumber {
-  color: #111;
-  font-size: 28px;
-  font-weight: 400;
-  font-family: "Georgia", serif;
+  color: var(--ink-main);
+  font-size: 24px;
+  font-weight: 500;
+  font-family: var(--font-mono);
+  letter-spacing: -0.05em;
 }
 
 .gameList {
   width: 100%;
   max-width: 480px;
-  display: flex;
-  flex-direction: column;
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  grid-auto-rows: minmax(80px, 1fr);
   gap: 16px;
-  padding: 0 20px;
+  padding: 24px 20px;
+  overflow-y: auto;
+}
+
+/* Hero Card perfectly balances the 7 items */
+.gameCard:first-child {
+  grid-column: 1 / -1;
+}
+
+/* If there's an even number of total cards, make the last one span full width to maintain symmetry */
+.gameCard:last-child:nth-child(even) {
+  grid-column: 1 / -1;
 }
 
 .gameCard {
-  display: block;
-  background-color: #FFFFFF;
-  border: 1px solid #EAEAEA;
-  border-radius: 24px;
-  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: var(--theme-wash);
+  border: var(--border-ink);
+  border-radius: var(--radius-sharp);
+  box-shadow: var(--shadow-ink);
+  padding: 16px;
   text-decoration: none;
   position: relative;
+  transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.02);
 }
 
-.gameCard:hover {
-  transform: translateY(-2px);
-  border-color: var(--theme-border);
-  box-shadow: 0 12px 24px var(--theme-shadow);
+.gameCard:active {
+  transform: translate(4px, 4px);
+  box-shadow: var(--shadow-ink-pressed);
 }
 
-.gameCardStrip { position: absolute; top: 0; left: 0; width: 6px; height: 100%; background-color: var(--theme-color); }
-.gameCardContent { display: flex; justify-content: space-between; align-items: center; padding-left: 16px; }
-.gameTitle { font-family: "Georgia", serif; font-size: 24px; font-weight: 400; color: #111; margin: 0 0 4px 0; }
-.gameDesc { font-size: 13px; color: #666; margin: 0; font-weight: 500; }
-.playIcon { width: 44px; height: 44px; border-radius: 50%; border: 1px solid #EAEAEA; display: flex; align-items: center; justify-content: center; color: #999; transition: all 0.3s ease; background-color: #FFFFFF; }
-.gameCard:hover .playIcon { background-color: var(--theme-bg); border-color: var(--theme-border); color: var(--theme-color); }
+.gameCardStrip { 
+  display: block; 
+  position: absolute; 
+  top: 0; 
+  left: 0; 
+  width: 100%; 
+  height: 6px; 
+  background-color: var(--theme-accent); 
+  border-bottom: var(--border-ink);
+}
 
-/* Distinct Color Themes for Game Cards */
-.themeChain { --theme-color: #6366F1; --theme-border: #C7D2FE; --theme-bg: #EEF2FF; --theme-shadow: rgba(99, 102, 241, 0.12); }
-.themeSplit { --theme-color: #10B981; --theme-border: #A7F3D0; --theme-bg: #ECFDF5; --theme-shadow: rgba(16, 185, 129, 0.12); }
-.themeLayers { --theme-color: #F43F5E; --theme-border: #FECDD3; --theme-bg: #FFF1F2; --theme-shadow: rgba(244, 63, 94, 0.12); }
-.themeVault { --theme-color: #64748B; --theme-border: #CBD5E1; --theme-bg: #F8FAFC; --theme-shadow: rgba(100, 116, 139, 0.12); }
-.themeShift { --theme-color: #8B5CF6; --theme-border: #DDD6FE; --theme-bg: #F5F3FF; --theme-shadow: rgba(139, 92, 246, 0.12); }
-.themeSpectrum { --theme-color: #F59E0B; --theme-border: #FDE68A; --theme-bg: #FFFBEB; --theme-shadow: rgba(245, 158, 11, 0.12); }
-.themeNumbers { --theme-color: #06B6D4; --theme-border: #A5F3FC; --theme-bg: #ECFEFF; --theme-shadow: rgba(6, 182, 212, 0.12); }
+.gameCardContent { display: flex; flex-direction: column; z-index: 2; margin-top: 4px; }
+.gameTitle { font-family: var(--font-official); font-size: 24px; font-weight: 700; color: var(--ink-main); margin: 0 0 4px 0; letter-spacing: -0.01em; line-height: 1.1; }
+.gameCard:first-child .gameTitle { font-size: 32px; font-style: italic; }
+.gameDesc { font-size: 13px; color: var(--ink-main); opacity: 0.85; margin: 0; font-weight: 500; line-height: 1.3; }
+.playIcon { display: none; }
+
+/* Classical Accent Themes */
+.themeChain { --theme-accent: var(--accent-sanguine); --theme-wash: var(--wash-sanguine); }
+.themeSplit { --theme-accent: var(--accent-viridian); --theme-wash: var(--wash-viridian); }
+.themeLayers { --theme-accent: var(--accent-crimson); --theme-wash: var(--wash-crimson); }
+.themeVault { --theme-accent: var(--accent-slate); --theme-wash: var(--wash-slate); }
+.themeShift { --theme-accent: var(--accent-indigo); --theme-wash: var(--wash-indigo); }
+.themeRoots { --theme-accent: var(--accent-pine); --theme-wash: var(--wash-pine); }
+.themeWeave { --theme-accent: var(--accent-copper); --theme-wash: var(--wash-copper); }
+.themeSpectrum { --theme-accent: var(--accent-ochre); --theme-wash: var(--wash-ochre); }
+.themeNumbers { --theme-accent: var(--accent-umber); --theme-wash: var(--wash-umber); }
+.themeLexicon { --theme-accent: var(--accent-teal); --theme-wash: var(--wash-teal); }

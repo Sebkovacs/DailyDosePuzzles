@@ -1,0 +1,50 @@
+.container { flex: 1; padding: 24px 20px; display: flex; flex-direction: column; min-height: 100%; }
+
+.iconBtn { padding: 8px; border-radius: var(--radius-sharp); border: var(--border-ink); background: transparent; color: var(--ink-main); cursor: pointer; transition: all 0.1s ease; display: flex; align-items: center; justify-content: center; box-shadow: 2px 2px 0px var(--ink-main); }
+.iconBtn:active { transform: translate(2px, 2px); box-shadow: var(--shadow-ink-pressed); }
+
+.modeToggle { display: flex; background: var(--bg-card); border: var(--border-ink); border-radius: var(--radius-sharp); padding: 4px; margin-bottom: 24px; box-shadow: var(--shadow-ink); flex-shrink: 0; }
+.modeBtn { flex: 1; padding: 8px; font-family: var(--font-mono); font-size: 12px; font-weight: 600; text-transform: uppercase; border: none; background: transparent; cursor: pointer; border-radius: 2px; color: var(--ink-light); transition: all 0.2s ease; }
+.modeBtnActive { background: var(--ink-main); color: var(--bg-paper); box-shadow: var(--shadow-ink-pressed); }
+
+.targetBox { background-color: var(--wash-teal); border: var(--border-ink); border-radius: var(--radius-sharp); padding: 24px; margin-bottom: 24px; text-align: center; box-shadow: var(--shadow-ink); }
+.targetWord { font-family: var(--font-official); font-size: 32px; font-weight: 700; color: var(--ink-main); margin: 0 0 8px 0; text-transform: uppercase; letter-spacing: 0.05em; }
+.targetDesc { font-family: var(--font-mono); font-size: 10px; font-weight: 700; color: var(--accent-teal); text-transform: uppercase; letter-spacing: 0.1em; margin: 0; }
+
+.optionsList { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; flex: 1; overflow-y: auto; padding-right: 4px; }
+.optionBtn { background-color: var(--bg-card); border: var(--border-ink); border-radius: var(--radius-sharp); box-shadow: var(--shadow-ink); padding: 16px; font-family: var(--font-ui); font-size: 15px; font-weight: 600; color: var(--ink-main); text-align: left; cursor: pointer; transition: all 0.1s ease; line-height: 1.4; }
+.optionBtn:active:not(:disabled) { transform: translate(4px, 4px); box-shadow: var(--shadow-ink-pressed); }
+.optionBtn:disabled { cursor: default; }
+
+.optionBtnCorrect { background-color: var(--wash-viridian); border-color: var(--accent-viridian); color: var(--accent-viridian); transform: translate(4px, 4px); box-shadow: var(--shadow-ink-pressed); }
+.optionBtnIncorrect { background-color: var(--wash-crimson); border-color: var(--accent-crimson); color: var(--accent-crimson); transform: translate(4px, 4px); box-shadow: var(--shadow-ink-pressed); opacity: 0.7; }
+
+.bottomArea { margin-top: auto; display: flex; align-items: center; justify-content: space-between; background-color: var(--bg-card); border: var(--border-ink); border-radius: var(--radius-sharp); padding: 12px 16px; box-shadow: var(--shadow-ink); }
+.chancesLabel { font-family: var(--font-mono); font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--ink-main); letter-spacing: 0.05em; }
+.dotsGroup { display: flex; gap: 6px; }
+.chanceDot { width: 12px; height: 12px; border-radius: 50%; border: var(--border-ink); background-color: var(--bg-card); transition: all 0.3s ease; }
+.chanceDotUsed { background-color: var(--accent-crimson); border-color: var(--accent-crimson); }
+.chanceDotRemaining { background-color: var(--accent-viridian); border-color: var(--accent-viridian); }
+
+.modalOverlay { position: absolute; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; background-color: rgba(242, 239, 233, 0.85); backdrop-filter: blur(4px); padding: 20px; }
+.modalCard { width: 100%; max-width: 380px; background-color: var(--bg-card); border: var(--border-ink); border-radius: var(--radius-sharp); box-shadow: var(--shadow-ink); padding: 32px 24px; text-align: center; position: relative; max-height: 90vh; overflow-y: auto; }
+.closeBtn { position: absolute; top: 12px; right: 12px; background: transparent; border: none; cursor: pointer; color: var(--ink-light); padding: 4px; transition: color 0.2s ease; }
+.closeBtn:hover { color: var(--ink-main); }
+
+.modalTitle { font-family: var(--font-official); font-size: 32px; font-weight: 700; margin: 0 0 8px 0; color: var(--ink-main); letter-spacing: -0.02em; text-transform: uppercase; }
+.modalDesc { font-size: 14px; color: var(--ink-light); margin: 0 0 24px 0; line-height: 1.5; font-family: var(--font-ui); font-weight: 500; }
+
+.solutionBox { background-color: var(--wash-teal); border: var(--border-ink); border-radius: var(--radius-sharp); padding: 16px; margin-bottom: 24px; display: flex; flex-direction: column; gap: 8px; text-align: left; }
+.solutionHeader { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; font-weight: 600; color: var(--accent-teal); letter-spacing: 0.1em; margin: 0 0 8px 0; text-align: center; }
+.solutionWord { font-family: var(--font-official); font-size: 20px; font-weight: 700; color: var(--ink-main); text-transform: uppercase; letter-spacing: 0.05em; text-align: center; margin-bottom: 8px; }
+.solutionDef { background-color: var(--bg-card); border: var(--border-ink); padding: 12px; border-radius: var(--radius-sharp); font-family: var(--font-ui); font-size: 14px; font-weight: 600; color: var(--ink-main); text-align: center; line-height: 1.4; }
+
+.modalActions { display: flex; flex-direction: column; gap: 12px; }
+
+.actionsRow { display: flex; gap: 12px; }
+.actionBtn { box-sizing: border-box; text-decoration: none; flex: 1; padding: 14px; border: var(--border-ink); border-radius: var(--radius-sharp); font-family: var(--font-mono); font-size: 14px; font-weight: 600; text-transform: uppercase; cursor: pointer; box-shadow: var(--shadow-ink); transition: all 0.1s ease; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; text-align: center; }
+.actionBtn:active:not(:disabled) { transform: translate(4px, 4px); box-shadow: var(--shadow-ink-pressed); }
+.actionBtn:disabled { opacity: 0.5; pointer-events: none; box-shadow: var(--shadow-ink-pressed); transform: translate(4px, 4px); }
+.actionBtnPrimary { background-color: var(--ink-main); color: var(--bg-paper); }
+.actionBtnSecondary { background-color: var(--bg-card); color: var(--ink-main); }
+.actionBtnSuccess { background-color: var(--accent-teal); color: var(--bg-paper); border-color: var(--accent-teal); }

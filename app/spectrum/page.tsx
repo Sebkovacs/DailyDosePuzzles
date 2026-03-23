@@ -4,13 +4,13 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { getDailySpectrum, generateRandomSpectrum, SpectrumPuzzle, SpectrumItem, DailySpectrum } from '@/lib/spectrum';
 import { shuffleArray } from '@/lib/puzzles';
-import { ChevronLeft, HelpCircle, Share2, X, MessageSquare, Dices } from 'lucide-react';
+import { HelpCircle, Share2, X, MessageSquare, Dices } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth } from '@/lib/useAuth';
 import { updateStreak, saveGameStats } from '@/lib/firebase';
 import { FeedbackModal } from '@/components/FeedbackModal';
+import { GameLayout } from '@/components/GameLayout';
 import styles from './Spectrum.module.css';
-import { Button } from '@/components/Button';
 
 export default function Spectrum() {
   const [mounted, setMounted] = useState(false);
@@ -200,40 +200,35 @@ export default function Spectrum() {
     }
   }, [isWin, user, isPlayTest]);
 
-  if (!mounted || !puzzle) return <div className={styles.loading}>Loading...</div>;
+  if (!mounted || !puzzle) return <div style={{ height: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--bg-paper)', fontFamily: 'var(--font-official)' }}>Loading...</div>;
+
+  const leftActions = isTester ? (
+    <button onClick={() => setShowFeedback(true)} className={styles.iconBtn} title="Give Feedback">
+      <MessageSquare size={18} />
+    </button>
+  ) : null;
+
+  const rightActions = (
+    <>
+      {isTester && (
+        <button onClick={handleRandomPuzzle} className={styles.iconBtn} title="Random Puzzle">
+          <Dices size={18} />
+        </button>
+      )}
+      <button onClick={() => setShowHelp(true)} className={styles.iconBtn} title="Help">
+        <HelpCircle size={18} />
+      </button>
+    </>
+  );
 
   return (
-    <div className={styles.appContainer}>
-      <header className={styles.header}>
-        <div className={styles.headerIconGroup}>
-          <Link href="/" className={styles.iconBtn}>
-            <ChevronLeft size={20} />
-          </Link>
-          {isTester && (
-            <button onClick={() => setShowFeedback(true)} className={styles.iconBtn} title="Give Feedback">
-              <MessageSquare size={20} />
-            </button>
-          )}
-        </div>
-        <div className={styles.titleGroup}>
-          <h1 className={styles.title}>Spectrum</h1>
-          <p className={styles.subtitle}>
-            {isPlayTest ? 'PLAYTEST MODE' : dateString}
-          </p>
-        </div>
-        <div className={styles.headerIconGroup}>
-          {isTester && (
-            <button onClick={handleRandomPuzzle} className={styles.iconBtn} title="Random Puzzle">
-              <Dices size={20} />
-            </button>
-          )}
-          <button onClick={() => setShowHelp(true)} className={styles.iconBtn}>
-            <HelpCircle size={20} />
-          </button>
-        </div>
-      </header>
-
-      <main className={styles.main}>
+    <GameLayout
+      title="Spectrum"
+      subtitle={isPlayTest ? 'PLAYTEST MODE' : dateString}
+      leftActions={leftActions}
+      rightActions={rightActions}
+    >
+      <div className={styles.container}>
         <div className={styles.modeToggle}>
             <button
               onClick={() => { if(!isGameOver && !isWin) { setIsEasyMode(true); setMistakes(0); setLockedPairs(new Set()); setCorrectPositions([]); } }}
@@ -294,14 +289,13 @@ export default function Spectrum() {
               ))}
             </div>
           </div>
-          <Button 
-            variant="primary"
-            fullWidth
+          <button 
+            className={`${styles.actionBtn} ${styles.actionBtnPrimary}`}
             onClick={handleSubmit}
             disabled={isGameOver || isWin}
           >
             Submit Order
-          </Button>
+          </button>
         </div>
 
         <AnimatePresence>
@@ -327,16 +321,15 @@ export default function Spectrum() {
                 </div>
 
                 <div className={styles.modalActions}>
-                  <Button 
-                    variant="success" 
-                    fullWidth 
-                    icon={<Share2 size={18} />} 
+                  <button 
+                    className={`${styles.actionBtn} ${styles.actionBtnSuccess}`}
                     onClick={handleShare}
                   >
+                    <Share2 size={18} />
                     {copied ? 'Copied to Clipboard!' : 'Share Result'}
-                  </Button>
-                  <Link href="/" style={{ textDecoration: 'none', display: 'block' }}>
-                    <Button variant="secondary" fullWidth>Back to Menu</Button>
+                  </button>
+                  <Link href="/" className={`${styles.actionBtn} ${styles.actionBtnSecondary}`}>
+                    Back to Menu
                   </Link>
                 </div>
               </div>
@@ -355,23 +348,26 @@ export default function Spectrum() {
                 initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
               className={styles.modalContent}
               >
-              <button onClick={() => setShowHelp(false)} className={`${styles.iconBtn} ${styles.closeBtn}`}>
+              <button onClick={() => setShowHelp(false)} className={styles.closeBtn}>
                 <X size={20} />
                 </button>
               <h2 className={styles.modalTitle}>How to Play</h2>
               <div className={styles.modalSubtitle} style={{ textAlign: 'left', marginTop: '16px' }}>
-                  <p>Arrange the items in the correct order based on a hidden metric. <strong>Both forward and backward orders are accepted!</strong></p>
-                  <p>Tap two items to swap their positions.</p>
-                  <p><strong>Easy Mode:</strong> Correctly adjacent items will lock together into blocks.</p>
-                  <p><strong>Hard Mode:</strong> No locks. You only see how many are in the correct spot.</p>
+                  <p style={{marginBottom: '12px'}}>Arrange the items in the correct order based on a hidden metric. <strong style={{color: 'var(--ink-main)'}}>Both forward and backward orders are accepted!</strong></p>
+                  <p style={{marginBottom: '12px'}}>Tap two items to swap their positions.</p>
+                  <p style={{marginBottom: '12px'}}><strong style={{color: 'var(--ink-main)'}}>Easy Mode:</strong> Correctly adjacent items will lock together into blocks.</p>
+                  <p><strong style={{color: 'var(--ink-main)'}}>Hard Mode:</strong> No locks. You only see how many are in the correct spot.</p>
                 </div>
-              <Button variant="primary" fullWidth onClick={() => setShowHelp(false)}>
+              <button className={`${styles.actionBtn} ${styles.actionBtnPrimary}`} onClick={() => setShowHelp(false)}>
                   Got it
-              </Button>
+              </button>
               </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
-      </main>
+      </div>
       <FeedbackModal isOpen={showFeedback} onClose={() => setShowFeedback(false)} gameName="Spectrum" userId={user?.uid} />
+    </GameLayout>
+  );
+}
   

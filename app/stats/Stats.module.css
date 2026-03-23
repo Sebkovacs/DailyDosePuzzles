@@ -1,0 +1,56 @@
+.appContainer { min-height: 100dvh; background-color: var(--bg-paper); color: var(--ink-main); font-family: var(--font-ui); display: flex; flex-direction: column; align-items: center; padding-bottom: 48px; }
+.loading { height: 100dvh; display: flex; align-items: center; justify-content: center; background-color: var(--bg-paper); font-family: var(--font-official); font-style: italic; color: var(--ink-light); }
+.deniedContainer { height: 100dvh; display: flex; flex-direction: column; align-items: center; justify-content: center; background-color: var(--bg-paper); color: var(--ink-main); padding: 20px; text-align: center; }
+.deniedTitle { font-family: var(--font-official); font-size: 32px; font-weight: 700; margin-bottom: 12px; }
+.deniedText { font-size: 14px; margin-bottom: 24px; color: var(--ink-light); font-family: var(--font-ui); }
+
+.header { width: 100%; max-width: 480px; padding: max(3vh, 20px) 24px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: var(--border-ink); background-color: var(--bg-paper); position: sticky; top: 0; z-index: 10; box-shadow: 0 4px 20px rgba(24, 22, 20, 0.04); }
+.headerTitle { font-family: var(--font-official); font-size: 24px; font-weight: 700; text-transform: uppercase; margin: 0; color: var(--ink-main); letter-spacing: -0.01em; display: flex; align-items: center; gap: 8px; }
+.iconBtn { padding: 8px; border-radius: var(--radius-sharp); border: var(--border-ink); background: transparent; color: var(--ink-main); cursor: pointer; transition: all 0.1s ease; display: flex; align-items: center; justify-content: center; box-shadow: 2px 2px 0px var(--ink-main); }
+.iconBtn:active { transform: translate(2px, 2px); box-shadow: var(--shadow-ink-pressed); }
+.headerSpacer { width: 40px; }
+
+.main { width: 100%; max-width: 480px; padding: 24px 20px; display: flex; flex-direction: column; gap: 32px; }
+
+.section { display: flex; flex-direction: column; gap: 16px; }
+.sectionTitle { font-family: var(--font-official); font-size: 24px; font-weight: 700; color: var(--ink-main); margin: 0; border-bottom: var(--border-ink); padding-bottom: 8px; }
+
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.statCard { background-color: var(--bg-card); border: var(--border-ink); border-radius: var(--radius-sharp); padding: 20px; display: flex; flex-direction: column; align-items: center; text-align: center; box-shadow: var(--shadow-ink); transition: all 0.1s ease; }
+.statCardHighlight { background-color: var(--ink-main); color: var(--bg-paper); }
+.statCardHighlight .statValue { color: var(--bg-paper); }
+.statCardHighlight .statLabel { color: var(--bg-paper); opacity: 0.8; }
+
+.statValue { font-family: var(--font-mono); font-size: 32px; font-weight: 700; color: inherit; line-height: 1; margin-bottom: 8px; letter-spacing: -0.05em; }
+.statLabel { font-family: var(--font-mono); font-size: 11px; font-weight: 600; color: var(--ink-light); text-transform: uppercase; letter-spacing: 0.1em; }
+
+.gameList { display: flex; flex-direction: column; gap: 12px; }
+.gameItem { display: flex; align-items: center; justify-content: space-between; padding: 16px; background-color: var(--bg-card); border: var(--border-ink); border-radius: var(--radius-sharp); transition: all 0.1s ease; box-shadow: var(--shadow-ink); }
+
+.gameInfo { display: flex; flex-direction: column; gap: 4px; }
+.gameNameGroup { display: flex; align-items: center; gap: 8px; }
+.gameName { font-weight: 600; font-size: 15px; color: var(--ink-main); font-family: var(--font-official); }
+.gameMode { font-size: 10px; font-weight: 700; font-family: var(--font-mono); text-transform: uppercase; padding: 2px 6px; border-radius: var(--radius-sharp); background-color: var(--ink-main); color: var(--bg-paper); border: var(--border-ink); }
+.gameModeHard { background-color: var(--accent-crimson); color: var(--bg-paper); border-color: var(--accent-crimson); }
+.gameDate { font-size: 12px; color: var(--ink-light); font-family: var(--font-mono); }
+
+.gameMetrics { display: flex; align-items: center; gap: 16px; }
+.gameMistakes { font-size: 12px; font-family: var(--font-mono); color: var(--ink-light); display: flex; align-items: center; gap: 4px; font-weight: 600; }
+
+.gameOutcome { font-size: 11px; font-weight: 700; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.1em; padding: 4px 10px; border-radius: var(--radius-sharp); border: var(--border-ink); }
+.outcomeWin { background-color: var(--wash-viridian); color: var(--accent-viridian); border-color: var(--accent-viridian); }
+.outcomeLoss { background-color: var(--wash-crimson); color: var(--accent-crimson); border-color: var(--accent-crimson); }
+
+.noData { text-align: center; color: var(--ink-light); font-size: 14px; padding: 32px 0; background-color: var(--bg-card); border-radius: var(--radius-sharp); border: 2px dashed var(--ink-light); font-family: var(--font-mono); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+
+.actionBtn { box-sizing: border-box; text-decoration: none; padding: 12px 24px; border: var(--border-ink); border-radius: var(--radius-sharp); font-family: var(--font-mono); font-size: 14px; font-weight: 600; text-transform: uppercase; cursor: pointer; box-shadow: var(--shadow-ink); transition: all 0.1s ease; display: inline-flex; align-items: center; justify-content: center; background-color: var(--ink-main); color: var(--bg-paper); }
+.actionBtn:active { transform: translate(4px, 4px); box-shadow: var(--shadow-ink-pressed); }
+
+/* Distinct Game Colors for subtle touches */
+.badgeChain { background-color: var(--wash-sanguine); color: var(--accent-sanguine); border-color: var(--accent-sanguine); }
+.badgeShift { background-color: var(--wash-indigo); color: var(--accent-indigo); border-color: var(--accent-indigo); }
+.badgeSpectrum { background-color: var(--wash-ochre); color: var(--accent-ochre); border-color: var(--accent-ochre); }
+.badgeNumbers { background-color: var(--wash-umber); color: var(--accent-umber); border-color: var(--accent-umber); }
+.badgeLayers { background-color: var(--wash-crimson); color: var(--accent-crimson); border-color: var(--accent-crimson); }
+.badgeVault { background-color: var(--wash-slate); color: var(--accent-slate); border-color: var(--accent-slate); }
+.badgeSplit { background-color: var(--wash-viridian); color: var(--accent-viridian); border-color: var(--accent-viridian); }

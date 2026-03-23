@@ -1,0 +1,39 @@
+# dataconnect/connector/queries.gql
+
+# Fetch all stats for a specific user to build their dashboard
+query GetUserStats($userId: String!) @auth(expr: "auth.uid == userId") {
+  gameStats(where: { userId: { eq: $userId } }, orderBy: [{ date: DESC }]) {
+    id
+    gameName
+    date
+    mode
+    won
+    mistakes
+    attempts
+    timeToCompleteSeconds
+  }
+}
+
+# Only users with the 'admin' custom claim in their token can run this
+query GetAllUsers @auth(expr: "auth.token.role == 'admin'") {
+  users(orderBy: [{ createdAt: DESC }]) {
+    id
+    email
+    displayName
+    role
+  }
+}
+
+# Fetch all game stats for global admin analytics
+query GetAllGameStats @auth(level: USER) {
+  gameStats(orderBy: [{ date: DESC }], limit: 2000) {
+    id
+    gameName
+    date
+    mode
+    won
+    mistakes
+    attempts
+    isPlayTest
+  }
+}

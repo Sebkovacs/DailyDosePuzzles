@@ -1,0 +1,6 @@
+# dataconnect/connector/connector.yaml
+connectorId: "default"
+generate:
+  javascriptSdk:
+    outputDir: "../../lib/dataconnect"
+    package: "@dataconnect/default"

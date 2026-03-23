@@ -3,13 +3,13 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'motion/react';
-import { ChevronLeft, HelpCircle, Share2, X, RotateCcw, Delete, MessageSquare, Dices } from 'lucide-react';
+import { HelpCircle, Share2, X, RotateCcw, Delete, MessageSquare, Dices, Zap, Brain } from 'lucide-react';
 import { useAuth } from '@/lib/useAuth';
 import { saveGameStats, updateStreak } from '@/lib/firebase';
 import { getDailyNumbers, generateRandomNumbers, NumbersPuzzle } from '@/lib/numbers';
 import { FeedbackModal } from '@/components/FeedbackModal';
+import { GameLayout } from '@/components/GameLayout';
 import styles from './Numbers.module.css';
-import { Button } from '@/components/Button';
 
 interface NumberItem {
   id: string;
@@ -29,12 +29,18 @@ export default function NumbersGame() {
   const [dateString, setDateString] = useState('');
   const [puzzle, setPuzzle] = useState<NumbersPuzzle | null>(null);
   
+  const [gameMode, setGameMode] = useState<'select' | 'blitz' | 'zen'>('select');
+  const [timeLeft, setTimeLeft] = useState(30);
   const [availableNumbers, setAvailableNumbers] = useState<NumberItem[]>([]);
   const [history, setHistory] = useState<Step[]>([]);
   
   const [selectedNum1, setSelectedNum1] = useState<NumberItem | null>(null);
   const [selectedOp, setSelectedOp] = useState<string | null>(null);
   
+  const [score, setScore] = useState<number | null>(null);
+  const [stars, setStars] = useState<number | null>(null);
+  const [finalResult, setFinalResult] = useState<number | null>(null);
+
   const [isWin, setIsWin] = useState(false);
   const [isShaking, setIsShaking] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -60,16 +66,39 @@ export default function NumbersGame() {
     setMounted(true);
   }, []);
 
+  // Timer Logic for Blitz Mode
   useEffect(() => {
-    if (!isWin && puzzle && availableNumbers.some(n => n.value === puzzle.target)) {
+    let timer: NodeJS.Timeout;
+    if (gameMode === 'blitz' && !isWin && timeLeft > 0) {
+      timer = setInterval(() => setTimeLeft(t => t - 1), 1000);
+    } else if (gameMode === 'blitz' && timeLeft === 0 && !isWin) {
+      handleDeclare(); // Auto-declare when time runs out
+    }
+    return () => clearInterval(timer);
+  }, [gameMode, isWin, timeLeft]);
+
+  useEffect(() => {
+    // Exact Match Auto-Win
+    if (!isWin && puzzle && gameMode !== 'select' && availableNumbers.some(n => n.value === puzzle.target)) {
       setIsWin(true);
+      const steps = history.length;
+      setFinalResult(puzzle.target);
+      
+      if (gameMode === 'blitz') {
+        const timeBonus = Math.floor(timeLeft / 5); // Reward for speed
+        setScore(10 + timeBonus);
+      } else {
+        const earnedStars = steps <= 3 ? 3 : steps === 4 ? 2 : 1;
+        setStars(earnedStars);
+      }
+
       saveGameStats(user?.uid || null, {
         gameName: 'Numbers',
         date: dateString,
-        mode: 'standard',
+        mode: gameMode,
         won: true,
         mistakes: 0,
-        attempts: history.length,
+        attempts: steps,
         timeToComplete: Math.floor((Date.now() - startTime) / 1000),
         isPlayTest
       });
@@ -77,7 +106,23 @@ export default function NumbersGame() {
         updateStreak(user.uid).catch(console.error);
       }
     }
-  }, [availableNumbers, isWin, puzzle, user, dateString, history.length, startTime, isPlayTest]);
+  }, [availableNumbers, isWin, puzzle, user, dateString, history.length, startTime, isPlayTest, gameMode, timeLeft]);
+
+  const startGame = (mode: 'blitz' | 'zen') => {
+    setGameMode(mode);
+    setTimeLeft(30);
+    setScore(null);
+    setStars(null);
+    setFinalResult(null);
+    setIsWin(false);
+    setHistory([]);
+    setSelectedNum1(null);
+    setSelectedOp(null);
+    if (puzzle) {
+      setAvailableNumbers(puzzle.numbers.map((n, i) => ({ id: `init-${i}`, value: n })));
+    }
+    setStartTime(Date.now());
+  };
 
   const handleNumberClick = (num: NumberItem) => {
     if (isWin) return;
@@ -163,159 +208,225 @@ export default function NumbersGame() {
     setSelectedOp(null);
   };
 
+  const handleDeclare = () => {
+    if (!puzzle || isWin || gameMode !== 'blitz' || availableNumbers.length === 0) return;
+    
+    // Find the number on the board closest to the target
+    let closest = availableNumbers[0].value;
+    let minDelta = Math.abs(closest - puzzle.target);
+    
+    for (const n of availableNumbers) {
+      const d = Math.abs(n.value - puzzle.target);
+      if (d < minDelta) {
+        minDelta = d;
+        closest = n.value;
+      }
+    }
+    
+    let earnedScore = 0;
+    if (minDelta === 0) earnedScore = 10;
+    else if (minDelta <= 5) earnedScore = 7;
+    else if (minDelta <= 10) earnedScore = 5;
+    
+    setScore(earnedScore);
+    setFinalResult(closest);
+    setIsWin(true); 
+    
+    saveGameStats(user?.uid || null, {
+        gameName: 'Numbers',
+        date: dateString,
+        mode: 'blitz',
+        won: earnedScore > 0,
+        mistakes: minDelta,
+        attempts: history.length,
+        timeToComplete: Math.floor((Date.now() - startTime) / 1000),
+        isPlayTest
+    });
+  };
+
   const handleRandomPuzzle = () => {
     const randomPuzzle = generateRandomNumbers();
     setPuzzle(randomPuzzle);
-    const initialNumbers = randomPuzzle.numbers.map((n, i) => ({ id: `init-${i}`, value: n }));
-    setAvailableNumbers(initialNumbers);
-    setHistory([]);
-    setSelectedNum1(null);
-    setSelectedOp(null);
-    setIsWin(false);
+    setGameMode('select');
     setIsPlayTest(true);
-    setStartTime(Date.now());
   };
 
   const handleShare = () => {
-    const text = `Numbers - ${dateString}\n${isWin ? 'Solved!' : 'Failed'}\nSteps: ${history.length}`;
+    let text = '';
+    if (gameMode === 'blitz') {
+      text = `Numbers (Blitz) - ${dateString}\nTarget: ${puzzle?.target} | Reached: ${finalResult}\nScore: ${score} pts ⚡`;
+    } else {
+      const starString = '⭐'.repeat(stars || 0) + '⚪'.repeat(3 - (stars || 0));
+      text = `Numbers (Zen) - ${dateString}\nSolved in ${history.length} steps\nEfficiency: ${starString} 🧘`;
+    }
+    
     navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
-  if (!mounted || !puzzle) return <div className={styles.loading}>Loading...</div>;
+  if (!mounted || !puzzle) return <div style={{ height: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--bg-paper)', fontFamily: 'var(--font-official)' }}>Loading...</div>;
+
+  const leftActions = isTester ? (
+    <button onClick={() => setShowFeedback(true)} className={styles.iconBtn} title="Give Feedback">
+      <MessageSquare size={18} />
+    </button>
+  ) : null;
+
+  const rightActions = (
+    <>
+      {isTester && (
+        <button onClick={handleRandomPuzzle} className={styles.iconBtn} title="Random Puzzle">
+          <Dices size={18} />
+        </button>
+      )}
+      <button onClick={() => setShowHelp(true)} className={styles.iconBtn} title="Help">
+        <HelpCircle size={18} />
+      </button>
+    </>
+  );
 
   return (
-    <div className={styles.appContainer}>
-      <header className={styles.header}>
-        <div className={styles.headerIconGroup}>
-          <Link href="/" className={styles.iconBtn}>
-            <ChevronLeft size={20} />
-          </Link>
-          {isTester && (
-            <button onClick={() => setShowFeedback(true)} className={styles.iconBtn} title="Give Feedback">
-              <MessageSquare size={20} />
+    <GameLayout
+      title="Numbers"
+      subtitle={isPlayTest ? 'Playtest' : dateString}
+      leftActions={leftActions}
+      rightActions={rightActions}
+    >
+      <div className={styles.container}>
+        {gameMode === 'select' ? (
+          <div className={styles.selectScreen}>
+            <div className={styles.instructions} style={{marginBottom: '24px'}}>
+              <h2 className={styles.instructionTitle}>Choose Your Path.</h2>
+              <p className={styles.instructionDesc}>How would you like to solve today&apos;s puzzle?</p>
+            </div>
+            
+            <button onClick={() => startGame('blitz')} className={styles.modeCard}>
+              <h3 className={styles.modeCardTitle}><Zap size={24} color="var(--accent-ochre)" /> Blitz</h3>
+              <p className={styles.modeCardDesc}>30 seconds. Fast math. Get as close to the target as possible before time runs out.</p>
             </button>
-          )}
-        </div>
-        <div className={styles.titleGroup}>
-          <h1 className={styles.title}>Numbers</h1>
-          <p className={styles.subtitle}>
-            {isPlayTest ? 'PLAYTEST MODE' : dateString}
-          </p>
-        </div>
-        <div className={styles.headerIconGroup}>
-          {isTester && (
-            <button onClick={handleRandomPuzzle} className={styles.iconBtn} title="Random Puzzle">
-              <Dices size={20} />
+            
+            <button onClick={() => startGame('zen')} className={styles.modeCard}>
+              <h3 className={styles.modeCardTitle}><Brain size={24} color="var(--accent-viridian)" /> Zen</h3>
+              <p className={styles.modeCardDesc}>No timer. Must hit the exact target. Scored purely on the efficiency of your steps.</p>
             </button>
-          )}
-          <button onClick={() => setShowHelp(true)} className={styles.iconBtn}>
-            <HelpCircle size={20} />
-          </button>
-        </div>
-      </header>
-
-      <main className={styles.main}>
-        <div className={styles.instruction}>
-          <h2>Reach the target.</h2>
-          <p>Use the numbers and basic math to get exactly the target.</p>
-        </div>
-
-        <div className={styles.targetBox}>
-          {puzzle.target}
-        </div>
-
-        <motion.div 
-          className={styles.numbersArea}
-          animate={isShaking ? { x: [-5, 5, -5, 5, 0] } : {}}
-          transition={{ duration: 0.4 }}
-        >
-          <AnimatePresence>
-            {availableNumbers.map((num) => {
-              const isSelected = selectedNum1?.id === num.id;
-              const isTarget = num.value === puzzle.target;
-              
-              let btnClass = styles.numberBtn;
-              if (isSelected) {
-                btnClass = `${styles.numberBtn} ${styles.numberBtnSelected}`;
-              } else if (isWin && isTarget) {
-                btnClass = `${styles.numberBtn} ${styles.numberBtnCorrect}`;
-              }
-
-              return (
-                <motion.button
-                  key={num.id}
-                  layout
-                  initial={{ scale: 0.8, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  exit={{ scale: 0.8, opacity: 0 }}
-                  onClick={() => handleNumberClick(num)}
-                  className={btnClass}
-                >
-                  {num.value}
-                </motion.button>
-              );
-            })}
-          </AnimatePresence>
-        </motion.div>
-
-        <div className={styles.opsArea}>
-          {['+', '-', '*', '/'].map((op) => {
-            const isSelected = selectedOp === op;
-            return (
-              <button
-                key={op}
-                onClick={() => handleOpClick(op)}
-                disabled={!selectedNum1 || isWin}
-                className={`${styles.opBtn} ${isSelected ? styles.opBtnSelected : ''}`}
-              >
-                {op === '*' ? '×' : op === '/' ? '÷' : op}
-              </button>
-            );
-          })}
-        </div>
-
-        <div className={styles.actionsArea}>
-          <Button
-            variant="secondary"
-            onClick={handleUndo}
-            disabled={history.length === 0 || isWin}
-            icon={<RotateCcw size={16} />}
-          >
-            Undo
-          </Button>
-          <Button
-            variant="secondary"
-            onClick={handleReset}
-            disabled={history.length === 0 || isWin}
-            icon={<Delete size={16} />}
-          >
-            Reset
-          </Button>
-        </div>
-
-        <div className={styles.historyArea}>
-          <AnimatePresence>
-            {history.map((step, index) => (
-              <motion.div
-                key={step.id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className={styles.historyItem}
-              >
-                <span className={styles.historyIndex}>{index + 1}.</span>
-                <div className={styles.historyEquation}>
-                  <span>{step.num1.value}</span>
-                  <span className={styles.historyOp}>{step.op === '*' ? '×' : step.op === '/' ? '÷' : step.op}</span>
-                  <span>{step.num2.value}</span>
-                  <span className={styles.historyOp}>=</span>
-                  <span className={styles.historyResult}>{step.result.value}</span>
+          </div>
+        ) : (
+          <>
+            <div className={styles.gameHeader}>
+              {gameMode === 'blitz' ? (
+                <>
+                  <div className={`${styles.timer} ${timeLeft <= 10 ? styles.timerLow : ''}`}>
+                    0:{timeLeft.toString().padStart(2, '0')}
+                  </div>
+                  <button className={styles.declareBtn} onClick={handleDeclare} disabled={isWin || availableNumbers.length === 0}>
+                    Declare
+                  </button>
+                </>
+              ) : (
+                <div className={styles.instructions} style={{margin: 0, textAlign: 'left'}}>
+                  <h2 className={styles.instructionTitle}>Zen Mode</h2>
+                  <p className={styles.instructionDesc}>Hit the target in as few steps as possible.</p>
                 </div>
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </div>
+              )}
+            </div>
+
+            <div className={styles.targetBox}>
+              {puzzle.target}
+            </div>
+
+            <motion.div 
+              className={styles.numbersArea}
+              animate={isShaking ? { x: [-5, 5, -5, 5, 0] } : {}}
+              transition={{ duration: 0.4 }}
+            >
+              <AnimatePresence>
+                {availableNumbers.map((num) => {
+                  const isSelected = selectedNum1?.id === num.id;
+                  const isTarget = num.value === puzzle.target;
+                  
+                  let btnClass = styles.numberBtn;
+                  if (isSelected) {
+                    btnClass = `${styles.numberBtn} ${styles.numberBtnSelected}`;
+                  } else if (isWin && isTarget) {
+                    btnClass = `${styles.numberBtn} ${styles.numberBtnCorrect}`;
+                  }
+
+                  return (
+                    <motion.button
+                      key={num.id}
+                      layout
+                      initial={{ scale: 0.8, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      exit={{ scale: 0.8, opacity: 0 }}
+                      onClick={() => handleNumberClick(num)}
+                      className={btnClass}
+                    >
+                      {num.value}
+                    </motion.button>
+                  );
+                })}
+              </AnimatePresence>
+            </motion.div>
+
+            <div className={styles.opsArea}>
+              {['+', '-', '*', '/'].map((op) => {
+                const isSelected = selectedOp === op;
+                return (
+                  <button
+                    key={op}
+                    onClick={() => handleOpClick(op)}
+                    disabled={!selectedNum1 || isWin}
+                    className={`${styles.opBtn} ${isSelected ? styles.opBtnSelected : ''}`}
+                  >
+                    {op === '*' ? '×' : op === '/' ? '÷' : op}
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className={styles.actionsArea}>
+              <button
+                onClick={handleUndo}
+                disabled={history.length === 0 || isWin}
+                className={`${styles.actionBtn} ${styles.actionBtnSecondary}`}
+              >
+                <RotateCcw size={16} />
+                Undo
+              </button>
+              <button
+                onClick={handleReset}
+                disabled={history.length === 0 || isWin}
+                className={`${styles.actionBtn} ${styles.actionBtnSecondary}`}
+              >
+                <Delete size={16} />
+                Reset
+              </button>
+            </div>
+
+            <div className={styles.historyArea}>
+              <AnimatePresence>
+                {history.map((step, index) => (
+                  <motion.div
+                    key={step.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className={styles.historyItem}
+                  >
+                    <span className={styles.historyIndex}>{index + 1}.</span>
+                    <div className={styles.historyEquation}>
+                      <span>{step.num1.value}</span>
+                      <span className={styles.historyOp}>{step.op === '*' ? '×' : step.op === '/' ? '÷' : step.op}</span>
+                      <span>{step.num2.value}</span>
+                      <span className={styles.historyOp}>=</span>
+                      <span className={styles.historyResult}>{step.result.value}</span>
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </div>
+          </>
+        )}
 
         <AnimatePresence>
           {isWin && (
@@ -324,22 +435,37 @@ export default function NumbersGame() {
               animate={{ opacity: 1, y: 0 }}
               className={styles.modalOverlay}
             >
-              <div className={styles.modalContent}>
-                <h2 className={styles.modalTitle}>Target Reached!</h2>
-                <p className={styles.modalSubtitle}>You solved it in {history.length} steps.</p>
+              <div className={styles.modalCard}>
+                <h2 className={styles.modalTitle}>{gameMode === 'blitz' ? 'Time Logged!' : 'Calculation Perfect!'}</h2>
+                <p className={styles.modalDesc}>
+                  {gameMode === 'blitz' 
+                    ? `You reached ${finalResult}. (Target was ${puzzle.target})` 
+                    : `You found the target in ${history.length} steps.`}
+                </p>
+                
+                {gameMode === 'blitz' && score !== null && (
+                  <div className={styles.bigScore}>{score} pts</div>
+                )}
+                {gameMode === 'zen' && stars !== null && (
+                  <div className={styles.starsRow}>
+                    {'⭐'.repeat(stars)}{'⚪'.repeat(3 - stars)}
+                  </div>
+                )}
+
                 <div className={styles.modalActions}>
-                  <Button variant="success" fullWidth icon={<Share2 size={18} />} onClick={handleShare}>
+                  <button className={`${styles.actionBtn} ${styles.actionBtnSuccess}`} onClick={handleShare}>
+                    <Share2 size={18} />
                     {copied ? 'Copied to Clipboard!' : 'Share Result'}
-                  </Button>
-                  <Link href="/" style={{ textDecoration: 'none', display: 'block' }}>
-                    <Button variant="secondary" fullWidth>Back to Menu</Button>
+                  </button>
+                  <Link href="/" className={`${styles.actionBtn} ${styles.actionBtnSecondary}`}>
+                    Back to Menu
                   </Link>
                 </div>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
-      </main>
+      </div>
 
       <AnimatePresence>
         {showHelp && (
@@ -353,29 +479,29 @@ export default function NumbersGame() {
               initial={{ scale: 0.9, y: 20 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.9, y: 20 }}
-              className={styles.modalContent}
+              className={styles.modalCard}
             >
-              <button onClick={() => setShowHelp(false)} className={`${styles.iconBtn} ${styles.closeBtn}`}>
+              <button onClick={() => setShowHelp(false)} className={styles.closeBtn}>
                 <X size={20} />
               </button>
               <h2 className={styles.modalTitle}>How to Play</h2>
-              <div className={styles.modalSubtitle} style={{ textAlign: 'left', marginTop: '16px' }}>
-                <p>Use the provided numbers and basic math operations to reach the exact target number.</p>
+              <div className={styles.modalDesc} style={{ textAlign: 'left', marginTop: '16px', marginBottom: '32px' }}>
+                <p style={{marginBottom: '12px'}}>Use the provided numbers and basic math operations to reach the exact target number.</p>
                 <ul style={{ paddingLeft: '20px', marginTop: '12px', lineHeight: '1.6' }}>
-                  <li>You can use each number at most once.</li>
-                  <li>You don&apos;t have to use all the numbers.</li>
-                  <li>Fractions and negative numbers are not allowed at any step.</li>
+                  <li style={{marginBottom: '8px'}}>You can use each number at most once.</li>
+                  <li style={{marginBottom: '8px'}}>You don&apos;t have to use all the numbers.</li>
+                  <li style={{marginBottom: '8px'}}>Fractions and negative numbers are not allowed at any step.</li>
                   <li>Select a number, then an operation, then another number.</li>
                 </ul>
               </div>
-              <Button variant="primary" fullWidth onClick={() => setShowHelp(false)}>
+              <button className={`${styles.actionBtn} ${styles.actionBtnPrimary}`} onClick={() => setShowHelp(false)}>
                 Got it
-              </Button>
+              </button>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
       <FeedbackModal isOpen={showFeedback} onClose={() => setShowFeedback(false)} gameName="Numbers" userId={user?.uid} />
-    </div>
+    </GameLayout>
   );
 }

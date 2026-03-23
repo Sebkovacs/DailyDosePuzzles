@@ -1,13 +1,42 @@
 "use client";
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Play, LogIn, LogOut, Flame, BarChart2 } from 'lucide-react';
+import { Play, LogIn, LogOut, Flame, BarChart2, Shield } from 'lucide-react';
 import { useAuth } from '@/lib/useAuth';
 import { signInWithGoogle, logout } from '@/lib/firebase';
 import styles from './page.module.css';
 
+const DEFAULT_GAMES = [
+  { id: 'chain', href: '/chain', title: 'Chain', desc: 'Connect the start and end words.', themeClass: styles.themeChain },
+  { id: 'stab', href: '/stab', title: 'Stab', desc: 'Wordle meets Chain. Deduce the missing links.', themeClass: styles.themeStab },
+  { id: 'spectrum', href: '/spectrum', title: 'Spectrum', desc: 'Sort the items by a hidden metric.', themeClass: styles.themeSpectrum },
+  { id: 'numbers', href: '/numbers', title: 'Numbers', desc: 'Use math to reach the exact target.', themeClass: styles.themeNumbers },
+  { id: 'split', href: '/split', title: 'Split', desc: 'Combine halves to form 16 words.', themeClass: styles.themeSplit },
+  { id: 'layers', href: '/layers', title: 'Layers', desc: 'Find the groups, then find the meta.', themeClass: styles.themeLayers },
+  { id: 'vault', href: '/vault', title: 'Vault', desc: 'Crack the code using logic rules.', themeClass: styles.themeVault },
+  { id: 'shift', href: '/shift', title: 'Shift', desc: 'Slide columns to reveal the words.', themeClass: styles.themeShift },
+  { id: 'lexicon', href: '/lexicon', title: 'Lexicon', desc: 'Build words from the falling letters.', themeClass: styles.themeLexicon },
+  { id: 'roots', href: '/roots', title: 'Roots', desc: 'Deduce the word from its ancient literal translation.', themeClass: styles.themeRoots },
+  { id: 'weave', href: '/weave', title: 'Weave', desc: 'Draw continuous paths to connect the nodes.', themeClass: styles.themeWeave }
+];
+
 export default function Menu() {
   const { user, profile, loading } = useAuth();
+  const [games, setGames] = useState(DEFAULT_GAMES);
+
+  useEffect(() => {
+    if (profile?.role === 'tester' || profile?.role === 'admin') {
+      const shuffled = [...DEFAULT_GAMES];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      setGames(shuffled);
+    } else {
+      setGames(DEFAULT_GAMES);
+    }
+  }, [profile?.role]);
 
   return (
     <div className={styles.appContainer}>
@@ -16,144 +45,65 @@ export default function Menu() {
           {!loading && (
             user ? (
               <>
+                {profile?.role === 'admin' && (
+                  <Link href="/admin" className={styles.iconBtn} title="Admin Portal">
+                    <Shield size={18} />
+                  </Link>
+                )}
+                
                 <Link href="/stats" className={styles.statsPill}>
                   <BarChart2 size={16} />
                   <span>Stats</span>
                 </Link>
-                {profile && profile.currentStreak > 0 && (
-                  <div className={styles.streakPill}>
-                    <Flame size={16} />
-                    <span>{profile.currentStreak}</span>
-                  </div>
-                )}
-                <button 
-                  onClick={logout}
-                  className={styles.iconBtn}
-                  title="Sign Out"
-                >
+                <div className={styles.streakPill}>
+                  <Flame size={14} color="#F9EAE7" fill="#F9EAE7" />
+                  <span>{profile?.streak || 0}</span>
+                </div>
+                <button onClick={logout} className={styles.iconBtn} title="Sign Out">
                   <LogOut size={18} />
                 </button>
               </>
             ) : (
-              <button 
-                onClick={signInWithGoogle}
-                className={styles.signInBtn}
-              >
+              <button onClick={signInWithGoogle} className={styles.signInBtn}>
                 <LogIn size={16} />
-                <span>Sign In</span>
+                <span>Sign In to Save</span>
               </button>
             )
           )}
         </div>
         
-        <h1 className={styles.title}>Daily Dose</h1>
-        <p className={styles.subtitle}>Refined challenges for the lateral mind.</p>
-        
-        {!loading && profile && (
+        <h1 className={styles.title}>Da Vinci</h1>
+        <p className={styles.subtitle}>Classical Logic & Deduction</p>
+
+        {user && (
           <div className={styles.streakStats}>
             <div className={styles.streakStatItem}>
-              <span className={styles.streakStatNumber}>{profile.currentStreak}</span>
-              <span>Current Streak</span>
+              <span>Streak</span>
+              <span className={styles.streakStatNumber}>{profile?.streak || 0}</span>
             </div>
             <div className={styles.streakStatItem}>
-              <span className={styles.streakStatNumber}>{profile.longestStreak}</span>
-              <span>Longest Streak</span>
+              <span>Max</span>
+              <span className={styles.streakStatNumber}>{profile?.maxStreak || 0}</span>
             </div>
           </div>
         )}
       </header>
 
-      <main className={styles.gameList}>
-        <Link href="/chain" className={`${styles.gameCard} ${styles.themeChain}`}>
-          <div className={styles.gameCardStrip}></div>
-          <div className={styles.gameCardContent}>
-            <div>
-              <h2 className={styles.gameTitle}>Chain</h2>
-              <p className={styles.gameDesc}>Connect the start and end words.</p>
+      <main className={styles.main}>
+        {games.map((game) => (
+          <Link key={game.id} href={game.href} className={`${styles.gameCard} ${game.themeClass}`}>
+            <div className={styles.gameCardStrip}></div>
+            <div className={styles.gameCardContent}>
+              <div>
+                <h2 className={styles.gameTitle}>{game.title}</h2>
+                <p className={styles.gameDesc}>{game.desc}</p>
+              </div>
+              <div className={styles.playIcon}>
+                <Play size={20} style={{ marginLeft: '2px' }} />
+              </div>
             </div>
-            <div className={styles.playIcon}>
-              <Play size={20} style={{ marginLeft: '2px' }} />
-            </div>
-          </div>
-        </Link>
-
-        <Link href="/spectrum" className={`${styles.gameCard} ${styles.themeSpectrum}`}>
-          <div className={styles.gameCardStrip}></div>
-          <div className={styles.gameCardContent}>
-            <div>
-              <h2 className={styles.gameTitle}>Spectrum</h2>
-              <p className={styles.gameDesc}>Sort the items by a hidden metric.</p>
-            </div>
-            <div className={styles.playIcon}>
-              <Play size={20} style={{ marginLeft: '2px' }} />
-            </div>
-          </div>
-        </Link>
-
-        <Link href="/numbers" className={`${styles.gameCard} ${styles.themeNumbers}`}>
-          <div className={styles.gameCardStrip}></div>
-          <div className={styles.gameCardContent}>
-            <div>
-              <h2 className={styles.gameTitle}>Numbers</h2>
-              <p className={styles.gameDesc}>Use math to reach the exact target.</p>
-            </div>
-            <div className={styles.playIcon}>
-              <Play size={20} style={{ marginLeft: '2px' }} />
-            </div>
-          </div>
-        </Link>
-
-        <Link href="/split" className={`${styles.gameCard} ${styles.themeSplit}`}>
-          <div className={styles.gameCardStrip}></div>
-          <div className={styles.gameCardContent}>
-            <div>
-              <h2 className={styles.gameTitle}>Split</h2>
-              <p className={styles.gameDesc}>Combine halves to form 16 words.</p>
-            </div>
-            <div className={styles.playIcon}>
-              <Play size={20} style={{ marginLeft: '2px' }} />
-            </div>
-          </div>
-        </Link>
-
-        <Link href="/layers" className={`${styles.gameCard} ${styles.themeLayers}`}>
-          <div className={styles.gameCardStrip}></div>
-          <div className={styles.gameCardContent}>
-            <div>
-              <h2 className={styles.gameTitle}>Layers</h2>
-              <p className={styles.gameDesc}>Find the groups, then find the meta.</p>
-            </div>
-            <div className={styles.playIcon}>
-              <Play size={20} style={{ marginLeft: '2px' }} />
-            </div>
-          </div>
-        </Link>
-
-        <Link href="/vault" className={`${styles.gameCard} ${styles.themeVault}`}>
-          <div className={styles.gameCardStrip}></div>
-          <div className={styles.gameCardContent}>
-            <div>
-              <h2 className={styles.gameTitle}>Vault</h2>
-              <p className={styles.gameDesc}>Crack the code using logic rules.</p>
-            </div>
-            <div className={styles.playIcon}>
-              <Play size={20} style={{ marginLeft: '2px' }} />
-            </div>
-          </div>
-        </Link>
-
-        <Link href="/shift" className={`${styles.gameCard} ${styles.themeShift}`}>
-          <div className={styles.gameCardStrip}></div>
-          <div className={styles.gameCardContent}>
-            <div>
-              <h2 className={styles.gameTitle}>Shift</h2>
-              <p className={styles.gameDesc}>Slide columns to reveal the words.</p>
-            </div>
-            <div className={styles.playIcon}>
-              <Play size={20} style={{ marginLeft: '2px' }} />
-            </div>
-          </div>
-        </Link>
+          </Link>
+        ))}
       </main>
     </div>
   );

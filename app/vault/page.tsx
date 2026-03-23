@@ -3,11 +3,13 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { getDailyVault, generateRandomVault, VaultPuzzle } from '@/lib/vault';
-import { ChevronLeft, HelpCircle, Share2, X, Delete, MessageSquare, Dices } from 'lucide-react';
+import { HelpCircle, Share2, X, Delete, MessageSquare, Dices } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth } from '@/lib/useAuth';
 import { updateStreak, saveGameStats } from '@/lib/firebase';
 import { FeedbackModal } from '@/components/FeedbackModal';
+import { GameLayout } from '@/components/GameLayout';
+import styles from './Vault.module.css';
 
 export default function Vault() {
   const [mounted, setMounted] = useState(false);
@@ -125,116 +127,105 @@ export default function Vault() {
     }
   }, [isWin, user, isPlayTest]);
 
-  if (!mounted || !puzzle) return <div className="min-h-screen flex items-center justify-center bg-[#F5F2ED] text-[#1A1A1A]">Loading...</div>;
+  if (!mounted || !puzzle) return <div style={{ height: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--bg-paper)', fontFamily: 'var(--font-official)' }}>Loading...</div>;
+
+  const leftActions = isTester ? (
+    <button onClick={() => setShowFeedback(true)} className={styles.iconBtn} title="Give Feedback">
+      <MessageSquare size={18} />
+    </button>
+  ) : null;
+
+  const rightActions = (
+    <>
+      {isTester && (
+        <button onClick={handleRandomPuzzle} className={styles.iconBtn} title="Random Puzzle">
+          <Dices size={18} />
+        </button>
+      )}
+      <button onClick={() => setShowHelp(true)} className={styles.iconBtn} title="Help">
+        <HelpCircle size={18} />
+      </button>
+    </>
+  );
 
   return (
-    <div className="h-[100dvh] overflow-hidden bg-[#F5F2ED] text-[#1A1A1A] font-sans flex flex-col items-center">
-      <header className="w-full max-w-md px-2 py-1 flex items-center justify-between border-b-[1.5px] border-[#1A1A1A] shrink-0">
-        <div className="flex items-center gap-1">
-          <Link href="/" className="p-1.5 hover:bg-neutral-300 rounded-sm transition-colors">
-            <ChevronLeft className="w-5 h-5" />
-          </Link>
-          {isTester && (
-            <button onClick={() => setShowFeedback(true)} className="p-1.5 hover:bg-neutral-300 rounded-sm transition-colors text-blue-600" title="Give Feedback">
-              <MessageSquare className="w-5 h-5" />
-            </button>
-          )}
-        </div>
-        <div className="text-center">
-          <h1 className="text-6xl font-serif font-black tracking-tight leading-none">VAULT</h1>
-          <p className="text-[10px] font-bold text-neutral-600 uppercase tracking-widest mt-0.5">
-            {isPlayTest ? 'PLAYTEST MODE' : dateString}
-          </p>
-        </div>
-        <div className="flex items-center gap-1">
-          {isTester && (
-            <button onClick={handleRandomPuzzle} className="p-1.5 hover:bg-neutral-300 rounded-sm transition-colors text-emerald-600" title="Random Puzzle">
-              <Dices className="w-5 h-5" />
-            </button>
-          )}
-          <button onClick={() => setShowHelp(true)} className="p-1.5 hover:bg-neutral-300 rounded-sm transition-colors">
-            <HelpCircle className="w-5 h-5" />
-          </button>
-        </div>
-      </header>
-
-      <main className="flex-1 min-h-0 w-full max-w-md px-4 py-6 flex flex-col items-center overflow-y-auto relative">
-        <div className="flex justify-center mb-6 shrink-0 w-full">
-          <div className="bg-neutral-100 p-1 rounded-full flex gap-1 border border-neutral-200 w-full max-w-[200px]">
+    <GameLayout
+      title="Vault"
+      subtitle={isPlayTest ? 'Playtest' : dateString}
+      leftActions={leftActions}
+      rightActions={rightActions}
+    >
+      <div className={styles.container}>
+        <div className={styles.modeToggle}>
             <button 
               onClick={() => setMode('easy')}
-              className={`flex-1 py-1.5 rounded-full text-xs font-bold transition-all ${mode === 'easy' ? 'bg-white text-neutral-900 shadow-sm border border-neutral-200' : 'text-neutral-500 hover:text-neutral-700 border border-transparent'}`}
+              className={`${styles.modeBtn} ${mode === 'easy' ? styles.modeBtnActive : ''}`}
             >
               Easy
             </button>
             <button 
               onClick={() => setMode('hard')}
-              className={`flex-1 py-1.5 rounded-full text-xs font-bold transition-all ${mode === 'hard' ? 'bg-white text-neutral-900 shadow-sm border border-neutral-200' : 'text-neutral-500 hover:text-neutral-700 border border-transparent'}`}
+              className={`${styles.modeBtn} ${mode === 'hard' ? styles.modeBtnActive : ''}`}
             >
               Hard
             </button>
-          </div>
         </div>
 
         {!isGameOver ? (
           <>
-            <div className="text-center mb-6">
-              <h2 className="text-lg font-serif font-medium text-neutral-800">Crack the code.</h2>
-              <p className="text-xs text-neutral-500 mt-1">Follow the security protocols.</p>
+            <div className={styles.instructions}>
+              <h2 className={styles.instructionTitle}>Crack the code.</h2>
+              <p className={styles.instructionDesc}>Follow the security protocols.</p>
             </div>
 
-            <div className="mb-6 bg-slate-50 border border-slate-200 p-5 rounded-2xl w-full max-w-[340px]">
-              <h2 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 text-center border-b border-slate-200 pb-2">Security Protocols</h2>
-              <ul className="space-y-3">
+            <div className={styles.rulesBox}>
+              <h2 className={styles.rulesHeader}>Security Protocols</h2>
+              <ul className={styles.ruleList}>
                 {puzzle.rules.map((rule, idx) => (
-                  <li key={idx} className="text-xs font-medium flex items-start gap-2 text-slate-700">
-                    <span className="text-slate-400 mt-[3px] text-[8px] leading-none">■</span>
-                    <span className="leading-snug">{rule}</span>
+                  <li key={idx} className={styles.ruleItem}>
+                    <span className={styles.ruleBullet}>■</span>
+                    <span>{rule}</span>
                   </li>
                 ))}
               </ul>
             </div>
 
-            <div className="flex flex-col items-center mb-6 w-full max-w-[340px]">
               <motion.div 
                 animate={shake ? { x: [-10, 10, -10, 10, 0] } : {}}
                 transition={{ duration: 0.4 }}
-                className="flex gap-3 mb-4"
+                className={styles.codeDisplay}
               >
                 {Array.from({ length: puzzle.code.length }).map((_, idx) => (
                   <div 
                     key={idx} 
-                    className={`w-14 h-16 flex items-center justify-center text-3xl font-mono font-bold border-2 rounded-xl transition-colors ${
-                      input[idx] ? 'bg-white border-slate-900 text-slate-900' : 'bg-slate-50 border-slate-200 text-transparent'
-                    } ${isWin ? 'bg-emerald-500 border-emerald-500 text-white' : ''}`}
+                    className={`${styles.codeSlot} ${
+                      input[idx] ? styles.codeSlotFilled : styles.codeSlotEmpty
+                    } ${isWin ? styles.codeSlotWin : ''}`}
                   >
                     {input[idx] || '0'}
                   </div>
                 ))}
               </motion.div>
               
-              <div className="w-full flex justify-between items-center px-2">
-                <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">Mistakes Remaining</span>
-                <div className="flex gap-1.5">
+              <div className={styles.mistakesContainer}>
+                <span className={styles.mistakesLabel}>Mistakes Remaining</span>
+                <div className={styles.dotsGroup}>
                   {[...Array(MAX_ATTEMPTS)].map((_, i) => (
                     <div 
                       key={i} 
-                      className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                        i < (MAX_ATTEMPTS - attempts) ? 'bg-slate-500 scale-100' : 'bg-neutral-200 scale-75'
-                      }`}
+                      className={`${styles.mistakeDot} ${i < (MAX_ATTEMPTS - attempts) ? styles.mistakeDotActive : ''}`}
                     />
                   ))}
                 </div>
               </div>
-            </div>
 
-            <div className="grid grid-cols-3 gap-2 mt-auto w-full max-w-[340px] pb-4">
+            <div className={styles.numpad}>
               {['1', '2', '3', '4', '5', '6', '7', '8', '9'].map((num) => (
                 <button
                   key={num}
                   onClick={() => handleKeyPress(num)}
                   disabled={input.length >= puzzle.code.length || isWin}
-                  className="bg-white border border-neutral-200 py-3 text-xl font-mono font-bold rounded-2xl hover:bg-neutral-50 hover:border-neutral-300 active:scale-95 transition-all disabled:opacity-50 text-neutral-800"
+                  className={styles.numBtn}
                 >
                   {num}
                 </button>
@@ -242,23 +233,23 @@ export default function Vault() {
               <button
                 onClick={() => handleKeyPress('delete')}
                 disabled={input.length === 0 || isWin}
-                className="bg-neutral-100 border border-transparent py-3 flex items-center justify-center rounded-2xl hover:bg-neutral-200 active:scale-95 transition-all disabled:opacity-50 text-neutral-600"
+                className={`${styles.numBtn} ${styles.actionKey}`}
               >
                 <Delete className="w-5 h-5" />
               </button>
               <button
                 onClick={() => handleKeyPress('0')}
                 disabled={input.length >= puzzle.code.length || isWin}
-                className="bg-white border border-neutral-200 py-3 text-xl font-mono font-bold rounded-2xl hover:bg-neutral-50 hover:border-neutral-300 active:scale-95 transition-all disabled:opacity-50 text-neutral-800"
+                className={styles.numBtn}
               >
                 0
               </button>
               <button
                 onClick={() => handleKeyPress('submit')}
                 disabled={input.length !== puzzle.code.length || isWin}
-                className="bg-slate-900 border border-transparent py-3 flex items-center justify-center rounded-2xl hover:bg-black active:scale-95 transition-all disabled:opacity-50 text-white"
+                className={`${styles.numBtn} ${styles.enterKey}`}
               >
-                <span className="font-bold text-xs uppercase tracking-widest">Enter</span>
+                Enter
               </button>
             </div>
           </>
@@ -302,30 +293,30 @@ export default function Vault() {
           {showHelp && (
             <motion.div 
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="absolute inset-0 z-50 flex items-center justify-center bg-[#1A1A1A]/50 backdrop-blur-sm p-4"
+              className={styles.modalOverlay}
             >
               <motion.div 
                 initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
-                className="bg-white p-6 rounded-lg shadow-[10px_10px_0px_#1A1A1A] max-w-sm w-full relative border-2 border-[#1A1A1A]"
+                className={styles.modalCard}
               >
-                <button onClick={() => setShowHelp(false)} className="absolute top-3 right-3 p-1.5 text-[#1A1A1A] hover:bg-neutral-300 rounded-sm transition-colors">
-                  <X className="w-4 h-4" />
+                <button onClick={() => setShowHelp(false)} className={styles.closeBtn}>
+                  <X size={20} />
                 </button>
-                <h2 className="text-6xl font-serif font-black mb-3">How to Play</h2>
-                <div className="space-y-3 text-base text-neutral-600">
-                  <p>You are a safecracker trying to deduce a 4-digit passcode.</p>
-                  <p>Read the <span className="text-[#1A1A1A] font-black">Security Protocols</span> carefully. They provide absolute logical rules about the code.</p>
-                  <p>You have exactly <strong>3 chances</strong> to enter the correct combination before the vault locks down.</p>
+                <h2 className={styles.modalTitle}>How to Play</h2>
+                <div className={styles.modalDesc} style={{ textAlign: 'left', marginBottom: '32px' }}>
+                  <p style={{marginBottom: '12px'}}>You are a safecracker trying to deduce a 4-digit passcode.</p>
+                  <p style={{marginBottom: '12px'}}>Read the <strong style={{color: 'var(--ink-main)'}}>Security Protocols</strong> carefully. They provide absolute logical rules about the code.</p>
+                  <p>You have exactly <strong style={{color: 'var(--ink-main)'}}>3 chances</strong> to enter the correct combination before the vault locks down.</p>
                 </div>
-                <button onClick={() => setShowHelp(false)} className="mt-6 w-full py-2.5 rounded-md bg-[#1A1A1A] text-white text-base font-black hover:bg-black transition-colors border-2 border-[#1A1A1A] shadow-[4px_4px_0px_#1A1A1A] active:translate-y-[2px] active:shadow-none">
+                <button onClick={() => setShowHelp(false)} className={`${styles.actionBtn} ${styles.actionBtnPrimary}`}>
                   Got it
                 </button>
               </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
-      </main>
+      </div>
       <FeedbackModal isOpen={showFeedback} onClose={() => setShowFeedback(false)} gameName="Vault" userId={user?.uid} />
-    </div>
+    </GameLayout>
   );
 }

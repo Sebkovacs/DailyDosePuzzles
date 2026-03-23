@@ -4,11 +4,13 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { getDailyChain, generateRandomChain, ChainPuzzle } from '@/lib/chain';
 import { shuffleArray } from '@/lib/puzzles';
-import { ChevronLeft, HelpCircle, Share2, X, MessageSquare, Dices } from 'lucide-react';
+import { HelpCircle, Share2, X, MessageSquare, Dices } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth } from '@/lib/useAuth';
 import { updateStreak, saveGameStats } from '@/lib/firebase';
 import { FeedbackModal } from '@/components/FeedbackModal';
+import { GameLayout } from '@/components/GameLayout';
+import styles from './Chain.module.css';
 
 export default function Chain() {
   const [mounted, setMounted] = useState(false);
@@ -168,106 +170,96 @@ export default function Chain() {
     }
   }, [isWin, user, isPlayTest]);
 
-  if (!mounted || !puzzle) return <div className="h-[100dvh] flex items-center justify-center bg-[#F5F2ED]">Loading...</div>;
+  if (!mounted || !puzzle) return <div style={{ height: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--bg-paper)', fontFamily: 'var(--font-official)' }}>Loading...</div>;
+
+  const leftActions = isTester ? (
+    <button onClick={() => setShowFeedback(true)} className={styles.iconBtn} title="Give Feedback">
+      <MessageSquare size={18} />
+    </button>
+  ) : null;
+
+  const rightActions = (
+    <>
+      {isTester && (
+        <button onClick={handleRandomPuzzle} className={styles.iconBtn} title="Random Puzzle">
+          <Dices size={18} />
+        </button>
+      )}
+      <button onClick={() => setShowHelp(true)} className={styles.iconBtn} title="Help">
+        <HelpCircle size={18} />
+      </button>
+    </>
+  );
 
   return (
-    <div className="h-[100dvh] overflow-hidden bg-white text-neutral-800 font-sans flex flex-col items-center">
-      <header className="w-full max-w-md px-4 py-3 flex items-center justify-between border-b border-neutral-100 shrink-0">
-        <div className="flex items-center gap-1">
-          <Link href="/" className="p-2 hover:bg-neutral-100 text-neutral-400 hover:text-neutral-800 rounded-full transition-colors">
-            <ChevronLeft className="w-5 h-5" />
-          </Link>
-          {isTester && (
-            <button onClick={() => setShowFeedback(true)} className="p-1.5 hover:bg-neutral-300 rounded-sm transition-colors text-blue-600" title="Give Feedback">
-              <MessageSquare className="w-5 h-5" />
-            </button>
-          )}
-        </div>
-        <div className="text-center">
-          <h1 className="text-3xl font-serif font-bold tracking-tight text-neutral-900">Chain</h1>
-          <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest mt-1">
-            {isPlayTest ? 'Playtest' : dateString}
-          </p>
-        </div>
-        <div className="flex items-center gap-1">
-          {isTester && (
-            <button onClick={handleRandomPuzzle} className="p-2 hover:bg-neutral-100 text-emerald-500 rounded-full transition-colors" title="Random Puzzle">
-              <Dices className="w-5 h-5" />
-            </button>
-          )}
-          <button onClick={() => setShowHelp(true)} className="p-2 hover:bg-neutral-100 text-neutral-400 hover:text-neutral-800 rounded-full transition-colors">
-            <HelpCircle className="w-5 h-5" />
-          </button>
-        </div>
-      </header>
-
-      <main className="flex-1 min-h-0 w-full max-w-md px-4 py-6 flex flex-col overflow-y-auto">
-        <div className="text-center mb-8">
-          <h2 className="text-lg font-serif font-medium text-neutral-800">Connect the words.</h2>
-          <p className="text-xs text-neutral-500 mt-1">Find the {puzzle.chain.length + 1}-step path from Start to End.</p>
+    <GameLayout
+      title="Chain"
+      subtitle={isPlayTest ? 'Playtest' : dateString}
+      leftActions={leftActions}
+      rightActions={rightActions}
+    >
+      <div className={styles.container}>
+        <div className={styles.instructions}>
+          <h2 className={styles.instructionTitle}>Connect the words.</h2>
+          <p className={styles.instructionDesc}>Find the {puzzle.chain.length + 1}-step path from Start to End.</p>
         </div>
 
-        <div className="w-full bg-indigo-50 text-indigo-900 rounded-2xl py-4 text-center font-black text-lg mb-4">
+        <div className={styles.bookend}>
           {puzzle.startWord}
         </div>
 
         <motion.div 
-          className="grid grid-cols-4 gap-2 mb-4 flex-1 content-start"
+          className={styles.grid}
           animate={isShaking ? { x: [-5, 5, -5, 5, 0] } : {}}
           transition={{ duration: 0.4 }}
         >
           {activeGrid.map((word) => {
             const selectedIndex = selectedChain.indexOf(word);
             const isSelected = selectedIndex !== -1;
-            
-            let bgClass = 'bg-neutral-50 text-neutral-800 border-neutral-200 hover:bg-neutral-100 hover:border-neutral-300';
-            if (isSelected) {
-              bgClass = 'bg-indigo-600 text-white border-indigo-600 scale-95';
-            }
 
             return (
               <motion.button
                 key={word}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => handleWordClick(word)}
-                className={`
-                  aspect-square rounded-xl font-bold text-[10px] sm:text-xs transition-all duration-200 flex flex-col items-center justify-center uppercase tracking-wider relative border
-                  ${bgClass}
-                `}
+                className={`${styles.wordBtn} ${isSelected ? styles.wordBtnSelected : ''}`}
               >
                 {word}
                 {isSelected && (
-                  <span className="absolute top-0.5 right-1 text-[7px] opacity-70">{selectedIndex + 1}</span>
+                  <span className={styles.wordIndex}>{selectedIndex + 1}</span>
                 )}
               </motion.button>
             );
           })}
         </motion.div>
 
-        <div className="w-full bg-indigo-50 text-indigo-900 rounded-2xl py-4 text-center font-black text-lg mb-4">
+        <div className={styles.bookend}>
           {puzzle.endWord}
         </div>
 
-        <div className="mt-auto flex flex-col items-center gap-4 pb-4">
-          <div className="flex items-center gap-1.5">
-            <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest mr-2">Mistakes Remaining</span>
+        <div className={styles.bottomArea}>
+          <div className={styles.mistakesContainer}>
+            <span className={styles.mistakesLabel}>Mistakes Remaining</span>
             {[...Array(MAX_MISTAKES)].map((_, i) => (
-              <div key={i} className={`w-2 h-2 rounded-full transition-all duration-300 ${i < (MAX_MISTAKES - mistakes) ? 'bg-indigo-500 scale-100' : 'bg-neutral-200 scale-75'}`} />
+              <div 
+                key={i} 
+                className={`${styles.mistakeDot} ${i < (MAX_MISTAKES - mistakes) ? styles.mistakeDotActive : ''}`} 
+              />
             ))}
           </div>
           
-          <div className="flex gap-3 w-full">
+          <div className={styles.actionsRow}>
             <button 
               onClick={() => setSelectedChain([])}
               disabled={selectedChain.length === 0 || isGameOver || isWin}
-              className="flex-1 py-3 rounded-full border border-neutral-200 bg-white font-bold text-neutral-600 hover:bg-neutral-50 disabled:opacity-50 transition-all text-sm active:scale-95"
+              className={`${styles.actionBtn} ${styles.actionBtnSecondary}`}
             >
               Clear
             </button>
             <button 
               onClick={handleSubmit}
               disabled={selectedChain.length === 0 || isGameOver || isWin}
-              className="flex-1 py-3 rounded-full bg-neutral-900 text-white font-bold hover:bg-black disabled:opacity-50 transition-all text-sm active:scale-95"
+              className={`${styles.actionBtn} ${styles.actionBtnPrimary}`}
             >
               Submit
             </button>
@@ -278,39 +270,39 @@ export default function Chain() {
           {(isGameOver || isWin) && (
             <motion.div 
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="absolute inset-0 z-10 flex items-center justify-center bg-white/95 backdrop-blur-sm p-4"
+              className={styles.modalOverlay}
             >
               <motion.div
                 initial={{ scale: 0.95, opacity: 0, y: 10 }} animate={{ scale: 1, opacity: 1, y: 0 }}
-                className="bg-white p-8 rounded-3xl shadow-2xl text-center max-w-sm w-full border border-neutral-100"
+                className={styles.modalCard}
               >
-                <h2 className="text-4xl font-serif font-bold tracking-tight mb-2 text-neutral-900">{isWin ? 'Chain Linked!' : 'Broken Chain!'}</h2>
-                <p className="text-sm text-neutral-500 mb-6">{isWin ? 'You found the correct path.' : 'You ran out of mistakes.'}</p>
+                <h2 className={styles.modalTitle}>{isWin ? 'Chain Linked!' : 'Broken Chain!'}</h2>
+                <p className={styles.modalDesc}>{isWin ? 'You found the correct path.' : 'You ran out of mistakes.'}</p>
                 
-                <div className="mb-6 w-full text-left bg-neutral-50 p-4 rounded-2xl border border-neutral-100">
-                  <h3 className="font-bold text-[10px] text-neutral-400 uppercase tracking-widest mb-3 text-center">Today&apos;s Chain</h3>
-                  <div className="flex flex-wrap items-center justify-center gap-2 text-xs font-bold">
-                    <span className="bg-neutral-900 text-white px-3 py-1.5 rounded-lg">{puzzle.startWord}</span>
+                <div className={styles.chainResultBox}>
+                  <h3 className={styles.chainResultLabel}>Today&apos;s Chain</h3>
+                  <div className={styles.chainFlow}>
+                    <span className={styles.chainWordEnd}>{puzzle.startWord}</span>
                     {puzzle.chain.map(word => (
-                      <div key={word} className="flex items-center gap-2">
-                        <span className="text-neutral-300">→</span>
-                        <span className="bg-white border border-neutral-200 px-3 py-1.5 rounded-lg text-neutral-800">{word}</span>
+                      <div key={word} style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
+                        <span className={styles.chainArrow}>→</span>
+                        <span className={styles.chainWord}>{word}</span>
                       </div>
                     ))}
-                    <span className="text-neutral-300">→</span>
-                    <span className="bg-neutral-900 text-white px-3 py-1.5 rounded-lg">{puzzle.endWord}</span>
+                    <span className={styles.chainArrow}>→</span>
+                    <span className={styles.chainWordEnd}>{puzzle.endWord}</span>
                   </div>
                 </div>
 
-                <div className="flex flex-col gap-3">
+                <div className={styles.modalActions}>
                   <button 
                     onClick={handleShare}
-                    className="w-full py-3.5 rounded-full bg-indigo-600 text-white text-sm font-bold hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2 active:scale-95"
+                    className={`${styles.actionBtn} ${styles.actionBtnPrimary}`}
                   >
                     <Share2 className="w-4 h-4" />
                     {copied ? 'Copied to Clipboard!' : 'Share Result'}
                   </button>
-                  <Link href="/" className="block w-full py-3.5 rounded-full bg-neutral-100 text-neutral-600 text-sm font-bold hover:bg-neutral-200 transition-colors active:scale-95">
+                  <Link href="/" className={`${styles.actionBtn} ${styles.actionBtnSecondary}`}>
                     Back to Menu
                   </Link>
                 </div>
@@ -324,30 +316,30 @@ export default function Chain() {
           {showHelp && (
             <motion.div 
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="absolute inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-sm p-4"
+              className={styles.modalOverlay}
             >
               <motion.div 
                 initial={{ scale: 0.95, opacity: 0, y: 10 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.95, opacity: 0, y: 10 }}
-                className="bg-white p-8 rounded-3xl shadow-xl max-w-sm w-full relative"
+                className={styles.modalCard}
               >
-                <button onClick={() => setShowHelp(false)} className="absolute top-4 right-4 p-2 text-neutral-400 hover:bg-neutral-100 rounded-full transition-colors">
+                <button onClick={() => setShowHelp(false)} className={styles.closeBtn}>
                   <X className="w-5 h-5" />
                 </button>
-                <h2 className="text-3xl font-serif font-black mb-4">How to Play</h2>
-                <div className="space-y-4 text-sm text-neutral-600 leading-relaxed">
-                  <p>Find the {puzzle.chain.length + 1}-step path from the <span className="font-bold text-neutral-900">Start</span> word to the <span className="font-bold text-neutral-900">End</span> word.</p>
-                  <p>Each word in the chain must be strongly associated with the previous one to form a common compound word or phrase.</p>
+                <h2 className={styles.modalTitle}>How to Play</h2>
+                <div className={styles.modalDesc} style={{textAlign: 'left', marginBottom: '32px'}}>
+                  <p style={{marginBottom: '12px'}}>Find the {puzzle.chain.length + 1}-step path from the <strong style={{color: 'var(--ink-main)'}}>Start</strong> word to the <strong style={{color: 'var(--ink-main)'}}>End</strong> word.</p>
+                  <p style={{marginBottom: '12px'}}>Each word in the chain must be strongly associated with the previous one to form a common compound word or phrase.</p>
                   <p>Select words in the correct sequence to build your chain and submit to check your answer.</p>
                 </div>
-                <button onClick={() => setShowHelp(false)} className="mt-8 w-full py-3.5 rounded-full bg-neutral-900 text-white text-sm font-bold hover:bg-black transition-colors active:scale-95">
+                <button onClick={() => setShowHelp(false)} className={`${styles.actionBtn} ${styles.actionBtnPrimary}`} style={{width: '100%'}}>
                   Play
                 </button>
               </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
-      </main>
+      </div>
       <FeedbackModal isOpen={showFeedback} onClose={() => setShowFeedback(false)} gameName="Chain" userId={user?.uid} />
-    </div>
+    </GameLayout>
   );
 }
