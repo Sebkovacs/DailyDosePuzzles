@@ -8,6 +8,8 @@ import { useAuth } from '@/lib/useAuth';
 import { saveGameStats, updateStreak } from '@/lib/firebase';
 import { getDailyNumbers, generateRandomNumbers, NumbersPuzzle } from '@/lib/numbers';
 import { FeedbackModal } from '@/components/FeedbackModal';
+import styles from './Numbers.module.css';
+import { Button } from '@/components/Button';
 
 interface NumberItem {
   id: string;
@@ -181,51 +183,51 @@ export default function NumbersGame() {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  if (!mounted || !puzzle) return <div className="h-[100dvh] flex items-center justify-center bg-[#F5F2ED]">Loading...</div>;
+  if (!mounted || !puzzle) return <div className={styles.loading}>Loading...</div>;
 
   return (
-    <div className="h-[100dvh] overflow-hidden bg-[#F5F2ED] text-[#1A1A1A] font-sans flex flex-col items-center">
-      <header className="w-full max-w-md px-2 py-1 flex items-center justify-between border-b-[1.5px] border-[#1A1A1A] shrink-0">
-        <div className="flex items-center gap-1">
-          <Link href="/" className="p-1.5 hover:bg-neutral-300 rounded-sm transition-colors">
-            <ChevronLeft className="w-5 h-5" />
+    <div className={styles.appContainer}>
+      <header className={styles.header}>
+        <div className={styles.headerIconGroup}>
+          <Link href="/" className={styles.iconBtn}>
+            <ChevronLeft size={20} />
           </Link>
           {isTester && (
-            <button onClick={() => setShowFeedback(true)} className="p-1.5 hover:bg-neutral-300 rounded-sm transition-colors text-blue-600" title="Give Feedback">
-              <MessageSquare className="w-5 h-5" />
+            <button onClick={() => setShowFeedback(true)} className={styles.iconBtn} title="Give Feedback">
+              <MessageSquare size={20} />
             </button>
           )}
         </div>
-        <div className="text-center">
-          <h1 className="text-6xl font-serif font-black tracking-tight leading-none">NUMBERS</h1>
-          <p className="text-[10px] font-bold text-neutral-600 uppercase tracking-widest mt-0.5">
+        <div className={styles.titleGroup}>
+          <h1 className={styles.title}>Numbers</h1>
+          <p className={styles.subtitle}>
             {isPlayTest ? 'PLAYTEST MODE' : dateString}
           </p>
         </div>
-        <div className="flex items-center gap-1">
+        <div className={styles.headerIconGroup}>
           {isTester && (
-            <button onClick={handleRandomPuzzle} className="p-1.5 hover:bg-neutral-300 rounded-sm transition-colors text-emerald-600" title="Random Puzzle">
-              <Dices className="w-5 h-5" />
+            <button onClick={handleRandomPuzzle} className={styles.iconBtn} title="Random Puzzle">
+              <Dices size={20} />
             </button>
           )}
-          <button onClick={() => setShowHelp(true)} className="p-1.5 hover:bg-neutral-300 rounded-sm transition-colors">
-            <HelpCircle className="w-5 h-5" />
+          <button onClick={() => setShowHelp(true)} className={styles.iconBtn}>
+            <HelpCircle size={20} />
           </button>
         </div>
       </header>
 
-      <main className="flex-1 min-h-0 w-full max-w-md px-4 py-4 flex flex-col overflow-y-auto">
-        <div className="text-center mb-6">
-          <h2 className="text-base font-serif font-bold leading-tight">Reach the target.</h2>
-          <p className="text-[10px] text-neutral-600 mt-0.5">Use the numbers and basic math to get exactly the target.</p>
+      <main className={styles.main}>
+        <div className={styles.instruction}>
+          <h2>Reach the target.</h2>
+          <p>Use the numbers and basic math to get exactly the target.</p>
         </div>
 
-        <div className="w-full bg-[#1A1A1A] text-white rounded-xl py-6 text-center font-black text-6xl mb-8 shadow-[6px_6px_0px_#1A1A1A] border-[2px] border-[#1A1A1A]">
+        <div className={styles.targetBox}>
           {puzzle.target}
         </div>
 
         <motion.div 
-          className="flex flex-wrap justify-center gap-3 mb-8"
+          className={styles.numbersArea}
           animate={isShaking ? { x: [-5, 5, -5, 5, 0] } : {}}
           transition={{ duration: 0.4 }}
         >
@@ -234,11 +236,11 @@ export default function NumbersGame() {
               const isSelected = selectedNum1?.id === num.id;
               const isTarget = num.value === puzzle.target;
               
-              let bgClass = 'bg-white text-[#1A1A1A] border-[#1A1A1A] hover:bg-neutral-200 shadow-[4px_4px_0px_#1A1A1A] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none';
+              let btnClass = styles.numberBtn;
               if (isSelected) {
-                bgClass = 'bg-blue-400 text-white border-[#1A1A1A] shadow-[2px_2px_0px_#1A1A1A] translate-x-[2px] translate-y-[2px]';
+                btnClass = `${styles.numberBtn} ${styles.numberBtnSelected}`;
               } else if (isWin && isTarget) {
-                bgClass = 'bg-[#00FF00] text-[#1A1A1A] border-[#1A1A1A] shadow-[4px_4px_0px_#1A1A1A]';
+                btnClass = `${styles.numberBtn} ${styles.numberBtnCorrect}`;
               }
 
               return (
@@ -249,10 +251,7 @@ export default function NumbersGame() {
                   animate={{ scale: 1, opacity: 1 }}
                   exit={{ scale: 0.8, opacity: 0 }}
                   onClick={() => handleNumberClick(num)}
-                  className={`
-                    w-16 h-16 rounded-lg font-black text-2xl transition-all duration-200 flex items-center justify-center border-[2px]
-                    ${bgClass}
-                  `}
+                  className={btnClass}
                 >
                   {num.value}
                 </motion.button>
@@ -261,7 +260,7 @@ export default function NumbersGame() {
           </AnimatePresence>
         </motion.div>
 
-        <div className="flex justify-center gap-2 mb-8">
+        <div className={styles.opsArea}>
           {['+', '-', '*', '/'].map((op) => {
             const isSelected = selectedOp === op;
             return (
@@ -269,10 +268,7 @@ export default function NumbersGame() {
                 key={op}
                 onClick={() => handleOpClick(op)}
                 disabled={!selectedNum1 || isWin}
-                className={`
-                  w-12 h-12 rounded-lg font-black text-2xl transition-all duration-200 flex items-center justify-center border-[2px]
-                  ${isSelected ? 'bg-blue-400 text-white border-[#1A1A1A] shadow-[2px_2px_0px_#1A1A1A] translate-x-[2px] translate-y-[2px]' : 'bg-neutral-200 text-[#1A1A1A] border-[#1A1A1A] hover:bg-neutral-300 shadow-[4px_4px_0px_#1A1A1A] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none disabled:opacity-50 disabled:cursor-not-allowed'}
-                `}
+                className={`${styles.opBtn} ${isSelected ? styles.opBtnSelected : ''}`}
               >
                 {op === '*' ? '×' : op === '/' ? '÷' : op}
               </button>
@@ -280,39 +276,41 @@ export default function NumbersGame() {
           })}
         </div>
 
-        <div className="flex justify-center gap-4 mb-6">
-          <button
+        <div className={styles.actionsArea}>
+          <Button
+            variant="secondary"
             onClick={handleUndo}
             disabled={history.length === 0 || isWin}
-            className="flex items-center gap-1 px-4 py-2 bg-white border-[1.5px] border-[#1A1A1A] rounded-md font-bold text-sm hover:bg-neutral-200 shadow-[3px_3px_0px_#1A1A1A] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            icon={<RotateCcw size={16} />}
           >
-            <RotateCcw className="w-4 h-4" /> Undo
-          </button>
-          <button
+            Undo
+          </Button>
+          <Button
+            variant="secondary"
             onClick={handleReset}
             disabled={history.length === 0 || isWin}
-            className="flex items-center gap-1 px-4 py-2 bg-white border-[1.5px] border-[#1A1A1A] rounded-md font-bold text-sm hover:bg-neutral-200 shadow-[3px_3px_0px_#1A1A1A] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            icon={<Delete size={16} />}
           >
-            <Delete className="w-4 h-4" /> Reset
-          </button>
+            Reset
+          </Button>
         </div>
 
-        <div className="flex-1 overflow-y-auto w-full max-w-xs mx-auto">
+        <div className={styles.historyArea}>
           <AnimatePresence>
             {history.map((step, index) => (
               <motion.div
                 key={step.id}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="flex items-center justify-between py-2 border-b-[1.5px] border-neutral-300 last:border-0 font-mono text-lg"
+                className={styles.historyItem}
               >
-                <span className="text-neutral-600">{index + 1}.</span>
-                <div className="flex items-center gap-2">
-                  <span className="font-bold">{step.num1.value}</span>
-                  <span className="text-blue-500 font-black">{step.op === '*' ? '×' : step.op === '/' ? '÷' : step.op}</span>
-                  <span className="font-bold">{step.num2.value}</span>
-                  <span className="text-neutral-400">=</span>
-                  <span className="font-black text-[#1A1A1A]">{step.result.value}</span>
+                <span className={styles.historyIndex}>{index + 1}.</span>
+                <div className={styles.historyEquation}>
+                  <span>{step.num1.value}</span>
+                  <span className={styles.historyOp}>{step.op === '*' ? '×' : step.op === '/' ? '÷' : step.op}</span>
+                  <span>{step.num2.value}</span>
+                  <span className={styles.historyOp}>=</span>
+                  <span className={styles.historyResult}>{step.result.value}</span>
                 </div>
               </motion.div>
             ))}
@@ -324,16 +322,20 @@ export default function NumbersGame() {
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mt-4 p-4 bg-white border-[2px] border-[#1A1A1A] rounded-xl shadow-[6px_6px_0px_#1A1A1A] text-center"
+              className={styles.modalOverlay}
             >
-              <h3 className="text-2xl font-serif font-black uppercase mb-2">Target Reached!</h3>
-              <p className="text-sm font-bold text-neutral-600 mb-4">You solved it in {history.length} steps.</p>
-              <button
-                onClick={handleShare}
-                className="w-full py-3 bg-[#1A1A1A] text-white rounded-lg font-bold uppercase tracking-wider hover:bg-neutral-800 transition-colors flex items-center justify-center gap-2"
-              >
-                {copied ? 'Copied!' : <><Share2 className="w-5 h-5" /> Share Result</>}
-              </button>
+              <div className={styles.modalContent}>
+                <h2 className={styles.modalTitle}>Target Reached!</h2>
+                <p className={styles.modalSubtitle}>You solved it in {history.length} steps.</p>
+                <div className={styles.modalActions}>
+                  <Button variant="success" fullWidth icon={<Share2 size={18} />} onClick={handleShare}>
+                    {copied ? 'Copied to Clipboard!' : 'Share Result'}
+                  </Button>
+                  <Link href="/" style={{ textDecoration: 'none', display: 'block' }}>
+                    <Button variant="secondary" fullWidth>Back to Menu</Button>
+                  </Link>
+                </div>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
@@ -345,35 +347,30 @@ export default function NumbersGame() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-            onClick={() => setShowHelp(false)}
+            className={styles.modalOverlay}
           >
             <motion.div 
               initial={{ scale: 0.9, y: 20 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.9, y: 20 }}
-              className="bg-[#F5F2ED] border-[2px] border-[#1A1A1A] rounded-xl p-6 max-w-sm w-full shadow-[8px_8px_0px_#1A1A1A]"
-              onClick={e => e.stopPropagation()}
+              className={styles.modalContent}
             >
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl font-serif font-black uppercase">How to Play</h2>
-                <button onClick={() => setShowHelp(false)} className="p-1 hover:bg-neutral-200 rounded-sm transition-colors">
-                  <X className="w-6 h-6" />
-                </button>
-              </div>
-              
-              <div className="space-y-4 text-sm font-medium">
+              <button onClick={() => setShowHelp(false)} className={`${styles.iconBtn} ${styles.closeBtn}`}>
+                <X size={20} />
+              </button>
+              <h2 className={styles.modalTitle}>How to Play</h2>
+              <div className={styles.modalSubtitle} style={{ textAlign: 'left', marginTop: '16px' }}>
                 <p>Use the provided numbers and basic math operations to reach the exact target number.</p>
-                <ul className="list-disc pl-5 space-y-2">
+                <ul style={{ paddingLeft: '20px', marginTop: '12px', lineHeight: '1.6' }}>
                   <li>You can use each number at most once.</li>
                   <li>You don&apos;t have to use all the numbers.</li>
                   <li>Fractions and negative numbers are not allowed at any step.</li>
                   <li>Select a number, then an operation, then another number.</li>
                 </ul>
-                <div className="mt-6 pt-4 border-t-[1.5px] border-[#1A1A1A]">
-                  <p className="text-xs text-neutral-600 font-bold uppercase tracking-wider text-center">New puzzle every day</p>
-                </div>
               </div>
+              <Button variant="primary" fullWidth onClick={() => setShowHelp(false)}>
+                Got it
+              </Button>
             </motion.div>
           </motion.div>
         )}

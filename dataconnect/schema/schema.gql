@@ -1,0 +1,31 @@
+# dataconnect/schema/schema.gql
+
+type User @table {
+  id: String! @col(name: "user_id") # Matches the Firebase Auth UID
+  email: String
+  displayName: String
+  role: String! @default(value: "user") # 'admin', 'tester', 'user'
+  currentStreak: Int! @default(value: 0)
+  longestStreak: Int! @default(value: 0)
+  createdAt: Timestamp! @default(expr: "request.time")
+  
+  # A user can have many game stats
+  gameStats: [GameStat!]!
+}
+
+type GameStat @table {
+  id: UUID! @default(expr: "uuidV4()")
+  user: User! # Foreign key relation to User
+  
+  gameName: String! # e.g., "Spectrum", "Numbers", "Shift"
+  date: Date! # The daily puzzle date (e.g., 2026-03-18)
+  mode: String! # "easy", "hard", "standard"
+  
+  won: Boolean!
+  mistakes: Int! @default(value: 0)
+  attempts: Int! @default(value: 1)
+  timeToCompleteSeconds: Int
+  
+  isPlayTest: Boolean! @default(value: false)
+  playedAt: Timestamp! @default(expr: "request.time")
+}

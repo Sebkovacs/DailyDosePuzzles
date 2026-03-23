@@ -1,0 +1,186 @@
+.appContainer {
+  min-height: 100dvh;
+  background-color: #FCFCF9;
+  color: #111;
+  font-family: system-ui, -apple-system, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 48px;
+}
+
+.header {
+  width: 100%;
+  max-width: 480px;
+  padding: 40px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-bottom: 1px solid #EAEAEA;
+  margin-bottom: 32px;
+  background-color: #FFFFFF;
+  position: relative;
+}
+
+.topActions {
+  position: absolute;
+  top: 16px;
+  right: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.statsPill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #666;
+  background-color: #F5F5F5;
+  padding: 6px 12px;
+  border-radius: 99px;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+.statsPill:hover {
+  background-color: #EAEAEA;
+  color: #111;
+}
+
+.streakPill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #EA580C;
+  background-color: #FFF7ED;
+  padding: 6px 12px;
+  border-radius: 99px;
+}
+
+.iconBtn {
+  padding: 8px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.iconBtn:hover {
+  background-color: #F5F5F5;
+  color: #111;
+}
+
+.signInBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  background-color: #111;
+  color: #FFF;
+  padding: 8px 20px;
+  border-radius: 99px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.signInBtn:hover {
+  background-color: #333;
+}
+.signInBtn:active {
+  transform: scale(0.95);
+}
+
+.title {
+  font-family: "Georgia", serif;
+  font-size: 40px;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  color: #111;
+  margin: 40px 0 0 0;
+  line-height: 1;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #666;
+  margin: 8px 0 0 0;
+  font-weight: 500;
+}
+
+.streakStats {
+  margin-top: 32px;
+  display: flex;
+  gap: 48px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: #888;
+}
+
+.streakStatItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.streakStatNumber {
+  color: #111;
+  font-size: 28px;
+  font-weight: 400;
+  font-family: "Georgia", serif;
+}
+
+.gameList {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 0 20px;
+}
+
+.gameCard {
+  display: block;
+  background-color: #FFFFFF;
+  border: 1px solid #EAEAEA;
+  border-radius: 24px;
+  padding: 20px;
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+}
+
+.gameCard:hover {
+  transform: translateY(-2px);
+  border-color: var(--theme-border);
+  box-shadow: 0 12px 24px var(--theme-shadow);
+}
+
+.gameCardStrip { position: absolute; top: 0; left: 0; width: 6px; height: 100%; background-color: var(--theme-color); }
+.gameCardContent { display: flex; justify-content: space-between; align-items: center; padding-left: 16px; }
+.gameTitle { font-family: "Georgia", serif; font-size: 24px; font-weight: 400; color: #111; margin: 0 0 4px 0; }
+.gameDesc { font-size: 13px; color: #666; margin: 0; font-weight: 500; }
+.playIcon { width: 44px; height: 44px; border-radius: 50%; border: 1px solid #EAEAEA; display: flex; align-items: center; justify-content: center; color: #999; transition: all 0.3s ease; background-color: #FFFFFF; }
+.gameCard:hover .playIcon { background-color: var(--theme-bg); border-color: var(--theme-border); color: var(--theme-color); }
+
+/* Distinct Color Themes for Game Cards */
+.themeChain { --theme-color: #6366F1; --theme-border: #C7D2FE; --theme-bg: #EEF2FF; --theme-shadow: rgba(99, 102, 241, 0.12); }
+.themeSplit { --theme-color: #10B981; --theme-border: #A7F3D0; --theme-bg: #ECFDF5; --theme-shadow: rgba(16, 185, 129, 0.12); }
+.themeLayers { --theme-color: #F43F5E; --theme-border: #FECDD3; --theme-bg: #FFF1F2; --theme-shadow: rgba(244, 63, 94, 0.12); }
+.themeVault { --theme-color: #64748B; --theme-border: #CBD5E1; --theme-bg: #F8FAFC; --theme-shadow: rgba(100, 116, 139, 0.12); }
+.themeShift { --theme-color: #8B5CF6; --theme-border: #DDD6FE; --theme-bg: #F5F3FF; --theme-shadow: rgba(139, 92, 246, 0.12); }
+.themeSpectrum { --theme-color: #F59E0B; --theme-border: #FDE68A; --theme-bg: #FFFBEB; --theme-shadow: rgba(245, 158, 11, 0.12); }
+.themeNumbers { --theme-color: #06B6D4; --theme-border: #A5F3FC; --theme-bg: #ECFEFF; --theme-shadow: rgba(6, 182, 212, 0.12); }
