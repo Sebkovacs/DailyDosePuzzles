@@ -32,3 +32,6 @@ firebase-debug.log*
 .firebase
 
 tsconfig.tsbuildinfo
+
+# Firebase Data Connect local emulator data
+.dataconnect/
