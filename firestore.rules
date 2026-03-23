@@ -177,6 +177,11 @@ service cloud.firestore {
       // No updating or deleting feedback
       allow update, delete: if false;
     }
+    match /arenaPuzzles/{puzzleId} {
+      // Testing arena requires admin privileges for all operations
+      allow read, write: if isAdmin();
+    }
+
     match /playtesters/{email} {
       allow read: if isAuthenticated() && request.auth.token.email.lower() == email;
       allow read, write: if isAdmin();
