@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { auth, db } from './firebase';
@@ -16,11 +16,26 @@ export interface UserProfile {
   role?: 'admin' | 'tester' | 'user';
 }
 
-export function useAuth() {
+interface AuthContextType {
+  user: User | null;
+  profile: UserProfile | null;
+  loading: boolean;
+}
+
+const AuthContext = createContext<AuthContextType>({
+  user: null,
+  profile: null,
+  loading: true,
+});
+
+export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // ⚡ Optimization: Centralizing the Firebase onAuthStateChanged listener inside
+  // this AuthProvider prevents redundant connections. Previously, every child
+  // component that called useAuth() created its own active listener.
   useEffect(() => {
     const unsubscribeAuth = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
@@ -34,6 +49,9 @@ export function useAuth() {
     return () => unsubscribeAuth();
   }, []);
 
+  // ⚡ Optimization: Centralizing the Firestore onSnapshot listener here prevents
+  // redundant document reads and active web socket connections for the user profile
+  // across multiple components on the same page.
   useEffect(() => {
     if (!user) return;
 
@@ -72,5 +90,13 @@ export function useAuth() {
     return () => unsubscribeProfile();
   }, [user]);
 
-  return { user, profile, loading };
+  return (
+    <AuthContext.Provider value={{ user, profile, loading }}>
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+export function useAuth() {
+  return useContext(AuthContext);
 }
