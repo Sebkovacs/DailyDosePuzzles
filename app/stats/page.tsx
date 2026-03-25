@@ -84,7 +84,7 @@ export default function StatsPage() {
   return (
     <div className={styles.appContainer}>
       <header className={styles.header}>
-        <Link href="/" className={styles.iconBtn}>
+        <Link href="/" className={styles.iconBtn} aria-label="Go Back">
           <ChevronLeft size={20} />
         </Link>
         <h1 className={styles.headerTitle}>

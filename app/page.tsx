@@ -58,7 +58,7 @@ export default function Menu() {
                   <Flame size={14} color="#F9EAE7" fill="#F9EAE7" />
                   <span>{(profile as any)?.streak || 0}</span>
                 </div>
-                <button onClick={logout} className={styles.iconBtn} title="Sign Out">
+                <button onClick={logout} className={styles.iconBtn} title="Sign Out" aria-label="Sign Out">
                   <LogOut size={18} />
                 </button>
               </>
