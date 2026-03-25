@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { onAuthStateChanged, User } from 'firebase/auth';
-import { doc, onSnapshot } from 'firebase/firestore';
+import { doc, onSnapshot, DocumentSnapshot, FirestoreError } from 'firebase/firestore';
 import { auth, db } from './firebase';
 
 export interface UserProfile {
@@ -16,13 +16,28 @@ export interface UserProfile {
   role?: 'admin' | 'tester' | 'user';
 }
 
-export function useAuth() {
+interface AuthContextType {
+  user: User | null;
+  profile: UserProfile | null;
+  loading: boolean;
+}
+
+const AuthContext = createContext<AuthContextType>({
+  user: null,
+  profile: null,
+  loading: true,
+});
+
+export function AuthProvider({ children }: { children: ReactNode }) {
+  // ⚡ Bolt: Using React Context caches the Firebase auth and profile state globally.
+  // This prevents spawning redundant onAuthStateChanged and onSnapshot listeners
+  // for every component that calls useAuth(), drastically reducing network overhead.
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribeAuth = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribeAuth = onAuthStateChanged(auth, (currentUser: User | null) => {
       setUser(currentUser);
       
       if (!currentUser) {
@@ -39,7 +54,7 @@ export function useAuth() {
 
     const unsubscribeProfile = onSnapshot(
       doc(db, 'users', user.uid),
-      (docSnap) => {
+      (docSnap: DocumentSnapshot) => {
         if (docSnap.exists()) {
           const data = docSnap.data() as UserProfile;
           
@@ -63,7 +78,7 @@ export function useAuth() {
         }
         setLoading(false);
       },
-      (error) => {
+      (error: FirestoreError) => {
         console.error("Error fetching user profile:", error);
         setLoading(false);
       }
@@ -72,5 +87,9 @@ export function useAuth() {
     return () => unsubscribeProfile();
   }, [user]);
 
-  return { user, profile, loading };
+  return <AuthContext.Provider value={{ user, profile, loading }}>{children}</AuthContext.Provider>;
+}
+
+export function useAuth() {
+  return useContext(AuthContext);
 }
