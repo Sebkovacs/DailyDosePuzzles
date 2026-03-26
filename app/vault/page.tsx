@@ -328,7 +328,7 @@ export default function Vault() {
                 initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
                 className={styles.modalCard}
               >
-                <button onClick={() => setShowHelp(false)} className={styles.closeBtn}>
+                <button onClick={() => setShowHelp(false)} className={styles.closeBtn} aria-label="Close help modal">
                   <X size={20} />
                 </button>
                 <h2 className={styles.modalTitle}>How to Play</h2>

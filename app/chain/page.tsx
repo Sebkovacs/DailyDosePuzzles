@@ -366,7 +366,7 @@ export default function Chain() {
                 initial={{ scale: 0.95, opacity: 0, y: 10 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.95, opacity: 0, y: 10 }}
                 className={styles.modalCard}
               >
-                <button onClick={() => setShowHelp(false)} className={styles.closeBtn}>
+                <button onClick={() => setShowHelp(false)} className={styles.closeBtn} aria-label="Close help modal">
                   <X size={20} />
                 </button>
                 <h2 className={styles.modalTitle}>How to Play</h2>
