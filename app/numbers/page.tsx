@@ -481,7 +481,7 @@ export default function NumbersGame() {
               exit={{ scale: 0.9, y: 20 }}
               className={styles.modalCard}
             >
-              <button onClick={() => setShowHelp(false)} className={styles.closeBtn}>
+              <button onClick={() => setShowHelp(false)} className={styles.closeBtn} aria-label="Close help modal">
                 <X size={20} />
               </button>
               <h2 className={styles.modalTitle}>How to Play</h2>
