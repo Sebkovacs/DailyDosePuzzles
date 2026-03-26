@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { auth, db } from './firebase';
@@ -14,9 +14,24 @@ export interface UserProfile {
   longestStreak: number;
   lastSolveDate?: string;
   role?: 'admin' | 'tester' | 'user';
+  streak?: number;
+  maxStreak?: number;
 }
 
-export function useAuth() {
+interface AuthContextType {
+  user: User | null;
+  profile: UserProfile | null;
+  loading: boolean;
+}
+
+const AuthContext = createContext<AuthContextType>({ user: null, profile: null, loading: true });
+
+// ⚡ Bolt Performance Optimization:
+// Converted `useAuth` localized state to a global Singleton Context provider.
+// This prevents every child component that calls `useAuth()` from mounting
+// duplicate `onAuthStateChanged` and `onSnapshot` listeners, drastically
+// reducing redundant Firebase network requests and active concurrent connections.
+export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -59,7 +74,7 @@ export function useAuth() {
             }
           }
           
-          setProfile({ ...data, currentStreak: displayStreak });
+          setProfile({ ...data, currentStreak: displayStreak, streak: displayStreak, maxStreak: data.longestStreak });
         }
         setLoading(false);
       },
@@ -72,5 +87,13 @@ export function useAuth() {
     return () => unsubscribeProfile();
   }, [user]);
 
-  return { user, profile, loading };
+  return (
+    <AuthContext.Provider value={{ user, profile, loading }}>
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+export function useAuth() {
+  return useContext(AuthContext);
 }
