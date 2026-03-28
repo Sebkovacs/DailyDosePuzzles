@@ -164,7 +164,7 @@ export default function AdminPage() {
             {admins.map(a => (
               <div key={a.email} className={styles.adminItem}>
                 <span className={styles.adminEmail}>{a.email}</span>
-                <button onClick={() => handleRemoveAdmin(a.email)} className={styles.removeBtn}><Trash2 size={16} /></button>
+                <button onClick={() => handleRemoveAdmin(a.email)} className={styles.removeBtn} aria-label="Remove admin"><Trash2 size={16} /></button>
               </div>
             ))}
           </div>
@@ -189,7 +189,7 @@ export default function AdminPage() {
             {testers.map(t => (
               <div key={t.email} className={styles.adminItem}>
                 <span className={styles.adminEmail}>{t.email}</span>
-                <button onClick={() => handleRemoveTester(t.email)} className={styles.removeBtn}><Trash2 size={16} /></button>
+                <button onClick={() => handleRemoveTester(t.email)} className={styles.removeBtn} aria-label="Remove tester"><Trash2 size={16} /></button>
               </div>
             ))}
           </div>
