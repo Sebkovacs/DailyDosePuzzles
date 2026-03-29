@@ -107,11 +107,11 @@ export default function Roots() {
 
   if (!mounted || !puzzle) return <div style={{ height: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--bg-paper)', fontFamily: 'var(--font-official)' }}>Loading...</div>;
 
-  const leftActions = isTester ? <button onClick={() => setShowFeedback(true)} className={styles.iconBtn} title="Give Feedback"><MessageSquare size={18} /></button> : null;
+  const leftActions = isTester ? <button onClick={() => setShowFeedback(true)} className={styles.iconBtn} title="Give Feedback" aria-label="Give Feedback"><MessageSquare size={18} /></button> : null;
   const rightActions = (
     <>
-      {isTester && <button onClick={handleRandomPuzzle} className={styles.iconBtn} title="Random Puzzle"><Dices size={18} /></button>}
-      <button onClick={() => setShowHelp(true)} className={styles.iconBtn} title="Help"><HelpCircle size={18} /></button>
+      {isTester && <button onClick={handleRandomPuzzle} className={styles.iconBtn} title="Random Puzzle" aria-label="Random Puzzle"><Dices size={18} /></button>}
+      <button onClick={() => setShowHelp(true)} className={styles.iconBtn} title="Help" aria-label="Help"><HelpCircle size={18} /></button>
     </>
   );
 
