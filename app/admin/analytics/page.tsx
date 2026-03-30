@@ -115,7 +115,7 @@ export default function AdminAnalyticsPage() {
     return (
       <div className={styles.appContainer}>
         <header className={styles.header}>
-          <button onClick={() => setSelectedGame(null)} className={styles.iconBtn}><ChevronLeft size={20} /></button>
+          <button onClick={() => setSelectedGame(null)} className={styles.iconBtn} aria-label="Go Back"><ChevronLeft size={20} /></button>
           <h1 className={styles.headerTitle}><Target size={20} /> {selectedGame} Insights</h1>
           <div className={styles.headerSpacer}></div>
         </header>
