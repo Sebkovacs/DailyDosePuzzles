@@ -162,7 +162,7 @@ export default function Vault() {
   if (!mounted || !puzzle) return <div style={{ height: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--bg-paper)', fontFamily: 'var(--font-official)' }}>Loading...</div>;
 
   const leftActions = isTester ? (
-    <button onClick={() => setShowFeedback(true)} className={styles.iconBtn} title="Give Feedback">
+    <button onClick={() => setShowFeedback(true)} className={styles.iconBtn} title="Give Feedback" aria-label="Give Feedback">
       <MessageSquare size={18} />
     </button>
   ) : null;
@@ -170,11 +170,11 @@ export default function Vault() {
   const rightActions = (
     <>
       {isTester && (
-        <button onClick={handleRandomPuzzle} className={styles.iconBtn} title="Random Puzzle">
+        <button onClick={handleRandomPuzzle} className={styles.iconBtn} title="Random Puzzle" aria-label="Random Puzzle">
           <Dices size={18} />
         </button>
       )}
-      <button onClick={() => setShowHelp(true)} className={styles.iconBtn} title="Help">
+      <button onClick={() => setShowHelp(true)} className={styles.iconBtn} title="Help" aria-label="Help">
         <HelpCircle size={18} />
       </button>
     </>
@@ -250,8 +250,7 @@ export default function Vault() {
               <button
                 onClick={() => handleKeyPress('delete')}
                 disabled={input.length === 0 || isWin}
-                className={`${styles.numBtn} ${styles.actionKey}`}
-              >
+                className={`${styles.numBtn} ${styles.actionKey}`} aria-label="Delete">
                 <Delete className="w-5 h-5" />
               </button>
               <button
@@ -295,7 +294,7 @@ export default function Vault() {
                     <p style={{ fontSize: '14px', fontWeight: 700, marginBottom: '12px', textAlign: 'center', color: 'var(--ink-main)' }}>Rate this Arena Variant</p>
                     <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
                       {[1, 2, 3, 4, 5].map(star => (
-                        <button key={star} onClick={() => handleSubmitRating(star)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--ink-main)' }}>
+                        <button key={star} onClick={() => handleSubmitRating(star)} aria-label={`Rate ${star} stars`} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--ink-main)' }}>
                           <Star size={28} fill={arenaRating >= star ? 'var(--ink-main)' : 'none'} />
                         </button>
                       ))}
@@ -328,7 +327,7 @@ export default function Vault() {
                 initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
                 className={styles.modalCard}
               >
-                <button onClick={() => setShowHelp(false)} className={styles.closeBtn}>
+                <button onClick={() => setShowHelp(false)} className={styles.closeBtn} aria-label="Close">
                   <X size={20} />
                 </button>
                 <h2 className={styles.modalTitle}>How to Play</h2>

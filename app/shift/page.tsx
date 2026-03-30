@@ -170,7 +170,7 @@ export default function Shift() {
   if (!mounted || !puzzle) return <div style={{ height: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--bg-paper)', fontFamily: 'var(--font-official)' }}>Loading...</div>;
 
   const leftActions = isTester ? (
-    <button onClick={() => setShowFeedback(true)} className={styles.iconBtn} title="Give Feedback">
+    <button onClick={() => setShowFeedback(true)} className={styles.iconBtn} title="Give Feedback" aria-label="Give Feedback">
       <MessageSquare size={18} />
     </button>
   ) : null;
@@ -178,11 +178,11 @@ export default function Shift() {
   const rightActions = (
     <>
       {isTester && (
-        <button onClick={handleRandomPuzzle} className={styles.iconBtn} title="Random Puzzle">
+        <button onClick={handleRandomPuzzle} className={styles.iconBtn} title="Random Puzzle" aria-label="Random Puzzle">
           <Dices size={18} />
         </button>
       )}
-      <button onClick={() => setShowHelp(true)} className={styles.iconBtn} title="Help">
+      <button onClick={() => setShowHelp(true)} className={styles.iconBtn} title="Help" aria-label="Help">
         <HelpCircle size={18} />
       </button>
     </>
@@ -222,8 +222,7 @@ export default function Shift() {
               <button 
                 onClick={() => shiftColumn(cIndex, 'up')}
                 disabled={isWin || isLoss}
-                className={styles.arrowBtn}
-              >
+                className={styles.arrowBtn} aria-label="Shift Column Up">
                 <ChevronUp size={20} />
               </button>
               
@@ -244,8 +243,7 @@ export default function Shift() {
               <button 
                 onClick={() => shiftColumn(cIndex, 'down')}
                 disabled={isWin || isLoss}
-                className={styles.arrowBtn}
-              >
+                className={styles.arrowBtn} aria-label="Shift Column Down">
                 <ChevronDown size={20} />
               </button>
             </div>
@@ -324,7 +322,7 @@ export default function Shift() {
                 initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
                 className={styles.modalCard}
               >
-                <button onClick={() => setShowHelp(false)} className={styles.closeBtn}>
+                <button onClick={() => setShowHelp(false)} className={styles.closeBtn} aria-label="Close">
                   <X size={20} />
                 </button>
                 <h2 className={styles.modalTitle}>How to Play</h2>
