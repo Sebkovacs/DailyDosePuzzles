@@ -1,8 +1,8 @@
 :root {
   /* 1. Typography: Classical elegance meets underlying machine intelligence */
-  --font-official: var(--font-serif, "Georgia", serif);
-  --font-ui: var(--font-sans, system-ui, sans-serif);
-  --font-mono: var(--font-mono, monospace);
+  --font-official: var(--font-serif, monospace, serif);
+  /* --font-ui: var(--font-sans, system-ui, sans-serif); */
+  /* --font-mono: var(--font-mono, monospace); */
 
   /* 2. Renaissance Ink & Paper */
   --bg-paper: #F2EFE9; /* Slightly deeper, warmer parchment */

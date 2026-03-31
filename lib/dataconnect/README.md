@@ -64,7 +64,7 @@ Below are examples of how to use the `default` connector's generated functions t
 ## GetUserStats
 You can execute the `GetUserStats` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect/index.d.ts](./index.d.ts):
 ```typescript
-getUserStats(vars: GetUserStatsVariables): QueryPromise<GetUserStatsData, GetUserStatsVariables>;
+getUserStats(vars: GetUserStatsVariables, options?: ExecuteQueryOptions): QueryPromise<GetUserStatsData, GetUserStatsVariables>;
 
 interface GetUserStatsRef {
   ...
@@ -75,7 +75,7 @@ export const getUserStatsRef: GetUserStatsRef;
 ```
 You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
 ```typescript
-getUserStats(dc: DataConnect, vars: GetUserStatsVariables): QueryPromise<GetUserStatsData, GetUserStatsVariables>;
+getUserStats(dc: DataConnect, vars: GetUserStatsVariables, options?: ExecuteQueryOptions): QueryPromise<GetUserStatsData, GetUserStatsVariables>;
 
 interface GetUserStatsRef {
   ...
@@ -182,7 +182,7 @@ executeQuery(ref).then((response) => {
 ## GetAllUsers
 You can execute the `GetAllUsers` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect/index.d.ts](./index.d.ts):
 ```typescript
-getAllUsers(): QueryPromise<GetAllUsersData, undefined>;
+getAllUsers(options?: ExecuteQueryOptions): QueryPromise<GetAllUsersData, undefined>;
 
 interface GetAllUsersRef {
   ...
@@ -193,7 +193,7 @@ export const getAllUsersRef: GetAllUsersRef;
 ```
 You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
 ```typescript
-getAllUsers(dc: DataConnect): QueryPromise<GetAllUsersData, undefined>;
+getAllUsers(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<GetAllUsersData, undefined>;
 
 interface GetAllUsersRef {
   ...
@@ -278,7 +278,7 @@ executeQuery(ref).then((response) => {
 ## GetAllGameStats
 You can execute the `GetAllGameStats` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect/index.d.ts](./index.d.ts):
 ```typescript
-getAllGameStats(): QueryPromise<GetAllGameStatsData, undefined>;
+getAllGameStats(options?: ExecuteQueryOptions): QueryPromise<GetAllGameStatsData, undefined>;
 
 interface GetAllGameStatsRef {
   ...
@@ -289,7 +289,7 @@ export const getAllGameStatsRef: GetAllGameStatsRef;
 ```
 You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
 ```typescript
-getAllGameStats(dc: DataConnect): QueryPromise<GetAllGameStatsData, undefined>;
+getAllGameStats(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<GetAllGameStatsData, undefined>;
 
 interface GetAllGameStatsRef {
   ...

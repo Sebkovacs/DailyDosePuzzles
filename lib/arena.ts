@@ -1,12 +1,12 @@
-import { db } from './firebase'; // Adjust this import based on your Firebase init file
-import { collection, addDoc, getDocs, query, where, updateDoc, doc, limit, arrayUnion } from 'firebase/firestore';
+import { db, auth } from './firebase'; // Adjust this import based on your Firebase init file
+import { collection, addDoc, getDocs, query, where, updateDoc, doc, arrayUnion } from 'firebase/firestore';
 
 export interface ArenaPuzzle {
   id?: string;
   batchId: string;
   gameName: string;
   data: any;
-  status: 'testing' | 'graduated' | 'rejected';
+  status: 'pending' | 'testing' | 'graduated' | 'rejected';
   createdAt: string;
 }
 
@@ -36,16 +36,41 @@ export async function getArenaQueue(gameName: string): Promise<ArenaPuzzle[]> {
   return snapshot.docs.map(d => ({ id: d.id, ...d.data() } as ArenaPuzzle));
 }
 
-export async function getNextArenaPuzzle(gameName: string): Promise<ArenaPuzzle | null> {
-  const q = query(
-    collection(db, 'arenaPuzzles'), 
-    where('gameName', '==', gameName), 
-    where('status', '==', 'testing'),
-    limit(1)
-  );
-  const snapshot = await getDocs(q);
-  if (snapshot.empty) return null;
-  return { id: snapshot.docs[0].id, ...snapshot.docs[0].data() } as ArenaPuzzle;
+export async function getNextArenaPuzzle(gameName: string): Promise<{ id: string; data: any } | null> {
+  try {
+    const user = auth.currentUser;
+    if (!user) {
+      console.error("User not authenticated to fetch arena puzzle.");
+      return null;
+    }
+
+    const token = await user.getIdToken();
+
+    const res = await fetch('/api/arena/next', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({ gameName }),
+    });
+
+    if (res.status === 404) {
+      return null; // No puzzles available
+    }
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.error || 'Failed to fetch next puzzle');
+    }
+
+    const puzzle = await res.json();
+    // The API returns the full document, the puzzle content is in the `data` property
+    return { id: puzzle.id, data: puzzle.data };
+  } catch (error) {
+    console.error(`Error in getNextArenaPuzzle for ${gameName}:`, error);
+    return null;
+  }
 }
 
 export async function submitArenaFeedback(puzzleId: string, feedbackStats: any) {

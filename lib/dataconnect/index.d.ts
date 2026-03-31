@@ -1,4 +1,4 @@
-import { ConnectorConfig, DataConnect, QueryRef, QueryPromise, MutationRef, MutationPromise } from 'firebase/data-connect';
+import { ConnectorConfig, DataConnect, QueryRef, QueryPromise, ExecuteQueryOptions, MutationRef, MutationPromise } from 'firebase/data-connect';
 
 export const connectorConfig: ConnectorConfig;
 
@@ -140,8 +140,8 @@ interface GetUserStatsRef {
 }
 export const getUserStatsRef: GetUserStatsRef;
 
-export function getUserStats(vars: GetUserStatsVariables): QueryPromise<GetUserStatsData, GetUserStatsVariables>;
-export function getUserStats(dc: DataConnect, vars: GetUserStatsVariables): QueryPromise<GetUserStatsData, GetUserStatsVariables>;
+export function getUserStats(vars: GetUserStatsVariables, options?: ExecuteQueryOptions): QueryPromise<GetUserStatsData, GetUserStatsVariables>;
+export function getUserStats(dc: DataConnect, vars: GetUserStatsVariables, options?: ExecuteQueryOptions): QueryPromise<GetUserStatsData, GetUserStatsVariables>;
 
 interface GetAllUsersRef {
   /* Allow users to create refs without passing in DataConnect */
@@ -152,8 +152,8 @@ interface GetAllUsersRef {
 }
 export const getAllUsersRef: GetAllUsersRef;
 
-export function getAllUsers(): QueryPromise<GetAllUsersData, undefined>;
-export function getAllUsers(dc: DataConnect): QueryPromise<GetAllUsersData, undefined>;
+export function getAllUsers(options?: ExecuteQueryOptions): QueryPromise<GetAllUsersData, undefined>;
+export function getAllUsers(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<GetAllUsersData, undefined>;
 
 interface GetAllGameStatsRef {
   /* Allow users to create refs without passing in DataConnect */
@@ -164,6 +164,6 @@ interface GetAllGameStatsRef {
 }
 export const getAllGameStatsRef: GetAllGameStatsRef;
 
-export function getAllGameStats(): QueryPromise<GetAllGameStatsData, undefined>;
-export function getAllGameStats(dc: DataConnect): QueryPromise<GetAllGameStatsData, undefined>;
+export function getAllGameStats(options?: ExecuteQueryOptions): QueryPromise<GetAllGameStatsData, undefined>;
+export function getAllGameStats(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<GetAllGameStatsData, undefined>;
 

@@ -94,6 +94,11 @@ export default function AdminAnalyticsPage() {
     const avgFirstAction = statsWithFirstAction.length > 0 
       ? Math.round(statsWithFirstAction.reduce((acc, s) => acc + s.timeToFirstAction!, 0) / statsWithFirstAction.length) 
       : 0;
+      
+    const statsWithCompletion = specificStats.filter(s => typeof s.timeToComplete === 'number' && s.won);
+    const avgCompletionTime = statsWithCompletion.length > 0
+      ? Math.round(statsWithCompletion.reduce((acc, s) => acc + s.timeToComplete!, 0) / statsWithCompletion.length)
+      : 0;
 
     const trapCounts: Record<string, number> = {};
     specificStats.forEach(s => {
@@ -124,6 +129,7 @@ export default function AdminAnalyticsPage() {
             <h2 className={styles.sectionTitle} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Clock size={18} /> Telemetry</h2>
             <div className={styles.kpiGrid}>
               <div className={styles.kpiCard}><div className={styles.kpiValue}>{avgFirstAction}s</div><div className={styles.kpiLabel}>Avg. Comprehension Time</div></div>
+              <div className={styles.kpiCard}><div className={styles.kpiValue}>{avgCompletionTime}s</div><div className={styles.kpiLabel}>Avg. Win Time</div></div>
               <div className={styles.kpiCard}><div className={styles.kpiValue}>{specificStats.length}</div><div className={styles.kpiLabel}>Total Plays Analyzed</div></div>
             </div>
           </section>

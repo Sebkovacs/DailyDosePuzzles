@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Play, LogIn, LogOut, Flame, BarChart2, Shield } from 'lucide-react';
+import { Play, LogIn, LogOut, Flame, BarChart2, Shield, Users } from 'lucide-react';
 import { useAuth } from '@/lib/useAuth';
 import { signInWithGoogle, logout } from '@/lib/firebase';
 import styles from './page.module.css';
@@ -53,6 +53,10 @@ export default function Menu() {
                 <Link href="/stats" className={styles.statsPill}>
                   <BarChart2 size={16} />
                   <span>Stats</span>
+                </Link>
+                <Link href="/tribes" className={styles.statsPill}>
+                  <Users size={16} />
+                  <span>Tribes</span>
                 </Link>
                 <div className={styles.streakPill}>
                   <Flame size={14} color="#F9EAE7" fill="#F9EAE7" />

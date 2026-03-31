@@ -1,63 +1,20 @@
-I0323 19:07:39.055233   37496 load.go:31] Reloading schema and connectors...
-W0323 19:07:39.074536   37496 control.go:74] [projects/emulator/locations/emulator/services/puzzlesaursos 3bda] connector "default" has errors: connector\queries.gql:4:2: On @auth: invalid expression ("auth.uid == $userId"): ERROR: <input>:1:13: Syntax error: token recognition error at: '$'
- | auth.uid == $userId
- | ............^
-connector\mutations.gql:4:2: On @auth: invalid expression ("auth.uid == $id"): ERROR: <input>:1:13: Syntax error: token recognition error at: '$'
- | auth.uid == $id
- | ............^
-connector\mutations.gql:16:2: On @auth: invalid expression ("auth.uid == $userId"): ERROR: <input>:1:13: Syntax error: token recognition error at: '$'
- | auth.uid == $userId
- | ............^
-
-sources: connector\mutations.gql [1122B] connector\queries.gql [857B] 
-I0323 19:07:39.074536   37496 control.go:100] [projects/emulator/locations/emulator/services/puzzlesaursos 3bda] UpdateResources(): done
+I0331 19:33:28.227785   24976 load.go:31] Reloading schema and connectors...
+I0331 19:33:28.384101   24976 control.go:100] [projects/emulator/locations/emulator/services/puzzlesaursos a4a2] UpdateResources(): done
 Main schema: sources: schema\schema.gql [890B] 
-Connector "default": sources: connector\mutations.gql [1122B] connector\queries.gql [857B] 
-E0323 19:07:39.075585   37496 load.go:73] Could not load sources: 
-Errors: connector\queries.gql:4:2: On @auth: invalid expression ("auth.uid == $userId"): ERROR: <input>:1:13: Syntax error: token recognition error at: '$'
- | auth.uid == $userId
- | ............^
-connector\mutations.gql:4:2: On @auth: invalid expression ("auth.uid == $id"): ERROR: <input>:1:13: Syntax error: token recognition error at: '$'
- | auth.uid == $id
- | ............^
-connector\mutations.gql:16:2: On @auth: invalid expression ("auth.uid == $userId"): ERROR: <input>:1:13: Syntax error: token recognition error at: '$'
- | auth.uid == $userId
- | ............^
-I0323 19:07:39.078264   37496 collector.go:107] schema extensions wrote into "C:\\Users\\sebko\\Desktop\\01 Web Projects\\Puzzlesaursos\\dataconnect\\.dataconnect\\schema"
-Generated sources: prelude.gql [80888B] main\implicit.gql [259B] main\input.gql [27068B] main\relation.gql [13749B] main\query.gql [2626B] main\mutation.gql [6945B] 
-I0323 19:07:39.079493   37496 load.go:74] Finished reloading
-I0323 19:07:39.083761   37496 dev.go:104] Listening on address (HTTP + gRPC): 127.0.0.1:9399
-I0323 19:07:39.084843   37496 dev.go:104] Listening on address (HTTP + gRPC): [::1]:9399
-I0323 19:07:43.896058   37496 migrate.go:24] Running migration SQL:
-Step 1: CREATE EXTENSION IF NOT EXISTS "uuid-ossp"
-Step 2: CREATE TABLE "public"."user" ("user_id" text NOT NULL, "created_at" timestamptz NOT NULL, "current_streak" integer NOT NULL DEFAULT 0, "display_name" text NULL, "email" text NULL, "longest_streak" integer NOT NULL DEFAULT 0, "role" text NOT NULL DEFAULT 'user', PRIMARY KEY ("user_id"))
-Step 3: CREATE TABLE "public"."game_stat" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "user_id" text NOT NULL, "attempts" integer NOT NULL DEFAULT 1, "date" date NOT NULL, "game_name" text NOT NULL, "is_play_test" boolean NOT NULL DEFAULT false, "mistakes" integer NOT NULL DEFAULT 0, "mode" text NOT NULL, "played_at" timestamptz NOT NULL, "time_to_complete_seconds" integer NULL, "won" boolean NOT NULL, PRIMARY KEY ("id"), CONSTRAINT "game_stat_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."user" ("user_id") ON DELETE CASCADE)
-Step 4: CREATE INDEX "game_stat_userId_idx" ON "public"."game_stat" ("user_id")
-W0323 19:07:44.020585   37496 control.go:74] [projects/emulator/locations/emulator/services/puzzlesaursos d0db] connector "default" has errors: connector\mutations.gql:4:2: On @auth: invalid expression ("auth.uid == $id"): ERROR: <input>:1:13: Syntax error: token recognition error at: '$'
- | auth.uid == $id
- | ............^
-connector\mutations.gql:16:2: On @auth: invalid expression ("auth.uid == $userId"): ERROR: <input>:1:13: Syntax error: token recognition error at: '$'
- | auth.uid == $userId
- | ............^
-connector\queries.gql:4:2: On @auth: invalid expression ("auth.uid == $userId"): ERROR: <input>:1:13: Syntax error: token recognition error at: '$'
- | auth.uid == $userId
- | ............^
-
-sources: connector\mutations.gql [1122B] connector\queries.gql [857B] 
-I0323 19:07:44.020585   37496 control.go:100] [projects/emulator/locations/emulator/services/puzzlesaursos d0db] UpdateResources(): done
+Connector "default": sources: connector\queries.gql [879B] connector\mutations.gql [1120B] 
+I0331 19:33:28.532964   24976 codegen.go:102] [connector "default" javascriptSdk] Generating sources into "C:\\Users\\sebko\\Desktop\\01 Web Projects\\Puzzlesaursos\\lib\\dataconnect"
+I0331 19:33:28.916765   24976 collector.go:107] schema extensions wrote into "C:\\Users\\sebko\\Desktop\\01 Web Projects\\Puzzlesaursos\\dataconnect\\.dataconnect\\schema"
+Generated sources: main\implicit.gql [259B] main\input.gql [27068B] main\relation.gql [13749B] prelude.gql [80888B] main\query.gql [2626B] main\mutation.gql [6945B] 
+I0331 19:33:28.933289   24976 collector.go:107] connector "default" javascriptSdk wrote into "C:\\Users\\sebko\\Desktop\\01 Web Projects\\Puzzlesaursos\\lib\\dataconnect"
+Generated sources: index.d.ts [5546B] index.cjs.js [2870B] .guides/config.json [236B] esm\index.esm.js [2509B] esm\package.json [17B] package.json [635B] README.md [29510B] .guides/usage.md [1306B] .guides/setup.md [582B] 
+I0331 19:33:28.933289   24976 installsdk.go:138] generate.javascriptSdk.packageJsonDir is not specified, skipping automatic installation of package
+I0331 19:33:28.944125   24976 load.go:109] Finished reloading
+I0331 19:33:29.143730   24976 dev.go:104] Listening on address (HTTP + gRPC): 127.0.0.1:9399
+I0331 19:33:29.149833   24976 dev.go:104] Listening on address (HTTP + gRPC): [::1]:9399
+I0331 19:33:36.431192   24976 control.go:100] [projects/emulator/locations/emulator/services/puzzlesaursos 5352] UpdateResources(): done
 Main schema: sources: schema\schema.gql [890B] 
-Connector "default": sources: connector\mutations.gql [1122B] connector\queries.gql [857B] 
-I0323 19:07:44.020585   37496 service.go:186] [projects/emulator/locations/emulator/services/puzzlesaursos d0db] while configuring to server.Settings{ConnectionString:"dbname='fdcdb' host='127.0.0.1' port='5432' sslmode='disable' dbname='fdcdb'", MaxOpenConnection:0, UseDummy:false, EnableGoogleMLIntegration:false, SchemaSettings:esql.Settings{SchemaValidationMode:"", SchemaName:""}}, failed to reload last live sources: 
-Errors: connector\mutations.gql:4:2: On @auth: invalid expression ("auth.uid == $id"): ERROR: <input>:1:13: Syntax error: token recognition error at: '$'
- | auth.uid == $id
- | ............^
-connector\mutations.gql:16:2: On @auth: invalid expression ("auth.uid == $userId"): ERROR: <input>:1:13: Syntax error: token recognition error at: '$'
- | auth.uid == $userId
- | ............^
-connector\queries.gql:4:2: On @auth: invalid expression ("auth.uid == $userId"): ERROR: <input>:1:13: Syntax error: token recognition error at: '$'
- | auth.uid == $userId
- | ............^
-I0323 19:07:44.021598   37496 configure_emulator.go:21] ConfigureEmulator successed
+Connector "default": sources: connector\mutations.gql [1120B] connector\queries.gql [879B] 
+I0331 19:33:36.438063   24976 configure_emulator.go:21] ConfigureEmulator successed
 Request: service_id: "puzzlesaursos"
 connection_string: "postgres://127.0.0.1:5432/fdcdb?sslmode=disable"
 database: "fdcdb"

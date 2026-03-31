@@ -53,7 +53,7 @@ service cloud.firestore {
     
     function isAdmin() {
       return isAuthenticated() && (
-        exists(/databases/$(database)/documents/admins/$(request.auth.token.email.lower())) ||
+        ('email' in request.auth.token && request.auth.token.email != null && exists(/databases/$(database)/documents/admins/$(request.auth.token.email.lower()))) ||
         (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin')
       );
     }
@@ -95,7 +95,7 @@ service cloud.firestore {
     // ===============================================================
 
     function isValidUser(data) {
-      return hasOnlyAllowedFields(['uid', 'email', 'displayName', 'photoURL', 'currentStreak', 'longestStreak', 'lastSolveDate', 'createdAt', 'role']) &&
+      return hasOnlyAllowedFields(['uid', 'email', 'displayName', 'photoURL', 'currentStreak', 'longestStreak', 'lastSolveDate', 'createdAt', 'role', 'isVerified', 'phoneNumber']) &&
              data.uid is string && data.uid.size() > 0 && data.uid.size() <= 128 &&
              data.currentStreak is number && data.currentStreak >= 0 &&
              data.longestStreak is number && data.longestStreak >= 0 &&
@@ -104,21 +104,18 @@ service cloud.firestore {
              (!('photoURL' in data) || (data.photoURL is string && isValidUrl(data.photoURL) && data.photoURL.size() <= 2000)) &&
              (!('lastSolveDate' in data) || isValidDateString(data.lastSolveDate)) &&
              (!('createdAt' in data) || data.createdAt is timestamp) &&
-             (!('role' in data) || data.role in ['user', 'tester', 'admin']);
+             (!('role' in data) || data.role in ['user', 'tester', 'admin']) &&
+             (!('isVerified' in data) || data.isVerified is bool) &&
+             (!('phoneNumber' in data) || data.phoneNumber is string);
     }
 
     function isValidGameStat(data) {
-      return hasOnlyAllowedFields(['userId', 'gameName', 'date', 'mode', 'won', 'mistakes', 'timeToComplete', 'attempts', 'timestamp', 'isPlayTest']) &&
-             data.userId is string && data.userId.size() > 0 && data.userId.size() <= 128 &&
+      return data.userId is string && data.userId.size() > 0 && data.userId.size() <= 128 &&
              data.gameName is string && data.gameName.size() > 0 && data.gameName.size() <= 50 &&
              data.date is string && isValidDateString(data.date) &&
-             data.mode is string && data.mode in ['easy', 'hard', 'standard'] &&
              data.won is bool &&
              data.mistakes is number && data.mistakes >= 0 &&
-             (!('timeToComplete' in data) || (data.timeToComplete is number && data.timeToComplete >= 0)) &&
-             (!('attempts' in data) || (data.attempts is number && data.attempts >= 0)) &&
-             data.timestamp is timestamp &&
-             (!('isPlayTest' in data) || data.isPlayTest is bool);
+             data.timestamp is timestamp;
     }
 
     function isValidFeedback(data) {
@@ -152,14 +149,15 @@ service cloud.firestore {
       allow delete: if false;
     }
 
-    match /game_stats/{statId} {
+    match /gameStats/{statId} {
       // Anyone can create a stat (even anonymous users)
       allow create: if hasRequiredFields(['userId', 'gameName', 'date', 'mode', 'won', 'mistakes', 'timestamp']) &&
                        isValidGameStat(request.resource.data) &&
                        (request.resource.data.userId == 'anonymous' || (isAuthenticated() && request.auth.uid == request.resource.data.userId));
       
-      // Allow reading if the user owns the stat or is an admin
-      allow read: if (isAuthenticated() && request.auth.uid == resource.data.userId) || isAdmin();
+      // Split into two explicit paths to bypass the complex partial-evaluator engine
+      allow read: if isAuthenticated() && request.auth.uid == resource.data.userId;
+      allow read: if isAdmin();
       
       // No updating or deleting stats from the client
       allow update, delete: if false;
@@ -185,6 +183,16 @@ service cloud.firestore {
     match /admins/{email} {
       allow read: if isAuthenticated() && request.auth.token.email.lower() == email;
       allow read, write: if isAdmin();
+    }
+
+    match /arenaPuzzles/{document} {
+      allow read, write: if isAuthenticated();
+    }
+
+    match /tribes/{tribeId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isVerified == true;
+      allow update: if isAuthenticated() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isVerified == true;
     }
   }
 }

@@ -1,239 +1,243 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { ChevronLeft, Shield, User as UserIcon, Beaker, Plus, Trash2, BarChart2 } from 'lucide-react';
 import { useAuth } from '@/lib/useAuth';
+import Link from 'next/link';
+import { Wand2, BarChart2, Activity, ShieldAlert, ChevronLeft, ArrowRight, Users, UserPlus, Trash2 } from 'lucide-react';
 import { db } from '@/lib/firebase';
-import { collection, getDocs, doc, updateDoc, setDoc, deleteDoc, serverTimestamp, query, limit } from 'firebase/firestore';
 import styles from './Admin.module.css';
+import { collection, getDocs, doc, setDoc, deleteDoc, serverTimestamp, query, where, orderBy, limit } from 'firebase/firestore';
 
-interface UserProfile {
-  uid: string;
-  email: string | null;
-  displayName: string | null;
-  role: 'admin' | 'tester' | 'user';
-}
-
-export default function AdminPage() {
-  const { user, profile, loading } = useAuth();
-  const [users, setUsers] = useState<UserProfile[]>([]);
-  const [admins, setAdmins] = useState<{email: string}[]>([]);
-  const [testers, setTesters] = useState<{email: string}[]>([]);
-  
-  const [newAdminEmail, setNewAdminEmail] = useState('');
+export default function AdminDashboard() {
+  const { profile, loading } = useAuth();
+  const [gameName, setGameName] = useState('Vault');
+ const [count, setCount] = useState(3);
+  const [constraints, setConstraints] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [message, setMessage] = useState('');
+  const [playtesters, setPlaytesters] = useState<string[]>([]);
   const [newTesterEmail, setNewTesterEmail] = useState('');
-  
-  const [addingAdmin, setAddingAdmin] = useState(false);
-  const [addingTester, setAddingTester] = useState(false);
-  const [fetching, setFetching] = useState(true);
+  const [fetchingUsers, setFetchingUsers] = useState(false);
+  const [queueStats, setQueueStats] = useState<{ count: number; lastGenerated: string | null } | null>(null);
+  const [fetchingQueueStats, setFetchingQueueStats] = useState(false);
 
   const isAdmin = profile?.role === 'admin';
 
   useEffect(() => {
-    const fetchAdminData = async () => {
+    const fetchQueueStats = async () => {
       if (!isAdmin) return;
+      setFetchingQueueStats(true);
+      setQueueStats(null);
       try {
-        const uSnap = await getDocs(query(collection(db, 'users'), limit(100)));
-        setUsers(uSnap.docs.map(d => d.data() as UserProfile));
+        const countQuery = query(
+          collection(db, 'arenaPuzzles'),
+          where('gameName', '==', gameName),
+          where('status', '==', 'pending')
+        );
+        const countSnapshot = await getDocs(countQuery);
+        const pendingCount = countSnapshot.size;
 
-        const aSnap = await getDocs(collection(db, 'admins'));
-        setAdmins(aSnap.docs.map(d => ({ email: d.id })));
-
-        const tSnap = await getDocs(collection(db, 'playtesters'));
-        setTesters(tSnap.docs.map(d => ({ email: d.id })));
-      } catch (error) {
-        console.error('Error fetching admin data:', error);
-      } finally {
-        setFetching(false);
-      }
+        const lastGeneratedQuery = query(
+          collection(db, 'arenaPuzzles'),
+          where('gameName', '==', gameName),
+          orderBy('createdAt', 'desc'),
+          limit(1)
+        );
+        const lastGeneratedSnapshot = await getDocs(lastGeneratedQuery);
+        const lastGeneratedDate = !lastGeneratedSnapshot.empty ? lastGeneratedSnapshot.docs[0].data().createdAt.toDate().toLocaleString() : null;
+        
+        setQueueStats({ count: pendingCount, lastGenerated: lastGeneratedDate });
+      } catch (error) { console.error(`Failed to fetch queue stats for ${gameName}:`, error); }
+      setFetchingQueueStats(false);
     };
+    fetchQueueStats();
+  }, [gameName, isAdmin]);
 
-    if (!loading && isAdmin) {
-      fetchAdminData();
+  useEffect(() => {
+    const fetchPlaytesters = async () => {
+      setFetchingUsers(true);
+      try {
+        const snapshot = await getDocs(collection(db, 'playtesters'));
+        setPlaytesters(snapshot.docs.map(doc => doc.id));
+      } catch (error) {
+        console.error('Error fetching playtesters:', error);
+      }
+      setFetchingUsers(false);
+    };
+    if (isAdmin && !loading) {
+      fetchPlaytesters();
     }
-  }, [loading, isAdmin]);
+  }, [isAdmin, loading]);
 
-  const handleRoleChange = async (uid: string, newRole: 'user' | 'tester' | 'admin') => {
-    if (uid === user?.uid) {
-      const confirmSelf = confirm(
-        "WARNING: If you change your own role to anything other than 'Admin', you will instantly be locked out of this dashboard. Proceed?"
-      );
-      if (!confirmSelf) return;
-    }
-
-    try {
-      await updateDoc(doc(db, 'users', uid), { role: newRole });
-      setUsers(users.map(u => u.uid === uid ? { ...u, role: newRole } : u));
-    } catch (error) {
-      console.error('Error updating role:', error);
-    }
-  };
-
-  const handleAddAdmin = async (e: React.FormEvent) => {
+  const handleAddPlaytester = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newAdminEmail) return;
-    setAddingAdmin(true);
+    if (!newTesterEmail || !newTesterEmail.includes('@')) return;
+    const emailLower = newTesterEmail.toLowerCase().trim();
     try {
-      const emailLower = newAdminEmail.toLowerCase();
-      await setDoc(doc(db, 'admins', emailLower), { addedAt: serverTimestamp() });
-      setAdmins([...admins, { email: emailLower }]);
-      setNewAdminEmail('');
-    } catch (error) {
-      console.error('Error adding admin:', error);
-    }
-    setAddingAdmin(false);
-  };
-
-  const handleRemoveAdmin = async (email: string) => {
-    try {
-      await deleteDoc(doc(db, 'admins', email));
-      setAdmins(admins.filter(a => a.email !== email));
-    } catch (error) {
-      console.error('Error removing admin:', error);
-    }
-  };
-
-  const handleAddTester = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newTesterEmail) return;
-    setAddingTester(true);
-    try {
-      const emailLower = newTesterEmail.toLowerCase();
       await setDoc(doc(db, 'playtesters', emailLower), { addedAt: serverTimestamp() });
-      setTesters([...testers, { email: emailLower }]);
       setNewTesterEmail('');
+      setPlaytesters(prev => Array.from(new Set([...prev, emailLower])));
     } catch (error) {
-      console.error('Error adding tester:', error);
+      console.error('Error adding playtester:', error);
+      alert('Failed to add playtester. Check permissions.');
     }
-    setAddingTester(false);
   };
 
-  const handleRemoveTester = async (email: string) => {
+  const handleRemovePlaytester = async (email: string) => {
+    if (!confirm(`Remove ${email} from playtesters?`)) return;
     try {
       await deleteDoc(doc(db, 'playtesters', email));
-      setTesters(testers.filter(t => t.email !== email));
+      setPlaytesters(prev => prev.filter(e => e !== email));
     } catch (error) {
-      console.error('Error removing tester:', error);
+      console.error('Error removing playtester:', error);
+      alert('Failed to remove playtester.');
     }
   };
 
-  if (loading || fetching) return <div className={styles.loading}>Loading Admin Data...</div>;
+  if (loading) return <div style={{ padding: '40px', textAlign: 'center', fontFamily: 'var(--font-mono)' }}>Verifying credentials...</div>;
 
   if (!isAdmin) {
     return (
       <div className={styles.deniedContainer}>
-        <h1 className={styles.deniedTitle}>Access Denied</h1>
-        <p className={styles.deniedText}>Admin privileges required.</p>
-        <Link href="/" className={styles.actionBtn}>Return Home</Link>
+        <ShieldAlert size={48} className={styles.deniedIcon} />
+        <h2>Access Denied</h2>
+        <p>Admin privileges required.</p>
+        <Link href="/" className={styles.deniedLink}>Return Home</Link>
       </div>
     );
   }
 
+  const handleGenerate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsGenerating(true);
+    setMessage('Brewing puzzles...');
+    try {
+      const res = await fetch('/api/arena/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ gameName, count: Number(count), constraints }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setMessage(`Success! Queued ${data.variants.length} new ${gameName} variants (Batch: ${data.batchId.slice(0,6)}...)`);
+      } else {
+        setMessage(`Error: ${data.error}`);
+      }
+    } catch (e: any) {
+      setMessage('Network error. Check console.');
+    }
+    setIsGenerating(false);
+  };
+
   return (
-    <div className={styles.appContainer}>
+    <div className={styles.container}>
       <header className={styles.header}>
-        <Link href="/" className={styles.iconBtn}>
+        <Link href="/" className={styles.backLink}>
           <ChevronLeft size={20} />
         </Link>
-        <h1 className={styles.headerTitle}>
-          <Shield size={20} /> Admin
+        <h1 className={styles.title}>
+          <Activity size={24} /> Admin Control Center
         </h1>
-        <Link href="/admin/analytics" className={styles.analyticsBtn}>
-          <BarChart2 size={14} /> Analytics
-        </Link>
       </header>
 
-      <main className={styles.main}>
-        <div className={styles.card}>
-          <h2 className={styles.cardHeader}><Shield size={16} /> Pre-Authorized Admins</h2>
-          <form onSubmit={handleAddAdmin} className={styles.formGroup}>
-            <input
-              type="email"
-              placeholder="admin@example.com"
-              value={newAdminEmail}
-              onChange={e => setNewAdminEmail(e.target.value)}
-              className={styles.input}
-              required
-            />
-            <button type="submit" className={styles.actionBtn} disabled={addingAdmin || !newAdminEmail}>
-              <Plus size={16} /> Add
+      <div className={styles.grid}>
+        
+        {/* AI Generator Panel */}
+        <form onSubmit={handleGenerate} className={styles.panel}>
+          <h2 className={styles.panelTitle}>
+            <Wand2 size={20} /> AI Playtest Generator
+          </h2>
+
+          <div className={styles.inputGroup}>
+            <label className={styles.label}>Target Game / Prototype</label>
+            <select value={gameName} onChange={e => setGameName(e.target.value)} className={styles.select}>
+              <option value="Vault">Vault (Standard Protocol)</option>
+              <option value="VaultBlitz">Vault: Blitz (Timed)</option>
+              <option value="VaultCorrupted">Vault: Corrupted (Deception)</option>
+              <option value="Chain">Chain (Standard)</option>
+              <option value="ChainBlitz">Chain: Blitz (Timed)</option>
+              <option value="ChainVersus">Chain: Versus (AI Opponent)</option>
+              <option value="Lexicon">Lexicon (Base Game)</option>
+              <option value="LexiconBlitz">Lexicon Blitz (10s Timer)</option>
+              <option value="LexiconReverse">Lexicon Reverse (Definition First)</option>
+              <option value="LexiconPersona">Lexicon Persona (Themed Bluffs)</option>
+            </select>
+          </div>
+
+          {/* Queue Status Display */}
+          <div className={styles.inputGroup} style={{ padding: '12px', borderRadius: 'var(--radius-sm)', backgroundColor: 'var(--bg-paper)', border: '1px solid var(--border-ink)', fontSize: '14px', fontFamily: 'var(--font-mono)' }}>
+            {fetchingQueueStats ? (
+              <div>Checking queue status...</div>
+            ) : queueStats ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <div><span style={{ fontWeight: 600 }}>Pending in Queue:</span> {queueStats.count}</div>
+                <div><span style={{ fontWeight: 600 }}>Last Generated:</span> {queueStats.lastGenerated || 'Never'}</div>
+              </div>
+            ) : (
+              <div>Could not load queue status.</div>
+            )}
+          </div>
+
+          <div className={styles.inputGroup}>
+            <label className={styles.rangeLabel}>
+              <span>Batch Size</span>
+              <span className={styles.rangeValue}>{count} Puzzles</span>
+            </label>
+            <input type="range" min="1" max="20" value={count} onChange={e => setCount(parseInt(e.target.value))} className={styles.rangeInput} />
+          </div>
+
+          <div className={styles.inputGroup} style={{ marginBottom: '24px' }}>
+            <label className={styles.label}>AI Constraints (Optional)</label>
+            <textarea value={constraints} onChange={e => setConstraints(e.target.value)} placeholder="e.g. Make the definitions pirate-themed..." className={styles.textarea} />
+          </div>
+
+          <button type="submit" disabled={isGenerating} className={styles.submitButton}>
+            <Wand2 size={18} /> {isGenerating ? 'Generating Variants...' : 'Queue Generation'}
+          </button>
+          {message && <div className={`${styles.message} ${message.includes('Error') ? styles.messageError : styles.messageSuccess}`}>{message}</div>}
+        </form>
+
+        {/* Playtester Management Panel */}
+        <section className={styles.panel}>
+          <h2 className={styles.panelTitle}>
+            <Users size={20} /> Playtester Management
+          </h2>
+          
+          <form onSubmit={handleAddPlaytester} className={styles.addForm}>
+            <input type="email" value={newTesterEmail} onChange={e => setNewTesterEmail(e.target.value)} placeholder="Email address" className={styles.emailInput} />
+            <button type="submit" disabled={!newTesterEmail.includes('@')} className={styles.addButton}>
+              <UserPlus size={16} /> Add
             </button>
           </form>
-          <div className={styles.adminList}>
-            {admins.map(a => (
-              <div key={a.email} className={styles.adminItem}>
-                <span className={styles.adminEmail}>{a.email}</span>
-                <button onClick={() => handleRemoveAdmin(a.email)} className={styles.removeBtn}><Trash2 size={16} /></button>
-              </div>
-            ))}
-          </div>
-        </div>
 
-        <div className={styles.card}>
-          <h2 className={styles.cardHeader}><Beaker size={16} /> Pre-Authorized Playtesters</h2>
-          <form onSubmit={handleAddTester} className={styles.formGroup}>
-            <input
-              type="email"
-              placeholder="tester@example.com"
-              value={newTesterEmail}
-              onChange={e => setNewTesterEmail(e.target.value)}
-              className={styles.input}
-              required
-            />
-            <button type="submit" className={styles.actionBtn} disabled={addingTester || !newTesterEmail}>
-              <Plus size={16} /> Add
-            </button>
-          </form>
-          <div className={styles.adminList}>
-            {testers.map(t => (
-              <div key={t.email} className={styles.adminItem}>
-                <span className={styles.adminEmail}>{t.email}</span>
-                <button onClick={() => handleRemoveTester(t.email)} className={styles.removeBtn}><Trash2 size={16} /></button>
-              </div>
-            ))}
+          <div>
+            <h3 className={styles.subheading}>Active Playtesters</h3>
+            {fetchingUsers ? (
+              <div style={{ fontSize: '14px', opacity: 0.7 }}>Loading...</div>
+            ) : playtesters.length === 0 ? (
+              <div style={{ fontSize: '14px', opacity: 0.7 }}>No playtesters added.</div>
+            ) : (
+              <ul className={styles.userList}>
+                {playtesters.map(email => (
+                  <li key={email} className={styles.userItem}>
+                    <span className={styles.userEmail}>{email}</span>
+                    <button onClick={() => handleRemovePlaytester(email)} className={styles.removeButton} title="Remove playtester">
+                      <Trash2 size={16} />
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
-        </div>
+        </section>
 
-        <div className={styles.card}>
-          <h2 className={styles.cardHeader}><UserIcon size={16} /> User Management</h2>
-          <div className={styles.userList}>
-            {users.map(u => (
-              <div key={u.uid} className={styles.userCard}>
-                <div className={styles.userInfoRow}>
-                  <div>
-                    <div className={styles.userName}>{u.displayName || 'Anonymous'}</div>
-                    <div className={styles.userEmail}>{u.email || 'No email'}</div>
-                  </div>
-                  <div className={`${styles.roleBadge} ${u.role === 'admin' ? styles.roleBadgeAdmin : u.role === 'tester' ? styles.roleBadgeTester : ''}`}>
-                    {u.role}
-                  </div>
-                </div>
-                <div className={styles.roleActions}>
-                  <button 
-                    onClick={() => handleRoleChange(u.uid, 'user')}
-                    className={`${styles.roleBtn} ${u.role === 'user' ? styles.roleBtnActiveUser : ''}`}
-                  >
-                    User
-                  </button>
-                  <button 
-                    onClick={() => handleRoleChange(u.uid, 'tester')}
-                    className={`${styles.roleBtn} ${u.role === 'tester' ? styles.roleBtnActiveTester : ''}`}
-                  >
-                    Tester
-                  </button>
-                  <button 
-                    onClick={() => handleRoleChange(u.uid, 'admin')}
-                    className={`${styles.roleBtn} ${u.role === 'admin' ? styles.roleBtnActiveAdmin : ''}`}
-                  >
-                    Admin
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </main>
+        <section className={styles.linksSection}>
+          <Link href="/admin/analytics" className={styles.navLink}>
+            <h2 className={styles.panelTitle}><BarChart2 size={20} /> X-Ray Analytics</h2>
+            <p className={styles.navLinkDesc}>View high-fidelity player telemetry, global win rates, and deep trap metrics. <ArrowRight size={16} /></p>
+          </Link>
+        </section>
+      </div>
     </div>
   );
 }

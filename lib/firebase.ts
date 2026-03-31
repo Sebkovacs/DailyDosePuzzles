@@ -55,7 +55,7 @@ export const saveGameStats = async (uid: string | null, stats: GameStats) => {
       isPlayTest: stats.isPlayTest || false
     });
   } catch (error) {
-    console.error('Error saving strictly-typed game stats to Data Connect:', error);
+    console.warn('Data Connect (PostgreSQL) is offline or failed. Make sure the emulator is running:', error);
   }
 
   // 2. Save flexible, high-fidelity AI telemetry data directly to NoSQL Firestore
@@ -63,7 +63,8 @@ export const saveGameStats = async (uid: string | null, stats: GameStats) => {
     await addDoc(collection(db, 'gameStats'), {
       ...stats,
       userId: uid || 'anonymous',
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
+      timestamp: serverTimestamp()
     });
   } catch (error) {
     console.error("Failed to save high-fidelity game telemetry to Firestore:", error);
@@ -142,7 +143,7 @@ export const signInWithGoogle = async () => {
         displayName: user.displayName || '',
         role: role
       });
-    } catch (err) { console.error("Error syncing to postgres:", err); }
+    } catch (err) { console.warn("Error syncing to postgres:", err); }
 
     return user;
   } catch (error) {
