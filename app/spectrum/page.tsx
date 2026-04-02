@@ -200,7 +200,7 @@ export default function Spectrum() {
     }
   }, [isWin, user, isPlayTest]);
 
-  if (!mounted || !puzzle) return <div style={{ height: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--bg-paper)', fontFamily: 'var(--font-official)' }}>Loading...</div>;
+  if (!mounted || !puzzle) return <div className={styles.loadingScreen}>Loading...</div>;
 
   const leftActions = isTester ? (
     <button onClick={() => setShowFeedback(true)} className={styles.iconBtn} title="Give Feedback">
@@ -352,11 +352,11 @@ export default function Spectrum() {
                 <X size={20} />
                 </button>
               <h2 className={styles.modalTitle}>How to Play</h2>
-              <div className={styles.modalSubtitle} style={{ textAlign: 'left', marginTop: '16px' }}>
-                  <p style={{marginBottom: '12px'}}>Arrange the items in the correct order based on a hidden metric. <strong style={{color: 'var(--ink-main)'}}>Both forward and backward orders are accepted!</strong></p>
-                  <p style={{marginBottom: '12px'}}>Tap two items to swap their positions.</p>
-                  <p style={{marginBottom: '12px'}}><strong style={{color: 'var(--ink-main)'}}>Easy Mode:</strong> Correctly adjacent items will lock together into blocks.</p>
-                  <p><strong style={{color: 'var(--ink-main)'}}>Hard Mode:</strong> No locks. You only see how many are in the correct spot.</p>
+              <div className={`${styles.modalSubtitle} ${styles.helpBody}`}>
+                  <p className={styles.helpParagraph}>Arrange the items in the correct order based on a hidden metric. <strong className={styles.helpEmphasis}>Both forward and backward orders are accepted!</strong></p>
+                  <p className={styles.helpParagraph}>Tap two items to swap their positions.</p>
+                  <p className={styles.helpParagraph}><strong className={styles.helpEmphasis}>Easy Mode:</strong> Correctly adjacent items will lock together into blocks.</p>
+                  <p><strong className={styles.helpEmphasis}>Hard Mode:</strong> No locks. You only see how many are in the correct spot.</p>
                 </div>
               <button className={`${styles.actionBtn} ${styles.actionBtnPrimary}`} onClick={() => setShowHelp(false)}>
                   Got it

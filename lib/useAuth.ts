@@ -12,7 +12,10 @@ export interface UserProfile {
   photoURL?: string;
   currentStreak: number;
   longestStreak: number;
+  streak?: number;
+  maxStreak?: number;
   lastSolveDate?: string;
+  isVerified?: boolean;
   role?: 'admin' | 'tester' | 'user';
 }
 

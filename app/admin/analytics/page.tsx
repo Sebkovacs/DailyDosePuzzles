@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { ChevronLeft, BarChart2, Target, Clock, AlertTriangle } from 'lucide-react';
 import { useAuth } from '@/lib/useAuth';
 import { db } from '@/lib/firebase';
-import { collection, getDocs, query, orderBy } from 'firebase/firestore';
+import { collection, getDocs, query } from 'firebase/firestore';
 import styles from './Analytics.module.css';
 
 interface GameStat {
@@ -58,7 +58,7 @@ export default function AdminAnalyticsPage() {
       <div className={styles.deniedContainer}>
         <h1 className={styles.deniedTitle}>Access Denied</h1>
         <p className={styles.deniedText}>Admin privileges required to view global analytics.</p>
-        <Link href="/" style={{ padding: '12px 20px', backgroundColor: 'var(--bg-card)', color: 'var(--ink-main)', border: 'var(--border-ink)', borderRadius: 'var(--radius-sharp)', textDecoration: 'none', fontWeight: 600, fontFamily: 'var(--font-mono)', textTransform: 'uppercase', boxShadow: 'var(--shadow-ink)' }}>Return Home</Link>
+        <Link href="/" className={styles.deniedLink}>Return Home</Link>
       </div>
     );
   }
@@ -106,7 +106,7 @@ export default function AdminAnalyticsPage() {
         s.wrongGuesses.forEach(guess => {
           let guessStr = '';
           if (typeof guess === 'string') guessStr = guess;
-          else if (Array.isArray(guess)) guessStr = guess.join(' ➔ ');
+          else if (Array.isArray(guess)) guessStr = guess.join(' -> ');
           else guessStr = JSON.stringify(guess);
           
           if (guessStr) {
@@ -126,7 +126,7 @@ export default function AdminAnalyticsPage() {
         </header>
         <main className={styles.main}>
           <section>
-            <h2 className={styles.sectionTitle} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Clock size={18} /> Telemetry</h2>
+            <h2 className={`${styles.sectionTitle} ${styles.sectionTitleWithIcon}`}><Clock size={18} /> Telemetry</h2>
             <div className={styles.kpiGrid}>
               <div className={styles.kpiCard}><div className={styles.kpiValue}>{avgFirstAction}s</div><div className={styles.kpiLabel}>Avg. Comprehension Time</div></div>
               <div className={styles.kpiCard}><div className={styles.kpiValue}>{avgCompletionTime}s</div><div className={styles.kpiLabel}>Avg. Win Time</div></div>
@@ -134,14 +134,21 @@ export default function AdminAnalyticsPage() {
             </div>
           </section>
           <section>
-            <h2 className={styles.sectionTitle} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><AlertTriangle size={18} /> The "Trap" Metric</h2>
+            <h2 className={`${styles.sectionTitle} ${styles.sectionTitleWithIcon}`}><AlertTriangle size={18} /> The "Trap" Metric</h2>
             <div className={styles.tableWrapper}>
               <table className={styles.table}>
                 <thead><tr><th>Path / Guess</th><th>Users Trapped</th></tr></thead>
                 <tbody>
                   {topTraps.length > 0 ? topTraps.map(([trap, count]) => (
-                    <tr key={trap}><td style={{ fontFamily: 'var(--font-mono)' }}>{trap}</td><td><span className={`${styles.badge} ${styles.badgeLoss}`}>{count}</span></td></tr>
-                  )) : <tr><td colSpan={2} style={{ textAlign: 'center', padding: '24px' }}>No traps recorded yet.</td></tr>}
+                    <tr key={trap}>
+                      <td className={styles.tableCellMono}>{trap}</td>
+                      <td><span className={`${styles.badge} ${styles.badgeLoss}`}>{count}</span></td>
+                    </tr>
+                  )) : (
+                    <tr>
+                      <td colSpan={2} className={styles.tableCellCenter}>No traps recorded yet.</td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
@@ -186,14 +193,18 @@ export default function AdminAnalyticsPage() {
               </thead>
               <tbody>
                 {aggregatedGames.map(g => (
-                  <tr key={g.name} onClick={() => setSelectedGame(g.name)} style={{ cursor: 'pointer' }} title={`View ${g.name} insights`}>
+                  <tr key={g.name} onClick={() => setSelectedGame(g.name)} className={styles.tableRowClickable} title={`View ${g.name} insights`}>
                     <td>{g.name}</td>
                     <td>{g.plays}</td>
                     <td><span className={`${styles.badge} ${g.winRate >= 50 ? styles.badgeWin : styles.badgeLoss}`}>{g.winRate}%</span></td>
                     <td>{g.avgMistakes}</td>
                   </tr>
                 ))}
-                {aggregatedGames.length === 0 && <tr><td colSpan={4} style={{ textAlign: 'center', padding: '24px' }}>No data collected yet.</td></tr>}
+                {aggregatedGames.length === 0 && (
+                  <tr>
+                    <td colSpan={4} className={styles.tableCellCenter}>No data collected yet.</td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>

@@ -48,8 +48,8 @@ Rules:
 *   ✅ Repo clearly communicates **what Daily Dose is**
 *   ✅ No ambiguous product direction remains
 *   ✅ Design system is **production-ready** (all primitives/foundations built)
-*   ✅ Styling rules are **enforceable** (CSS Modules + tokens, no Tailwind, no inline styles)
-*   ✅ Component library is **well-documented** with implementation examples
+*   🔄 Styling rules are codified and under active enforcement hardening (legacy inline styles and token aliases still being migrated)
+*   ✅ Component library contract is documented and being kept in sync with implementation
 *   ✅ Motion system is **standardized** (Framer Motion + consistent easing/durations)
 
 ***
@@ -83,6 +83,32 @@ Rules:
 *   Anyone can play today’s puzzle
 *   Puzzle feels fair, fast, and finishable
 *   You can say: *“This already feels good.”*
+
+***
+
+# PHASE 1.5 — UI OPERATING SYSTEM (SPEED + QUALITY)
+
+> Goal: Make UI changes fast, safe, and measurable without rewrite cycles.
+
+### ✅ Tasks
+
+*   [ ] Stabilise primitive/foundation APIs (no prop churn)
+*   [ ] Add experiment wiring standard to high-impact surfaces:
+    *   home/menu
+    *   onboarding/sign-in prompts
+    *   premium upsell surfaces
+*   [ ] Define event taxonomy for UI tests:
+    *   exposure
+    *   interaction
+    *   outcome
+*   [ ] Add visual regression snapshots for critical components
+*   [ ] Add "remove loser variant" cleanup rule to release checklist
+
+### ✅ Exit Criteria
+
+*   UI experiments can ship without touching core primitives
+*   Theme and component changes are mostly token/variant updates
+*   Winning UI variants can be promoted quickly with low risk
 
 ***
 

@@ -16,6 +16,7 @@ interface FetchedStat {
   won: boolean;
   mistakes: number;
   timeToCompleteSeconds?: number;
+  isPlayTest?: boolean;
 }
 
 export default function StatsPage() {
@@ -115,14 +116,14 @@ export default function StatsPage() {
 
   // Achievements Evaluation
   const achievements = [
-    { id: 'first_win', title: 'First Win', desc: 'Win your first puzzle.', icon: <Award size={24} color="var(--accent-indigo)" />, unlocked: totalWon > 0 },
-    { id: 'flawless', title: 'Flawless', desc: 'Win with zero mistakes.', icon: <Target size={24} color="var(--accent-sanguine)" />, unlocked: stats.some(s => s.won && s.mistakes === 0) },
-    { id: 'hot_streak', title: 'Hot Streak', desc: 'Achieve a 7-day streak.', icon: <Flame size={24} color="var(--accent-ochre)" />, unlocked: longestStreak >= 7 },
-    { id: 'pioneer', title: 'Pioneer', desc: 'Play a prototype variant.', icon: <Compass size={24} color="var(--accent-viridian)" />, unlocked: stats.some(s => s.isPlayTest) },
-    { id: 'safecracker', title: 'Safecracker', desc: 'Win 10 Vault puzzles.', icon: <Lock size={24} color="var(--accent-slate)" />, unlocked: logic.wins >= 10 },
-    { id: 'wordsmith', title: 'Wordsmith', desc: 'Win 10 Lexicon puzzles.', icon: <BookOpen size={24} color="var(--accent-teal)" />, unlocked: linguistic.wins >= 10 },
-    { id: 'link_master', title: 'Link Master', desc: 'Win 10 Chain puzzles.', icon: <Link2 size={24} color="var(--accent-umber)" />, unlocked: lateral.wins >= 10 },
-    { id: 'dedicated', title: 'Dedicated', desc: 'Play 100 total games.', icon: <Crown size={24} color="var(--accent-crimson)" />, unlocked: totalPlayed >= 100 },
+    { id: 'first_win', title: 'First Win', desc: 'Win your first puzzle.', icon: <Award size={24} color="var(--color-game-indigo)" />, unlocked: totalWon > 0 },
+    { id: 'flawless', title: 'Flawless', desc: 'Win with zero mistakes.', icon: <Target size={24} color="var(--color-accent-primary)" />, unlocked: stats.some(s => s.won && s.mistakes === 0) },
+    { id: 'hot_streak', title: 'Hot Streak', desc: 'Achieve a 7-day streak.', icon: <Flame size={24} color="var(--color-game-ochre)" />, unlocked: longestStreak >= 7 },
+    { id: 'pioneer', title: 'Pioneer', desc: 'Play a prototype variant.', icon: <Compass size={24} color="var(--color-game-viridian)" />, unlocked: stats.some(s => s.isPlayTest) },
+    { id: 'safecracker', title: 'Safecracker', desc: 'Win 10 Vault puzzles.', icon: <Lock size={24} color="var(--color-game-slate)" />, unlocked: logic.wins >= 10 },
+    { id: 'wordsmith', title: 'Wordsmith', desc: 'Win 10 Lexicon puzzles.', icon: <BookOpen size={24} color="var(--color-accent-secondary)" />, unlocked: linguistic.wins >= 10 },
+    { id: 'link_master', title: 'Link Master', desc: 'Win 10 Chain puzzles.', icon: <Link2 size={24} color="var(--color-warning)" />, unlocked: lateral.wins >= 10 },
+    { id: 'dedicated', title: 'Dedicated', desc: 'Play 100 total games.', icon: <Crown size={24} color="var(--color-danger)" />, unlocked: totalPlayed >= 100 },
   ];
 
   // Game by Game Breakdown
@@ -147,22 +148,22 @@ export default function StatsPage() {
         <Link href="/" className={styles.iconBtn}>
           <ChevronLeft size={20} />
         </Link>
-        <h1 className={styles.headerTitle} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <BarChart2 size={20} /> Statistics {profile?.isVerified && <ShieldCheck size={20} color="var(--accent-viridian)" title="Verified Player" />}
+        <h1 className={styles.headerTitle}>
+          <BarChart2 size={20} /> Statistics {profile?.isVerified && <ShieldCheck size={20} className={styles.verifiedIcon} />}
         </h1>
         <div className={styles.headerSpacer}></div>
       </header>
 
       <main className={styles.main}>
         {!profile?.isVerified && (
-          <section style={{ backgroundColor: 'var(--wash-crimson)', padding: '16px', borderRadius: 'var(--radius-md)', border: '1px solid var(--accent-crimson)', marginBottom: '24px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--accent-crimson)', fontWeight: 700 }}>
+          <section className={styles.unverifiedBanner}>
+            <div className={styles.unverifiedTitle}>
               <ShieldAlert size={20} /> Unverified Account
             </div>
-            <p style={{ fontSize: '14px', margin: 0, color: 'var(--ink-main)', lineHeight: 1.5 }}>
+            <p className={styles.unverifiedText}>
               Link your phone number to prove you are human. Verified players unlock Tribes, Global Leaderboards, and exclusive rewards.
             </p>
-            <Link href="/verify" style={{ backgroundColor: 'var(--accent-crimson)', color: 'white', padding: '10px 16px', borderRadius: 'var(--radius-sm)', textDecoration: 'none', fontWeight: 600, textAlign: 'center', fontSize: '14px', marginTop: '8px' }}>
+            <Link href="/verify" className={styles.unverifiedLink}>
               Verify Now
             </Link>
           </section>
@@ -250,7 +251,7 @@ export default function StatsPage() {
         {/* Game by Game Breakdown */}
         {breakdownList.length > 0 && (
           <section className={styles.section}>
-            <h2 className={styles.sectionTitle} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <h2 className={`${styles.sectionTitle} ${styles.sectionTitleWithIcon}`}>
               <Gamepad2 size={20} /> Detailed Breakdown
             </h2>
             <div className={styles.breakdownList}>

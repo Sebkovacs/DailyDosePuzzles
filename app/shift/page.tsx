@@ -167,7 +167,7 @@ export default function Shift() {
     }
   }, [isWin, user, isPlayTest]);
 
-  if (!mounted || !puzzle) return <div style={{ height: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--bg-paper)', fontFamily: 'var(--font-official)' }}>Loading...</div>;
+  if (!mounted || !puzzle) return <div className={styles.loadingScreen}>Loading...</div>;
 
   const leftActions = isTester ? (
     <button onClick={() => setShowFeedback(true)} className={styles.iconBtn} title="Give Feedback">
@@ -328,10 +328,10 @@ export default function Shift() {
                   <X size={20} />
                 </button>
                 <h2 className={styles.modalTitle}>How to Play</h2>
-                <div className={styles.modalDesc} style={{ textAlign: 'left', marginTop: '16px', marginBottom: '32px' }}>
-                  <p style={{marginBottom: '12px'}}>Slide the columns up and down to align the letters.</p>
-                  <p style={{marginBottom: '12px'}}>Every row must form a valid word.</p>
-                  <p style={{marginBottom: '12px'}}>Click Submit to check your answer.</p>
+                <div className={`${styles.modalDesc} ${styles.helpBody}`}>
+                  <p className={styles.helpParagraph}>Slide the columns up and down to align the letters.</p>
+                  <p className={styles.helpParagraph}>Every row must form a valid word.</p>
+                  <p className={styles.helpParagraph}>Click Submit to check your answer.</p>
                   <p>You have 3 chances to get it right!</p>
                 </div>
                 <button className={`${styles.actionBtn} ${styles.actionBtnPrimary}`} onClick={() => setShowHelp(false)}>

@@ -265,7 +265,7 @@ export default function NumbersGame() {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  if (!mounted || !puzzle) return <div style={{ height: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--bg-paper)', fontFamily: 'var(--font-official)' }}>Loading...</div>;
+  if (!mounted || !puzzle) return <div className={styles.loadingScreen}>Loading...</div>;
 
   const leftActions = isTester ? (
     <button onClick={() => setShowFeedback(true)} className={styles.iconBtn} title="Give Feedback">
@@ -296,18 +296,18 @@ export default function NumbersGame() {
       <div className={styles.container}>
         {gameMode === 'select' ? (
           <div className={styles.selectScreen}>
-            <div className={styles.instructions} style={{marginBottom: '24px'}}>
+            <div className={`${styles.instructions} ${styles.selectIntroSpacing}`}>
               <h2 className={styles.instructionTitle}>Choose Your Path.</h2>
               <p className={styles.instructionDesc}>How would you like to solve today&apos;s puzzle?</p>
             </div>
             
             <button onClick={() => startGame('blitz')} className={styles.modeCard}>
-              <h3 className={styles.modeCardTitle}><Zap size={24} color="var(--accent-ochre)" /> Blitz</h3>
+              <h3 className={styles.modeCardTitle}><Zap size={24} className={styles.modeIconBlitz} /> Blitz</h3>
               <p className={styles.modeCardDesc}>30 seconds. Fast math. Get as close to the target as possible before time runs out.</p>
             </button>
             
             <button onClick={() => startGame('zen')} className={styles.modeCard}>
-              <h3 className={styles.modeCardTitle}><Brain size={24} color="var(--accent-viridian)" /> Zen</h3>
+              <h3 className={styles.modeCardTitle}><Brain size={24} className={styles.modeIconZen} /> Zen</h3>
               <p className={styles.modeCardDesc}>No timer. Must hit the exact target. Scored purely on the efficiency of your steps.</p>
             </button>
           </div>
@@ -324,7 +324,7 @@ export default function NumbersGame() {
                   </button>
                 </>
               ) : (
-                <div className={styles.instructions} style={{margin: 0, textAlign: 'left'}}>
+                <div className={`${styles.instructions} ${styles.zenInstruction}`}>
                   <h2 className={styles.instructionTitle}>Zen Mode</h2>
                   <p className={styles.instructionDesc}>Hit the target in as few steps as possible.</p>
                 </div>
@@ -485,12 +485,12 @@ export default function NumbersGame() {
                 <X size={20} />
               </button>
               <h2 className={styles.modalTitle}>How to Play</h2>
-              <div className={styles.modalDesc} style={{ textAlign: 'left', marginTop: '16px', marginBottom: '32px' }}>
-                <p style={{marginBottom: '12px'}}>Use the provided numbers and basic math operations to reach the exact target number.</p>
-                <ul style={{ paddingLeft: '20px', marginTop: '12px', lineHeight: '1.6' }}>
-                  <li style={{marginBottom: '8px'}}>You can use each number at most once.</li>
-                  <li style={{marginBottom: '8px'}}>You don&apos;t have to use all the numbers.</li>
-                  <li style={{marginBottom: '8px'}}>Fractions and negative numbers are not allowed at any step.</li>
+              <div className={`${styles.modalDesc} ${styles.helpBody}`}>
+                <p className={styles.helpParagraph}>Use the provided numbers and basic math operations to reach the exact target number.</p>
+                <ul className={styles.helpList}>
+                  <li className={styles.helpListItem}>You can use each number at most once.</li>
+                  <li className={styles.helpListItem}>You don&apos;t have to use all the numbers.</li>
+                  <li className={styles.helpListItem}>Fractions and negative numbers are not allowed at any step.</li>
                   <li>Select a number, then an operation, then another number.</li>
                 </ul>
               </div>

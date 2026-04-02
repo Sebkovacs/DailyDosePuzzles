@@ -1,14 +1,14 @@
 "use client";
 
 import React from 'react';
-import { motion } from 'framer-motion';
-import { MOTION } from '@/styles/motions';
+import { motion, type HTMLMotionProps } from 'motion/react';
 import styles from './Button.module.css';
 
 type ButtonVariant = 'primary' | 'secondary' | 'neutral' | 'success' | 'danger' | 'accent';
 type ButtonSize = 'sm' | 'md' | 'lg';
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonProps extends Omit<HTMLMotionProps<'button'>, 'children'> {
+  children?: React.ReactNode;
   variant?: ButtonVariant;
   size?: ButtonSize;
   fullWidth?: boolean;

@@ -1,0 +1,151 @@
+.page {
+  max-width: 440px;
+  margin: 40px auto;
+  padding: var(--pad-lg);
+  font-family: var(--font-sans);
+}
+
+.centerState {
+  max-width: 400px;
+  margin: 60px auto;
+  padding: var(--pad-lg);
+  text-align: center;
+  font-family: var(--font-sans);
+}
+
+.loadingState {
+  padding: 40px;
+  text-align: center;
+  font-family: var(--font-sans);
+}
+
+.successIcon {
+  margin: 0 auto var(--space-4);
+  color: var(--color-game-viridian);
+}
+
+.successText {
+  opacity: 0.8;
+  margin-bottom: var(--space-5);
+}
+
+.successLink {
+  display: inline-block;
+  padding: var(--space-3) var(--space-5);
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+  border: var(--border-width-thin) solid var(--color-border-primary);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  font-weight: var(--font-weight-semibold);
+}
+
+.header {
+  margin-bottom: var(--space-6);
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text-primary);
+  text-decoration: none;
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--space-4);
+}
+
+.title {
+  margin: 0 0 var(--space-2) 0;
+  font-size: var(--font-size-2xl);
+  color: var(--color-text-primary);
+  font-family: var(--font-serif);
+}
+
+.subtitle {
+  color: var(--color-text-secondary);
+  margin: 0;
+  font-size: 15px;
+  line-height: var(--line-height-normal);
+}
+
+.card {
+  background-color: var(--color-bg-secondary);
+  padding: var(--pad-lg);
+  border-radius: var(--radius-md);
+  border: var(--border-width-thin) solid var(--color-border-primary);
+  box-shadow: var(--shadow-raised);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.label {
+  display: block;
+  margin-bottom: var(--space-2);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-sm);
+}
+
+.inputWrap {
+  display: flex;
+  align-items: center;
+  border: var(--border-width-thin) solid var(--color-border-primary);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-bg-primary);
+  padding: 0 var(--space-3);
+  gap: var(--space-2);
+}
+
+.inputIcon {
+  color: var(--color-text-secondary);
+}
+
+.input {
+  width: 100%;
+  padding: var(--space-3);
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: var(--font-size-md);
+  font-family: var(--font-mono);
+}
+
+.codeInput {
+  letter-spacing: 0.2em;
+  font-size: var(--font-size-lg);
+}
+
+.submitButton {
+  padding: 14px;
+  background-color: var(--color-text-primary);
+  color: var(--color-text-inverse);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-bold);
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-standard), opacity var(--duration-fast) var(--ease-standard);
+}
+
+.submitButtonLoading {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.submitButtonSuccess {
+  background-color: var(--color-game-viridian);
+}
+
+.errorBox {
+  margin-top: var(--space-4);
+  padding: var(--space-3);
+  background-color: var(--color-wash-danger);
+  color: var(--color-danger);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  text-align: center;
+  border: var(--border-width-thin) solid var(--color-danger);
+}

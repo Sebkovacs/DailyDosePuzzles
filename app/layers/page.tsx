@@ -191,7 +191,7 @@ export default function Layers() {
     }
   }, [isMetaWin, user, isPlayTest]);
 
-  if (!mounted || !puzzle) return <div style={{ height: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--bg-paper)', fontFamily: 'var(--font-official)' }}>Loading...</div>;
+  if (!mounted || !puzzle) return <div className={styles.loadingScreen}>Loading...</div>;
 
   const leftActions = isTester ? (
     <button onClick={() => setShowFeedback(true)} className={styles.iconBtn} title="Give Feedback">
@@ -306,12 +306,12 @@ export default function Layers() {
             animate={{ opacity: 1, y: 0 }}
             className={styles.metaArea}
           >
-            <div className={styles.instructions} style={{marginBottom: '32px'}}>
+            <div className={`${styles.instructions} ${styles.metaIntroSpacing}`}>
               <h2 className={styles.instructionTitle}>Groups Found!</h2>
               <p className={styles.instructionDesc}>Now, what connects these four groups?</p>
             </div>
 
-            <div className={styles.solvedGroups} style={{width: '100%', marginBottom: '32px'}}>
+            <div className={`${styles.solvedGroups} ${styles.metaSolvedSpacing}`}>
               {solvedGroups.map((group) => (
                 <div key={group.theme} className={styles.solvedGroup}>
                   <span className={styles.solvedGroupTheme}>{group.theme}</span>
@@ -430,9 +430,9 @@ export default function Layers() {
                   <X size={20} />
                 </button>
                 <h2 className={styles.modalTitle}>How to Play</h2>
-                <div className={styles.modalDesc} style={{textAlign: 'left', marginBottom: '32px'}}>
-                  <p style={{marginBottom: '12px'}}>First, find 4 groups of 4 related words.</p>
-                  <p style={{marginBottom: '12px'}}>Then, use the names of those 4 groups to solve the final anagram.</p>
+                <div className={`${styles.modalDesc} ${styles.helpBody}`}>
+                  <p className={styles.helpParagraph}>First, find 4 groups of 4 related words.</p>
+                  <p className={styles.helpParagraph}>Then, use the names of those 4 groups to solve the final anagram.</p>
                   <p>Watch out for words that might belong to multiple categories!</p>
                 </div>
                 <button onClick={() => setShowHelp(false)} className={`${styles.actionBtn} ${styles.actionBtnPrimary}`}>

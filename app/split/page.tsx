@@ -168,7 +168,7 @@ export default function Split() {
   }, [isWin, user, isPlayTest]);
 
   if (!mounted || !puzzle) {
-    return <div style={{ height: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--bg-paper)', fontFamily: 'var(--font-official)' }}>Loading...</div>;
+    return <div className={styles.loadingScreen}>Loading...</div>;
   }
 
   const leftActions = isTester ? (
@@ -344,9 +344,9 @@ export default function Split() {
                   <X size={20} />
                 </button>
                 <h2 className={styles.modalTitle}>How to Play</h2>
-                <div className={styles.modalDesc} style={{textAlign: 'left', marginBottom: '32px'}}>
-                  <p style={{marginBottom: '12px'}}>Combine the word halves to form valid compound words.</p>
-                  <p style={{marginBottom: '12px'}}>Select two tiles to merge them. If they form a valid word, they will be locked in.</p>
+                <div className={`${styles.modalDesc} ${styles.helpBody}`}>
+                  <p className={styles.helpParagraph}>Combine the word halves to form valid compound words.</p>
+                  <p className={styles.helpParagraph}>Select two tiles to merge them. If they form a valid word, they will be locked in.</p>
                   <p>Find all 8 compound words to win!</p>
                 </div>
                 <button onClick={() => setShowHelp(false)} className={`${styles.actionBtn} ${styles.actionBtnPrimary}`}>

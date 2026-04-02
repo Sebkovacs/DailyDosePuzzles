@@ -8,7 +8,7 @@ type TextVariant = 'primary' | 'secondary' | 'muted' | 'inverse';
 type TextWeight = 'regular' | 'medium' | 'semibold' | 'bold';
 
 interface TextProps extends React.HTMLAttributes<HTMLDivElement> {
-  as?: 'p' | 'span' | 'div';
+  as?: 'h1' | 'h2' | 'h3' | 'h4' | 'p' | 'span' | 'div' | 'label' | 'code';
   size?: TextSize;
   variant?: TextVariant;
   weight?: TextWeight;

@@ -59,7 +59,7 @@ export default function Menu() {
                   <span>Tribes</span>
                 </Link>
                 <div className={styles.streakPill}>
-                  <Flame size={14} color="#F9EAE7" fill="#F9EAE7" />
+                  <Flame size={14} className={styles.streakIcon} />
                   <span>{(profile as any)?.streak || 0}</span>
                 </div>
                 <button onClick={logout} className={styles.iconBtn} title="Sign Out">
@@ -102,7 +102,7 @@ export default function Menu() {
                 <p className={styles.gameDesc}>{game.desc}</p>
               </div>
               <div className={styles.playIcon}>
-                <Play size={20} style={{ marginLeft: '2px' }} />
+                <Play size={20} className={styles.playIconGlyph} />
               </div>
             </div>
           </Link>

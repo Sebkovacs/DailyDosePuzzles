@@ -18,6 +18,15 @@
   min-height: 100%;
 }
 
+.loadingScreen {
+  height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-bg-primary);
+  font-family: var(--font-sans);
+}
+
 /* ============================================
    ICON BUTTONS
    ============================================ */
@@ -85,6 +94,14 @@
 .wordRow {
   display: flex;
   gap: var(--space-1);
+}
+
+.rowFaded {
+  opacity: 0.2;
+}
+
+.endRowSpacing {
+  margin-top: var(--space-3);
 }
 
 .letterBox {

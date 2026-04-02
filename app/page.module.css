@@ -79,6 +79,11 @@
   box-shadow: var(--shadow-raised);
 }
 
+.streakIcon {
+  color: var(--color-bg-primary);
+  fill: var(--color-bg-primary);
+}
+
 .iconBtn {
   padding: var(--pad-sm);
   border-radius: 50%;
@@ -268,6 +273,10 @@
 
 .playIcon {
   display: none;
+}
+
+.playIconGlyph {
+  margin-left: 2px;
 }
 
 /* ============================================

@@ -17,6 +17,15 @@
   min-height: 100%;
 }
 
+.loadingScreen {
+  height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-bg-primary);
+  font-family: var(--font-sans);
+}
+
 /* ============================================
    ICON BUTTONS
    ============================================ */
@@ -50,6 +59,15 @@
   text-align: center;
   margin-bottom: var(--pad-lg);
   flex-shrink: 0;
+}
+
+.selectIntroSpacing {
+  margin-bottom: var(--space-5);
+}
+
+.zenInstruction {
+  margin: 0;
+  text-align: left;
 }
 
 .instructionTitle {
@@ -110,6 +128,14 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
+}
+
+.modeIconBlitz {
+  color: var(--color-game-ochre);
+}
+
+.modeIconZen {
+  color: var(--color-game-viridian);
 }
 
 .modeCardDesc {
@@ -488,6 +514,26 @@
   margin: 0 0 var(--pad-lg) 0;
   line-height: var(--line-height-normal);
   font-family: var(--font-sans);
+}
+
+.helpBody {
+  text-align: left;
+  margin-top: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.helpParagraph {
+  margin-bottom: var(--space-3);
+}
+
+.helpList {
+  padding-left: 20px;
+  margin-top: var(--space-3);
+  line-height: 1.6;
+}
+
+.helpListItem {
+  margin-bottom: var(--space-2);
 }
 
 /* ============================================

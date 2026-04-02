@@ -1,0 +1,302 @@
+.loading {
+  padding: 40px;
+  text-align: center;
+  font-family: var(--font-sans);
+}
+
+.gateWrap {
+  max-width: 400px;
+  margin: 40px auto;
+  padding: var(--pad-lg);
+  text-align: center;
+  font-family: var(--font-sans);
+}
+
+.gateIcon {
+  margin: 0 auto var(--space-4);
+  color: var(--color-danger);
+}
+
+.gateText {
+  opacity: 0.8;
+  margin-bottom: var(--space-5);
+}
+
+.gateLink {
+  display: inline-block;
+  padding: var(--space-3) var(--space-5);
+  background-color: var(--color-text-primary);
+  color: var(--color-text-inverse);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  font-weight: var(--font-weight-semibold);
+}
+
+.page {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 0 var(--space-5);
+  font-family: var(--font-sans);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  margin-bottom: var(--space-6);
+  gap: var(--space-4);
+}
+
+.backLink {
+  padding: var(--space-2);
+  background-color: var(--color-bg-secondary);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-primary);
+  text-decoration: none;
+  border: var(--border-width-thin) solid var(--color-border-primary);
+  display: flex;
+  align-items: center;
+}
+
+.title {
+  margin: 0;
+  font-size: var(--font-size-xl);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-serif);
+}
+
+.actions {
+  display: flex;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+}
+
+.actionBtn {
+  flex: 1;
+  padding: 14px;
+  border-radius: var(--radius-sm);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  box-shadow: var(--shadow-raised);
+  border: var(--border-width-thin) solid var(--color-border-primary);
+}
+
+.actionBtnPrimary {
+  background-color: var(--color-text-primary);
+  color: var(--color-text-inverse);
+}
+
+.actionBtnSecondary {
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.emptyState {
+  text-align: center;
+  padding: var(--space-7) var(--space-5);
+  background-color: var(--color-bg-secondary);
+  border-radius: var(--radius-md);
+  border: var(--border-width-thin) dashed var(--color-border-primary);
+  opacity: 0.75;
+}
+
+.emptyIcon {
+  margin: 0 auto var(--space-4);
+  opacity: 0.5;
+}
+
+.emptyTitle {
+  margin: 0;
+  font-weight: var(--font-weight-semibold);
+}
+
+.emptySub {
+  margin: var(--space-2) 0 0 0;
+  font-size: var(--font-size-sm);
+}
+
+.tribeLink {
+  text-decoration: none;
+  color: inherit;
+}
+
+.tribeCard {
+  background-color: var(--color-bg-secondary);
+  padding: var(--pad-lg);
+  border-radius: var(--radius-md);
+  border: var(--border-width-thin) solid var(--color-border-primary);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  box-shadow: var(--shadow-raised);
+}
+
+.tribeTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.tribeName {
+  margin: 0 0 var(--space-1) 0;
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-xl);
+  font-family: var(--font-serif);
+}
+
+.tribeTagline {
+  margin: 0;
+  font-size: var(--font-size-xs);
+  opacity: 0.75;
+  font-style: italic;
+  color: var(--color-text-secondary);
+}
+
+.arrowBubble {
+  padding: var(--space-2);
+  background-color: var(--color-bg-primary);
+  border-radius: 50%;
+  border: var(--border-width-thin) solid var(--color-border-primary);
+  display: flex;
+}
+
+.metrics {
+  display: flex;
+  gap: var(--space-4);
+  border-top: var(--border-width-thin) dashed var(--color-border-secondary);
+  padding-top: var(--space-4);
+}
+
+.metric {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  font-family: var(--font-mono);
+}
+
+.metricMembers {
+  color: var(--color-game-indigo);
+}
+
+.metricActive {
+  color: var(--color-game-viridian);
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(24, 22, 20, 0.8);
+  z-index: var(--z-modal-backdrop);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-5);
+}
+
+.modal {
+  background-color: var(--color-bg-primary);
+  padding: var(--pad-lg);
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 400px;
+  border: var(--border-width-thin) solid var(--color-border-primary);
+  box-shadow: var(--shadow-deep);
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-5);
+}
+
+.modalTitle {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-serif);
+}
+
+.closeBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  display: flex;
+}
+
+.statusBox {
+  padding: var(--space-3);
+  margin-bottom: var(--space-5);
+  background-color: var(--color-wash-danger);
+  color: var(--color-danger);
+  border: var(--border-width-thin) solid var(--color-danger);
+  text-align: center;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
+.formLabel {
+  display: block;
+  margin-bottom: var(--space-2);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+}
+
+.formInput {
+  width: 100%;
+  padding: 14px;
+  margin-bottom: var(--space-5);
+  border: var(--border-width-thin) solid var(--color-border-primary);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-md);
+  outline: none;
+}
+
+.formInputCode {
+  font-size: var(--font-size-xl);
+  font-family: var(--font-mono);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.submitBtn {
+  width: 100%;
+  padding: 14px;
+  border-radius: var(--radius-sm);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-md);
+  cursor: pointer;
+}
+
+.submitPrimary {
+  background-color: var(--color-text-primary);
+  color: var(--color-text-inverse);
+  border: none;
+}
+
+.submitSecondary {
+  background-color: var(--color-game-viridian-wash);
+  color: var(--color-game-viridian);
+  border: var(--border-width-thin) solid var(--color-game-viridian);
+}

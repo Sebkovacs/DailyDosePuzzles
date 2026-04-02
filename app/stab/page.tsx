@@ -92,7 +92,7 @@ export default function Stab() {
 
   const isGameOver = guesses.length >= MAX_GUESSES;
 
-  if (!mounted || !puzzle) return <div style={{ height: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--bg-paper)', fontFamily: 'var(--font-official)' }}>Loading...</div>;
+  if (!mounted || !puzzle) return <div className={styles.loadingScreen}>Loading...</div>;
 
   const leftActions = isTester ? <button onClick={() => setShowFeedback(true)} className={styles.iconBtn} title="Give Feedback"><MessageSquare size={18} /></button> : null;
   const rightActions = (
@@ -145,12 +145,12 @@ export default function Stab() {
 
           {/* Empty Rows Padding */}
           {!isWin && [...Array(Math.max(0, MAX_GUESSES - guesses.length - 1))].map((_, i) => (
-            <div key={`empty-${i}`} className={styles.wordRow} style={{ opacity: 0.2 }}>
+            <div key={`empty-${i}`} className={`${styles.wordRow} ${styles.rowFaded}`}>
               {[...Array(puzzle.targetWord.length)].map((_, j) => <div key={`empty-box-${j}`} className={styles.letterBox}></div>)}
             </div>
           ))}
 
-          <div className={styles.wordRow} style={{marginTop: '12px'}}>
+          <div className={`${styles.wordRow} ${styles.endRowSpacing}`}>
             {puzzle.endWord.split('').map((char, i) => (
               <div key={`end-${i}`} className={`${styles.letterBox} ${styles.boxFixed}`}>{char}</div>
             ))}

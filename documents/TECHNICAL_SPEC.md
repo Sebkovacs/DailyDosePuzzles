@@ -231,6 +231,28 @@ Silent failure is unacceptable.
 
 ---
 
+## 11.1 UI Experimentation Invariants
+
+UI experiments must follow these constraints:
+
+1. Control experience must always be available as fallback.
+2. Experiment assignment must not break core gameplay flows.
+3. Exposure events must be logged before outcome events are evaluated.
+4. Variant naming must be stable and machine-readable.
+5. Losing variants must be removable without component rewrite.
+
+UI experiments may optimize:
+- retention
+- completion
+- conversion
+
+They may not compromise:
+- accessibility baseline
+- puzzle fairness
+- deterministic game logic
+
+---
+
 ## 12. Enforcement Rule
 
 When documents conflict, precedence is:
