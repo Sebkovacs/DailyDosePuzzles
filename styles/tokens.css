@@ -1,0 +1,225 @@
+/**
+ * Daily Dose Design Tokens
+ * 
+ * Single source of truth for all visual properties.
+ * Organized by semantic intent, not appearance.
+ * 
+ * Aesthetic: Neo-brutalist letterpress
+ * Philosophy: High contrast, intentional hierarchy, no visual noise
+ */
+
+:root {
+  /* ========================================
+     1. COLOR TOKENS (Semantic Intent)
+     ======================================== */
+
+  /* Paper & Surface */
+  --color-bg-primary: #F2EFE9;          /* Warm parchment - main background */
+  --color-bg-secondary: #FCFAF5;         /* Brighter card/surface layer */
+  --color-bg-tertiary: #F5F3EC;          /* Subtle depth variation */
+  
+  /* Text & Ink */
+  --color-text-primary: #181614;         /* Maximum contrast charcoal */
+  --color-text-secondary: #5A534A;       /* Faded aged ink */
+  --color-text-muted: #8A8278;           /* Very light for disabled/hint */
+  --color-text-inverse: #FCFAF5;         /* On dark accents */
+
+  /* Semantic Accents (Da Vinci Palette) */
+  --color-success: #2D5A27;              /* Pine green - stable, growth */
+  --color-danger: #781D26;               /* Crimson - urgent, caution */
+  --color-warning: #A36F21;              /* Ochre - attention */
+  --color-info: #232F4C;                 /* Indigo - neutral information */
+  
+  /* Interactive Accents (for depth & joy) */
+  --color-accent-primary: #8A3626;       /* Sanguine/Terracotta - warmth */
+  --color-accent-secondary: #195C5E;     /* Teal - cool contrast */
+  --color-accent-tertiary: #4A2B4D;      /* Plum - mystique */
+
+  /* Wash/Tint Layer (backgrounds for accents) */
+  --color-wash-primary: #F9EAE7;         /* Sanguine wash */
+  --color-wash-secondary: #E7F3F1;       /* Teal wash */
+  --color-wash-tertiary: #EFE8F0;        /* Plum wash */
+
+  /* Borders */
+  --color-border-primary: #181614;       /* Ink borders for emphasis */
+  --color-border-secondary: #D4D0C8;     /* Subtle dividers */
+  --color-border-light: #EAE6DE;         /* Very faint separation */
+
+  /* ========================================
+     2. TYPOGRAPHY TOKENS
+     ======================================== */
+
+  --font-serif: "Crimson Text", "Georgia", serif;
+  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "Courier New", monospace;
+
+  /* Font Sizes */
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-md: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 22px;
+  --font-size-2xl: 28px;
+  --font-size-3xl: 36px;
+  --font-size-4xl: 48px;
+
+  /* Font Weights */
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Line Heights (for readability) */
+  --line-height-tight: 1.2;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+
+  /* Letter Spacing */
+  --letter-spacing-tight: -0.01em;
+  --letter-spacing-normal: 0;
+  --letter-spacing-wide: 0.02em;
+
+  /* ========================================
+     3. SPACING TOKENS (4px baseline)
+     ======================================== */
+
+  --space-0: 0;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+
+  /* Common layout gaps */
+  --gap-tight: var(--space-2);
+  --gap-normal: var(--space-4);
+  --gap-relaxed: var(--space-6);
+
+  /* Padding presets */
+  --pad-xs: var(--space-2);
+  --pad-sm: var(--space-3);
+  --pad-md: var(--space-4);
+  --pad-lg: var(--space-5);
+  --pad-xl: var(--space-6);
+
+  /* ========================================
+     4. BORDER & RADIUS TOKENS
+     ======================================== */
+
+  --radius-none: 0;
+  --radius-sharp: 4px;                   /* Structured, letterpress feel */
+  --radius-sm: 6px;                      /* Slightly softer */
+  --radius-md: 8px;                      /* Standard */
+  --radius-lg: 12px;                     /* Generous */
+
+  /* Border Widths */
+  --border-width-thin: 1px;
+  --border-width-regular: 2px;           /* Strong letterpress border */
+  --border-width-thick: 3px;
+
+  /* ========================================
+     5. SHADOW TOKENS (Letterpress & Depth)
+     ======================================== */
+
+  /* Physical, structural shadows */
+  --shadow-pressed: 0px 0px 0px var(--color-border-primary);           /* Flat, pressed */
+  --shadow-raised: 4px 4px 0px var(--color-border-primary);            /* Lifted physically */
+  --shadow-lifted: 6px 6px 0px var(--color-border-primary);            /* More elevation */
+  --shadow-floating: 8px 8px 0px var(--color-border-primary);          /* High elevation */
+
+  /* Subtle depth shadows (for softer elements) */
+  --shadow-soft: 2px 2px 4px rgba(24, 22, 20, 0.08);                   /* Gentle depth */
+  --shadow-medium: 4px 4px 8px rgba(24, 22, 20, 0.12);                 /* Medium depth */
+  --shadow-deep: 8px 8px 16px rgba(24, 22, 20, 0.16);                  /* Pronounced depth */
+
+  /* Border styles */
+  --border-ink-regular: var(--border-width-regular) solid var(--color-border-primary);
+  --border-ink-thin: var(--border-width-thin) solid var(--color-border-primary);
+  --border-subtle: var(--border-width-thin) solid var(--color-border-secondary);
+
+  /* ========================================
+     6. MOTION & ANIMATION TOKENS
+     ======================================== */
+
+  /* Easing Curves (premium motion) */
+  /* Standard: used for most UI motion */
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Decelerate: natural exit motion */
+  --ease-out: cubic-bezier(0.0, 0, 0.2, 1);
+  
+  /* Accelerate: quick entrance */
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  
+  /* Bounce: playful, energetic */
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  
+  /* Subtle: for micro-interactions */
+  --ease-subtle: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+  /* Durations */
+  --duration-instant: 0ms;
+  --duration-micro: 100ms;              /* Icons, small state changes */
+  --duration-fast: 150ms;               /* Hover states, short transitions */
+  --duration-normal: 200ms;             /* Standard interactions */
+  --duration-slow: 300ms;               /* Page transitions, modals */
+  --duration-glacial: 500ms;            /* Elaborate animations */
+
+  /* ========================================
+     7. LAYOUT & CONTAINER TOKENS
+     ======================================== */
+
+  --max-width-xs: 320px;
+  --max-width-sm: 640px;
+  --max-width-md: 960px;
+  --max-width-lg: 1200px;
+  --max-width-xl: 1440px;
+
+  --container-inline-start: var(--pad-lg);
+  --container-inline-end: var(--pad-lg);
+
+  /* ========================================
+     8. INTERACTIVE TOKENS (Touch & Click)
+     ======================================== */
+
+  --touch-target-min: 44px;              /* Minimum touch target size */
+  --touch-target-comfortable: 48px;      /* Recommended touch target */
+  --touch-target-generous: 56px;         /* Generous spacing */
+
+  /* ========================================
+     9. OPACITY TOKENS (Subtlety)
+     ======================================== */
+
+  --opacity-disabled: 0.4;
+  --opacity-hover: 0.08;
+  --opacity-focus: 0.12;
+  --opacity-active: 0.16;
+
+  /* ========================================
+     10. Z-INDEX TOKENS (Layering)
+     ======================================== */
+
+  --z-base: 0;
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-fixed: 300;
+  --z-modal-backdrop: 400;
+  --z-modal: 500;
+  --z-popover: 600;
+  --z-tooltip: 700;
+}
+
+/**
+ * Dark Mode (if future-proofing)
+ * Currently disabled, but ready to activate
+ */
+@media (prefers-color-scheme: dark) {
+  /* :root {
+    --color-bg-primary: #0f1115;
+    --color-text-primary: #eef1f6;
+    --color-border-primary: #262b44;
+  } */
+}

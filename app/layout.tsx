@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono, Cormorant_Garamond } from "next/font/google";
-import "./globals.css";
+import { Inter, JetBrains_Mono, Crimson_Text } from "next/font/google";
+import "../styles/globals.css";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -12,9 +12,9 @@ const jetbrainsMono = JetBrains_Mono({
   variable: "--font-mono",
 });
 
-const cormorantGaramond = Cormorant_Garamond({
+const crimsonText = Crimson_Text({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["400", "600", "700"],
   variable: "--font-serif",
 });
 
@@ -29,7 +29,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable} ${cormorantGaramond.variable}`}>
+    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable} ${crimsonText.variable}`}>
       <body>
         {children}
       </body>

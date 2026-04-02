@@ -1,0 +1,154 @@
+/**
+ * Surface Component Styles
+ * 
+ * Abstract representation of "UI surface" - panels, cards, containers
+ * Handles: background color, border, radius, elevation, padding
+ */
+
+.surface {
+  background-color: var(--color-bg-secondary);
+  border-radius: var(--radius-sharp);
+  transition: box-shadow var(--duration-fast) var(--ease-standard),
+              background-color var(--duration-fast) var(--ease-standard);
+}
+
+/* ============================================
+   ELEVATIONS (Physical depth)
+   ============================================ */
+
+.elevation-flat {
+  box-shadow: none;
+  background-color: var(--color-bg-primary);
+}
+
+.elevation-raised {
+  box-shadow: var(--shadow-raised);
+}
+
+.elevation-lifted {
+  box-shadow: var(--shadow-lifted);
+}
+
+.elevation-floating {
+  box-shadow: var(--shadow-floating);
+}
+
+/* ============================================
+   INTENT-DRIVEN BACKGROUNDS
+   ============================================ */
+
+.intent-default {
+  background-color: var(--color-bg-secondary);
+}
+
+.intent-accent {
+  background-color: var(--color-wash-primary);
+  border-color: var(--color-accent-primary);
+}
+
+.intent-success {
+  background-color: #F0FDF4;
+  border-color: var(--color-success);
+}
+
+.intent-warning {
+  background-color: #FFFBEB;
+  border-color: var(--color-warning);
+}
+
+.intent-danger {
+  background-color: #FEF2F2;
+  border-color: var(--color-danger);
+}
+
+/* ============================================
+   BORDERS
+   ============================================ */
+
+.bordered {
+  border: var(--border-ink-thin);
+  border-color: var(--color-border-primary);
+}
+
+.intent-accent.bordered {
+  border-color: var(--color-accent-primary);
+}
+
+.intent-success.bordered {
+  border-color: var(--color-success);
+}
+
+.intent-warning.bordered {
+  border-color: var(--color-warning);
+}
+
+.intent-danger.bordered {
+  border-color: var(--color-danger);
+}
+
+/* ============================================
+   PADDING
+   ============================================ */
+
+.padding-none {
+  padding: 0;
+}
+
+.padding-xs {
+  padding: var(--pad-xs);
+}
+
+.padding-sm {
+  padding: var(--pad-sm);
+}
+
+.padding-md {
+  padding: var(--pad-md);
+}
+
+.padding-lg {
+  padding: var(--pad-lg);
+}
+
+.padding-xl {
+  padding: var(--pad-xl);
+}
+
+/* ============================================
+   CARD SPECIFIC
+   ============================================ */
+
+.cardHeader {
+  padding: var(--pad-lg);
+  border-bottom: var(--border-subtle);
+}
+
+.cardHeader:empty {
+  display: none;
+}
+
+.cardContent {
+  padding: var(--pad-lg);
+}
+
+.cardFooter {
+  padding: var(--pad-lg);
+  border-top: var(--border-subtle);
+  background-color: var(--color-bg-tertiary);
+  border-radius: 0 0 var(--radius-sharp) var(--radius-sharp);
+}
+
+.cardFooter:empty {
+  display: none;
+}
+
+/* ============================================
+   DIVIDER
+   ============================================ */
+
+.divider {
+  margin: var(--pad-md) 0;
+  border: none;
+  border-top: var(--border-subtle);
+  height: 0;
+}

@@ -1,62 +1,187 @@
+/**
+ * Button Component - Neo-brutalist Letterpress Style
+ * 
+ * Semantic variants: primary, secondary, success, danger, neutral
+ * States: default, hover, active, disabled, focus
+ * 
+ * Design: Sharp corners, ink shadows, dramatic hover states
+ */
+
 .button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 12px 24px;
-  font-family: system-ui, -apple-system, sans-serif;
-  font-size: 1rem;
-  font-weight: 500;
-  border-radius: 99px; /* Pill shape is very modern/zen */
-  border: 1px solid transparent;
+  gap: var(--space-3);
+  
+  /* Layout & Typography */
+  padding: var(--pad-md) var(--pad-lg);
+  font-family: var(--font-serif);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+  
+  /* Geometry */
+  border: none;
+  border-radius: var(--radius-sharp);
+  
+  /* Interaction */
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+  transition: all var(--duration-fast) var(--ease-standard);
+  
+  /* Accessibility */
   outline: none;
-  background: #ffffff;
+  min-height: var(--touch-target-comfortable);
+  
+  /* Physical presence */
+  position: relative;
+  box-shadow: var(--shadow-raised);
+}
+
+/* Hover: Shadow deepens, text stays put (not scale) */
+.button:hover:not(:disabled) {
+  box-shadow: var(--shadow-lifted);
+  transform: translate(-2px, -2px); /* Simulate lifting */
+}
+
+/* Active: Pressed down */
+.button:active:not(:disabled) {
+  box-shadow: var(--shadow-pressed);
+  transform: translate(4px, 4px);
+}
+
+.button:focus:not(:disabled) {
+  box-shadow: var(--shadow-raised), 0 0 0 2px var(--color-bg-primary), 0 0 0 4px var(--color-accent-primary);
 }
 
 .button:disabled {
-  opacity: 0.5;
+  opacity: var(--opacity-disabled);
   cursor: not-allowed;
 }
 
-.button:active:not(:disabled) {
-  transform: scale(0.97);
-}
-
+/* Fullwidth variant */
 .fullWidth {
   width: 100%;
 }
 
-/* Semantic Variants */
+/* ============================================
+   SEMANTIC VARIANTS
+   ============================================ */
+
+/* PRIMARY: High emphasis, dark ink on paper */
 .primary {
-  background-color: #1A1A1A;
-  color: #FFFFFF;
+  background-color: var(--color-text-primary);
+  color: var(--color-bg-primary);
+  border: var(--border-ink-regular);
 }
+
 .primary:hover:not(:disabled) {
-  background-color: #333333;
+  background-color: var(--color-text-secondary);
 }
 
+.primary:active:not(:disabled) {
+  background-color: var(--color-text-primary);
+}
+
+/* SECONDARY: Low emphasis, outlined */
 .secondary {
-  background-color: #FFFFFF;
-  color: #1A1A1A;
-  border-color: #EAEAEA;
-}
-.secondary:hover:not(:disabled) {
-  background-color: #FAFAFA;
-  border-color: #D4D4D4;
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+  border: var(--border-ink-regular);
 }
 
+.secondary:hover:not(:disabled) {
+  background-color: var(--color-bg-tertiary);
+  border-color: var(--color-text-secondary);
+}
+
+/* NEUTRAL: Subtle, for less important actions */
+.neutral {
+  background-color: var(--color-bg-tertiary);
+  color: var(--color-text-secondary);
+  border: var(--border-subtle);
+  box-shadow: var(--shadow-soft);
+}
+
+.neutral:hover:not(:disabled) {
+  color: var(--color-text-primary);
+  border-color: var(--color-border-primary);
+}
+
+/* SUCCESS: Growth, affirmation, positive actions */
 .success {
-  background-color: #F0FDF4;
-  color: #166534;
-  border-color: #BBF7D0;
+  background-color: var(--color-wash-primary);
+  color: var(--color-success);
+  border: var(--border-width-thin) solid var(--color-success);
+  box-shadow: none;
 }
+
 .success:hover:not(:disabled) {
-  background-color: #DCFCE7;
+  background-color: var(--color-accent-primary);
+  color: var(--color-text-inverse);
+  border-color: var(--color-accent-primary);
+  box-shadow: var(--shadow-raised);
 }
+
+/* DANGER: Urgent, destructive actions */
+.danger {
+  background-color: var(--color-wash-tertiary);
+  color: var(--color-danger);
+  border: var(--border-width-thin) solid var(--color-danger);
+  box-shadow: none;
+}
+
+.danger:hover:not(:disabled) {
+  background-color: var(--color-danger);
+  color: var(--color-text-inverse);
+  border-color: var(--color-danger);
+  box-shadow: var(--shadow-raised);
+}
+
+/* ACCENT: Special, premium, highlight */
+.accent {
+  background-color: var(--color-accent-primary);
+  color: var(--color-text-inverse);
+  border: var(--border-ink-regular);
+}
+
+.accent:hover:not(:disabled) {
+  background-color: #A3472D;
+  box-shadow: var(--shadow-floating);
+}
+
+/* ============================================
+   SIZE VARIANTS
+   ============================================ */
+
+.sm {
+  padding: var(--pad-sm) var(--pad-md);
+  font-size: var(--font-size-sm);
+  min-height: 40px;
+  gap: var(--space-2);
+}
+
+.lg {
+  padding: var(--pad-lg) var(--pad-xl);
+  font-size: var(--font-size-lg);
+  min-height: 56px;
+  gap: var(--space-4);
+}
+
+/* ============================================
+   ICON HANDLING
+   ============================================ */
 
 .icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
-  display: flex;
+}
+
+.iconOnly {
+  padding: var(--pad-md);
+  min-width: var(--touch-target-comfortable);
+  width: var(--touch-target-comfortable);
+  border-radius: var(--radius-sharp);
 }

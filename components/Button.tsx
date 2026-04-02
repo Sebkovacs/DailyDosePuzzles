@@ -1,31 +1,54 @@
+"use client";
+
 import React from 'react';
+import { motion } from 'framer-motion';
 import styles from './Button.module.css';
 
+type ButtonVariant = 'primary' | 'secondary' | 'neutral' | 'success' | 'danger' | 'accent';
+type ButtonSize = 'sm' | 'md' | 'lg';
+
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'success';
+  variant?: ButtonVariant;
+  size?: ButtonSize;
   fullWidth?: boolean;
   icon?: React.ReactNode;
+  iconOnly?: boolean;
+  isLoading?: boolean;
 }
 
 export function Button({ 
   children, 
-  variant = 'secondary', 
+  variant = 'secondary',
+  size = 'md',
   fullWidth = false,
-  className = '',
   icon,
+  iconOnly = false,
+  isLoading = false,
+  className = '',
+  disabled = false,
   ...props 
 }: ButtonProps) {
-  const buttonClass = [
+  const classes = [
     styles.button,
     styles[variant],
-    fullWidth ? styles.fullWidth : '',
+    size !== 'md' && styles[size],
+    fullWidth && styles.fullWidth,
+    iconOnly && styles.iconOnly,
     className
   ].filter(Boolean).join(' ');
 
   return (
-    <button className={buttonClass} {...props}>
+    <motion.button
+      className={classes}
+      disabled={disabled || isLoading}
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
+      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+      aria-busy={isLoading}
+      {...props}
+    >
       {icon && <span className={styles.icon}>{icon}</span>}
       {children}
-    </button>
+    </motion.button>
   );
 }

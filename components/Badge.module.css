@@ -1,0 +1,123 @@
+/**
+ * Badge Component Styles
+ * 
+ * Compact status or classification indicator
+ * Variants: neutral, accent, success, warning, danger
+ * Sizes: sm, md, lg
+ */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  border-radius: var(--radius-sharp);
+  border: var(--border-width-thin) solid;
+  white-space: nowrap;
+}
+
+/* ============================================
+   VARIANTS
+   ============================================ */
+
+.variant-neutral {
+  background-color: var(--color-bg-tertiary);
+  color: var(--color-text-secondary);
+  border-color: var(--color-border-secondary);
+}
+
+.variant-accent {
+  background-color: var(--color-wash-primary);
+  color: var(--color-accent-primary);
+  border-color: var(--color-accent-primary);
+}
+
+.variant-success {
+  background-color: #F0FDF4;
+  color: var(--color-success);
+  border-color: var(--color-success);
+}
+
+.variant-warning {
+  background-color: #FFFBEB;
+  color: var(--color-warning);
+  border-color: var(--color-warning);
+}
+
+.variant-danger {
+  background-color: #FEF2F2;
+  color: var(--color-danger);
+  border-color: var(--color-danger);
+}
+
+/* ============================================
+   SIZES
+   ============================================ */
+
+.size-sm {
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--font-size-xs);
+}
+
+.size-md {
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--font-size-sm);
+}
+
+.size-lg {
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--font-size-md);
+}
+
+/* ============================================
+   ICON
+   ============================================ */
+
+.icon {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+/* ============================================
+   PILL VARIANT (Common for scores)
+   ============================================ */
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  border-radius: 99px; /* Pill shape */
+  background-color: implicit;
+}
+
+/* Pill variants inherit from badge */
+.pill.variant-neutral {
+  background-color: var(--color-bg-tertiary);
+  color: var(--color-text-secondary);
+}
+
+.pill.variant-accent {
+  background-color: var(--color-accent-primary);
+  color: var(--color-text-inverse);
+}
+
+.pill.variant-success {
+  background-color: var(--color-success);
+  color: white;
+}
+
+.pill.variant-warning {
+  background-color: var(--color-warning);
+  color: white;
+}
+
+.pill.variant-danger {
+  background-color: var(--color-danger);
+  color: white;
+}

@@ -1,0 +1,126 @@
+/**
+ * Text Component Styles
+ * 
+ * Handles all typography - sizes, variants (color), weights, alignment
+ * Centralized control for text hierarchy and visual consistency
+ */
+
+.text {
+  margin: 0;
+  padding: 0;
+}
+
+/* ============================================
+   SIZES
+   ============================================ */
+
+.size-xs {
+  font-size: var(--font-size-xs);
+  line-height: 1.4;
+}
+
+.size-sm {
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+}
+
+.size-md {
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-normal);
+}
+
+.size-lg {
+  font-size: var(--font-size-lg);
+  line-height: 1.4;
+}
+
+.size-xl {
+  font-size: var(--font-size-xl);
+  line-height: 1.3;
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+.size-2xl {
+  font-size: var(--font-size-2xl);
+  line-height: 1.3;
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+.size-3xl {
+  font-size: var(--font-size-3xl);
+  line-height: 1.2;
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+.size-4xl {
+  font-size: var(--font-size-4xl);
+  line-height: 1.1;
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+/* ============================================
+   VARIANTS (Semantic Color Intent)
+   ============================================ */
+
+.variant-primary {
+  color: var(--color-text-primary);
+}
+
+.variant-secondary {
+  color: var(--color-text-secondary);
+}
+
+.variant-muted {
+  color: var(--color-text-muted);
+}
+
+.variant-inverse {
+  color: var(--color-text-inverse);
+}
+
+/* ============================================
+   FONT WEIGHTS
+   ============================================ */
+
+.weight-regular {
+  font-weight: var(--font-weight-regular);
+}
+
+.weight-medium {
+  font-weight: var(--font-weight-medium);
+}
+
+.weight-semibold {
+  font-weight: var(--font-weight-semibold);
+}
+
+.weight-bold {
+  font-weight: var(--font-weight-bold);
+}
+
+/* ============================================
+   ALIGNMENT
+   ============================================ */
+
+.align-left {
+  text-align: left;
+}
+
+.align-center {
+  text-align: center;
+}
+
+.align-right {
+  text-align: right;
+}
+
+/* ============================================
+   SPECIAL STYLES
+   ============================================ */
+
+.mono {
+  font-family: var(--font-mono);
+  background-color: var(--color-bg-tertiary);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sharp);
+}
