@@ -120,12 +120,12 @@ export default function LexiconReverse() {
     <GameLayout title="Lexicon Reverse" subtitle="Experimental" rightActions={rightActions}>
       <div className={styles.container}>
         {!puzzle ? (
-          <div style={{ textAlign: 'center', marginTop: '40px' }}>Loading prototype...</div>
+          <div className={styles.loadingPlaceholder}>Loading prototype...</div>
         ) : !isGameOver ? (
           <>
-            <div className={styles.targetBox} style={{ backgroundColor: 'var(--bg-card)', padding: '24px', borderRadius: '12px' }}>
-              <p className={styles.targetDesc} style={{ fontSize: '18px', lineHeight: '1.5', color: 'var(--ink-main)' }}>"{puzzle.definition}"</p>
-              <p style={{ marginTop: '16px', fontSize: '12px', opacity: 0.5, textTransform: 'uppercase', letterSpacing: '0.1em' }}>What is the word?</p>
+            <div className={styles.targetBoxReverse}>
+              <p className={styles.definitionText}>"{puzzle.definition}"</p>
+              <p className={styles.hintText}>What is the word?</p>
             </div>
 
             <div className={styles.optionsList}>
@@ -141,7 +141,7 @@ export default function LexiconReverse() {
                   }
 
                   return (
-                    <motion.button key={i} onClick={() => handleOptionClick(option)} disabled={isGuessed || isWin || guessedOptions.length >= MAX_GUESSES} className={buttonClass} style={{ textAlign: 'center', fontSize: '20px', fontWeight: 'bold' }}>
+                    <motion.button key={i} onClick={() => handleOptionClick(option)} disabled={isGuessed || isWin || guessedOptions.length >= MAX_GUESSES} className={buttonClass}>
                       {option}
                     </motion.button>
                   );
@@ -161,12 +161,12 @@ export default function LexiconReverse() {
 
               <div className={styles.modalActions}>
                 {arenaPuzzleId && !feedbackSubmitted ? (
-                  <div style={{ width: '100%', padding: '16px', backgroundColor: 'var(--bg-paper)', borderRadius: 'var(--radius-md)', border: 'var(--border-ink)' }}>
-                    <p style={{ fontSize: '14px', fontWeight: 700, marginBottom: '12px', textAlign: 'center', color: 'var(--ink-main)' }}>Rate this Prototype</p>
-                    <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+                  <div className={styles.feedbackBox}>
+                    <p className={styles.feedbackTitle}>Rate this Prototype</p>
+                    <div className={styles.starsContainer}>
                       {[1, 2, 3, 4, 5].map(star => (
-                        <button key={star} onClick={() => handleSubmitRating(star)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--ink-main)' }}>
-                          <Star size={28} fill={arenaRating >= star ? 'var(--ink-main)' : 'none'} />
+                        <button key={star} onClick={() => handleSubmitRating(star)} className={styles.starBtn} aria-label={`Rate ${star} stars`}>
+                          <Star size={28} fill={arenaRating >= star ? 'var(--color-text-primary)' : 'none'} />
                         </button>
                       ))}
                     </div>

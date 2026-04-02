@@ -11,7 +11,7 @@
 
 .progressBar {
   width: 100%;
-  height: 8px;
+  height: var(--progress-bar-height);
   background-color: var(--color-bg-tertiary);
   border-radius: var(--radius-sharp);
   border: var(--border-width-thin) solid var(--color-border-secondary);
@@ -53,8 +53,8 @@
 }
 
 .dot {
-  width: 12px;
-  height: 12px;
+  width: var(--progress-dot-size);
+  height: var(--progress-dot-size);
   border-radius: 50%;
   border: var(--border-width-thin) solid var(--color-border-secondary);
 }

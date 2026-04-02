@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
+import { MOTION } from '@/styles/motions';
 import styles from './Button.module.css';
 
 type ButtonVariant = 'primary' | 'secondary' | 'neutral' | 'success' | 'danger' | 'accent';
@@ -16,8 +17,8 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   isLoading?: boolean;
 }
 
-export function Button({ 
-  children, 
+export function Button({
+  children,
   variant = 'secondary',
   size = 'md',
   fullWidth = false,
@@ -26,7 +27,7 @@ export function Button({
   isLoading = false,
   className = '',
   disabled = false,
-  ...props 
+  ...props
 }: ButtonProps) {
   const classes = [
     styles.button,
@@ -41,8 +42,8 @@ export function Button({
     <motion.button
       className={classes}
       disabled={disabled || isLoading}
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
+      whileHover={!disabled && !isLoading ? { scale: 1.02 } : undefined}
+      whileTap={!disabled && !isLoading ? { scale: 0.98 } : undefined}
       transition={{ type: 'spring', stiffness: 300, damping: 20 }}
       aria-busy={isLoading}
       {...props}

@@ -151,7 +151,7 @@ export default function Lexicon() {
     }
   }, [isWin, user, isPlayTest]);
 
-  if (!mounted || !puzzle) return <div style={{ height: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--bg-paper)', fontFamily: 'var(--font-official)' }}>Loading...</div>;
+  if (!mounted || !puzzle) return <div className={styles.loadingScreen}>Loading...</div>;
 
   const leftActions = isTester ? (
     <button onClick={() => setShowFeedback(true)} className={styles.iconBtn} title="Give Feedback">
@@ -251,12 +251,12 @@ export default function Lexicon() {
 
               <div className={styles.modalActions}>
                 {arenaPuzzleId && !feedbackSubmitted ? (
-                  <div style={{ width: '100%', padding: '16px', backgroundColor: 'var(--bg-paper)', borderRadius: 'var(--radius-md)', border: 'var(--border-ink)' }}>
-                    <p style={{ fontSize: '14px', fontWeight: 700, marginBottom: '12px', textAlign: 'center', color: 'var(--ink-main)' }}>Rate this Arena Variant</p>
-                    <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+                  <div className={styles.feedbackBox}>
+                    <p className={styles.feedbackTitle}>Rate this Arena Variant</p>
+                    <div className={styles.starsContainer}>
                       {[1, 2, 3, 4, 5].map(star => (
-                        <button key={star} onClick={() => handleSubmitRating(star)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--ink-main)' }}>
-                          <Star size={28} fill={arenaRating >= star ? 'var(--ink-main)' : 'none'} />
+                        <button key={star} onClick={() => handleSubmitRating(star)} className={styles.starBtn} aria-label={`Rate ${star} stars`}>
+                          <Star size={28} fill={arenaRating >= star ? 'var(--color-text-primary)' : 'none'} />
                         </button>
                       ))}
                     </div>
@@ -292,10 +292,10 @@ export default function Lexicon() {
                   <X size={20} />
                 </button>
                 <h2 className={styles.modalTitle}>How to Play</h2>
-                <div className={styles.modalDesc} style={{textAlign: 'left', marginBottom: '32px'}}>
-                  <p style={{marginBottom: '12px'}}>You will be presented with an obscure word and six possible definitions.</p>
-                  <p style={{marginBottom: '12px'}}>Only <strong style={{color: 'var(--ink-main)'}}>one</strong> definition is real. The others are bluffs.</p>
-                  <p>You have 3 guesses. Guess correctly on the first try for 3 points, second try for 2 points, and third try for 1 point.</p>
+                <div className={styles.helpContent}>
+                  <p className={styles.helpParagraph}>You will be presented with an obscure word and six possible definitions.</p>
+                  <p className={styles.helpParagraph}>Only <strong className={styles.helpEmphasis}>one</strong> definition is real. The others are bluffs.</p>
+                  <p className={styles.helpParagraph}>You have 3 guesses. Guess correctly on the first try for 3 points, second try for 2 points, and third try for 1 point.</p>
                 </div>
                 <button onClick={() => setShowHelp(false)} className={`${styles.actionBtn} ${styles.actionBtnPrimary}`}>
                   Got it

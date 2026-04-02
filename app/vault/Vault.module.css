@@ -1,62 +1,632 @@
-.container { flex: 1; padding: 24px 20px; display: flex; flex-direction: column; align-items: center; min-height: 100%; width: 100%; max-width: 380px; margin: 0 auto; }
+/**
+ * Vault Puzzle Game Styles
+ *
+ * Number code cracking game with keypad (like safe-cracking)
+ * Uses new design tokens system
+ */
 
-.iconBtn { padding: 8px; border-radius: var(--radius-sharp); border: var(--border-ink); background: transparent; color: var(--ink-main); cursor: pointer; transition: all 0.1s ease; display: flex; align-items: center; justify-content: center; box-shadow: 2px 2px 0px var(--ink-main); }
-.iconBtn:active { transform: translate(2px, 2px); box-shadow: var(--shadow-ink-pressed); }
+/* ============================================
+   MAIN CONTAINER
+   ============================================ */
 
-.modeToggle { display: flex; background: var(--bg-card); border: var(--border-ink); border-radius: var(--radius-sharp); padding: 4px; margin-bottom: 24px; box-shadow: var(--shadow-ink); flex-shrink: 0; width: 100%; }
-.modeBtn { flex: 1; padding: 8px; font-family: var(--font-mono); font-size: 12px; font-weight: 600; text-transform: uppercase; border: none; background: transparent; cursor: pointer; border-radius: 2px; color: var(--ink-light); transition: all 0.2s ease; }
-.modeBtnActive { background: var(--ink-main); color: var(--bg-paper); box-shadow: var(--shadow-ink-pressed); }
+.container {
+  flex: 1;
+  padding: var(--pad-lg) var(--pad-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100%;
+  width: 100%;
+  max-width: var(--max-width-sm);
+  margin: 0 auto;
+}
 
-.instructions { text-align: center; margin-bottom: 24px; flex-shrink: 0; }
-.instructionTitle { font-family: var(--font-official); font-size: 24px; font-weight: 700; margin: 0 0 4px 0; color: var(--ink-main); }
-.instructionDesc { font-family: var(--font-ui); font-size: 13px; color: var(--ink-light); margin: 0; }
+/* ============================================
+   ICON BUTTONS
+   ============================================ */
 
-.rulesBox { width: 100%; background-color: var(--wash-slate); border: var(--border-ink); border-radius: var(--radius-sharp); padding: 16px; margin-bottom: 24px; box-shadow: var(--shadow-ink); }
-.rulesHeader { font-family: var(--font-mono); font-size: 10px; font-weight: 700; color: var(--accent-slate); text-transform: uppercase; letter-spacing: 0.1em; margin: 0 0 12px 0; text-align: center; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 8px; }
-.ruleList { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px; }
-.ruleItem { font-size: 12px; font-weight: 600; color: var(--ink-main); display: flex; align-items: flex-start; gap: 8px; line-height: 1.4; }
-.ruleBullet { color: var(--accent-slate); font-size: 8px; margin-top: 4px; }
+.iconBtn {
+  padding: var(--pad-sm);
+  border-radius: var(--radius-sharp);
+  border: var(--border-ink-regular);
+  background: transparent;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: all var(--duration-micro) var(--ease-standard);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-raised);
+  min-width: var(--touch-target-comfortable);
+  min-height: var(--touch-target-comfortable);
+}
 
-.codeDisplay { display: flex; gap: 12px; margin-bottom: 16px; width: 100%; justify-content: center; }
-.codeSlot { width: 52px; height: 60px; border-radius: var(--radius-sharp); display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 28px; font-weight: 700; transition: all 0.2s ease; }
-@media (min-width: 360px) { .codeSlot { width: 60px; height: 68px; font-size: 32px; } }
-.codeSlotEmpty { border: 2px dashed var(--ink-light); color: transparent; }
-.codeSlotFilled { background-color: var(--bg-card); border: var(--border-ink); color: var(--ink-main); box-shadow: var(--shadow-ink); }
-.codeSlotWin { background-color: var(--accent-slate); border: var(--border-ink); color: var(--bg-paper); box-shadow: var(--shadow-ink); }
+.iconBtn:active {
+  transform: translate(var(--button-offset-sm), var(--button-offset-sm));
+  box-shadow: var(--shadow-pressed);
+}
 
-.mistakesContainer { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 0 8px; margin-bottom: 24px; }
-.mistakesLabel { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; font-weight: 700; color: var(--ink-light); }
-.dotsGroup { display: flex; gap: 6px; }
-.mistakeDot { width: 10px; height: 10px; border-radius: 50%; border: var(--border-ink); background-color: var(--bg-card); transition: all 0.3s ease; }
-.mistakeDotActive { background-color: var(--accent-slate); border-color: var(--accent-slate); }
+/* ============================================
+   MODE TOGGLE
+   ============================================ */
 
-.numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; margin-top: auto; padding-bottom: 16px; }
-@media (min-width: 360px) { .numpad { gap: 12px; } }
-.numBtn { background-color: var(--bg-card); border: var(--border-ink); border-radius: var(--radius-sharp); box-shadow: var(--shadow-ink); font-family: var(--font-mono); font-size: 24px; font-weight: 700; color: var(--ink-main); display: flex; align-items: center; justify-content: center; padding: 14px 0; cursor: pointer; transition: all 0.1s ease; }
-.numBtn:active:not(:disabled) { transform: translate(4px, 4px); box-shadow: var(--shadow-ink-pressed); }
-.numBtn:disabled { opacity: 0.5; pointer-events: none; box-shadow: var(--shadow-ink-pressed); transform: translate(4px, 4px); }
+.modeToggle {
+  display: flex;
+  background: var(--color-bg-secondary);
+  border: var(--border-ink-regular);
+  border-radius: var(--radius-sharp);
+  padding: var(--space-1);
+  margin-bottom: var(--pad-lg);
+  box-shadow: var(--shadow-raised);
+  flex-shrink: 0;
+  width: 100%;
+}
 
-.actionKey { background-color: var(--wash-slate); color: var(--ink-main); }
-.enterKey { background-color: var(--ink-main); color: var(--bg-paper); font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; }
+.modeBtn {
+  flex: 1;
+  padding: var(--pad-sm);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 2px;
+  color: var(--color-text-secondary);
+  transition: all var(--duration-fast) var(--ease-standard);
+}
 
-.modalOverlay { position: absolute; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; background-color: rgba(242, 239, 233, 0.85); backdrop-filter: blur(4px); padding: 20px; }
-.modalCard { width: 100%; max-width: 380px; background-color: var(--bg-card); border: var(--border-ink); border-radius: var(--radius-sharp); box-shadow: var(--shadow-ink); padding: 32px 24px; text-align: center; position: relative; max-height: 90vh; overflow-y: auto; }
-.closeBtn { position: absolute; top: 12px; right: 12px; background: transparent; border: none; cursor: pointer; color: var(--ink-light); padding: 4px; transition: color 0.2s ease; }
-.closeBtn:hover { color: var(--ink-main); }
+.modeBtnActive {
+  background: var(--color-text-primary);
+  color: var(--color-bg-primary);
+  box-shadow: var(--shadow-pressed);
+}
 
-.modalTitle { font-family: var(--font-official); font-size: 32px; font-weight: 700; margin: 0 0 8px 0; color: var(--ink-main); letter-spacing: -0.02em; }
-.modalDesc { font-size: 14px; color: var(--ink-light); margin: 0 0 24px 0; line-height: 1.5; font-family: var(--font-ui); }
+/* ============================================
+   INSTRUCTIONS
+   ============================================ */
 
-.solutionBox { background-color: var(--wash-slate); border: var(--border-ink); border-radius: var(--radius-sharp); padding: 16px; margin-bottom: 24px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
-.solutionHeader { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; font-weight: 600; color: var(--accent-slate); letter-spacing: 0.1em; margin: 0 0 8px 0; text-align: center; }
-.solutionCode { font-family: var(--font-mono); font-size: 36px; font-weight: 700; color: var(--ink-main); letter-spacing: 0.3em; background-color: var(--bg-card); border: var(--border-ink); padding: 12px 16px 12px 28px; border-radius: var(--radius-sharp); margin: 0; }
+.instructions {
+  text-align: center;
+  margin-bottom: var(--pad-lg);
+  flex-shrink: 0;
+}
 
-.modalActions { display: flex; flex-direction: column; gap: 12px; }
+.instructionTitle {
+  font-family: var(--font-serif);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  margin: 0 0 var(--space-1) 0;
+  color: var(--color-text-primary);
+}
 
-.actionsRow { display: flex; gap: 12px; }
-.actionBtn { box-sizing: border-box; text-decoration: none; flex: 1; padding: 14px; border: var(--border-ink); border-radius: var(--radius-sharp); font-family: var(--font-mono); font-size: 14px; font-weight: 600; text-transform: uppercase; cursor: pointer; box-shadow: var(--shadow-ink); transition: all 0.1s ease; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; text-align: center; }
-.actionBtn:active:not(:disabled) { transform: translate(4px, 4px); box-shadow: var(--shadow-ink-pressed); }
-.actionBtn:disabled { opacity: 0.5; pointer-events: none; box-shadow: var(--shadow-ink-pressed); transform: translate(4px, 4px); }
-.actionBtnPrimary { background-color: var(--ink-main); color: var(--bg-paper); }
-.actionBtnSecondary { background-color: var(--bg-card); color: var(--ink-main); }
-.actionBtnSuccess { background-color: var(--accent-slate); color: var(--bg-paper); border-color: var(--accent-slate); }
+.instructionDesc {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+/* ============================================
+   RULES BOX
+   ============================================ */
+
+.rulesBox {
+  width: 100%;
+  background-color: var(--color-game-slate-wash);
+  border: var(--border-ink-regular);
+  border-radius: var(--radius-sharp);
+  padding: var(--pad-md);
+  margin-bottom: var(--pad-lg);
+  box-shadow: var(--shadow-raised);
+}
+
+.rulesHeader {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-game-slate);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+  margin: 0 0 var(--pad-md) 0;
+  text-align: center;
+  border-bottom: var(--border-width-thin) solid rgba(0, 0, 0, 0.1);
+  padding-bottom: var(--space-2);
+}
+
+.ruleList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--pad-md);
+}
+
+.ruleItem {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  line-height: var(--line-height-normal);
+}
+
+.ruleBullet {
+  color: var(--color-game-slate);
+  font-size: var(--font-size-xs);
+  margin-top: var(--space-1);
+}
+
+/* ============================================
+   CODE DISPLAY (Slot Grid)
+   ============================================ */
+
+.codeDisplay {
+  display: flex;
+  gap: var(--pad-md);
+  margin-bottom: var(--pad-lg);
+  width: 100%;
+  justify-content: center;
+}
+
+.codeSlot {
+  width: 52px;
+  height: 60px;
+  border-radius: var(--radius-sharp);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  transition: all var(--duration-fast) var(--ease-standard);
+}
+
+@media (min-width: 360px) {
+  .codeSlot {
+    width: 60px;
+    height: 68px;
+    font-size: var(--font-size-3xl);
+  }
+}
+
+.codeSlotEmpty {
+  border: 2px dashed var(--color-text-secondary);
+  color: transparent;
+}
+
+.codeSlotFilled {
+  background-color: var(--color-bg-secondary);
+  border: var(--border-ink-regular);
+  color: var(--color-text-primary);
+  box-shadow: var(--shadow-raised);
+}
+
+.codeSlotWin {
+  background-color: var(--color-game-slate);
+  border: var(--border-ink-regular);
+  color: var(--color-bg-primary);
+  box-shadow: var(--shadow-raised);
+}
+
+/* ============================================
+   MISTAKES DISPLAY
+   ============================================ */
+
+.mistakesContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0 var(--space-2);
+  margin-bottom: var(--pad-lg);
+}
+
+.mistakesLabel {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-secondary);
+}
+
+.dotsGroup {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.mistakeDot {
+  width: var(--progress-dot-size);
+  height: var(--progress-dot-size);
+  border-radius: 50%;
+  border: var(--border-ink-regular);
+  background-color: var(--color-bg-secondary);
+  transition: all var(--duration-normal) var(--ease-standard);
+}
+
+.mistakeDotActive {
+  background-color: var(--color-game-slate);
+  border-color: var(--color-game-slate);
+}
+
+/* ============================================
+   NUMPAD KEYPAD
+   ============================================ */
+
+.numpad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-2);
+  width: 100%;
+  margin-top: auto;
+  padding-bottom: var(--pad-md);
+}
+
+@media (min-width: 360px) {
+  .numpad {
+    gap: var(--space-3);
+  }
+}
+
+.numBtn {
+  background-color: var(--color-bg-secondary);
+  border: var(--border-ink-regular);
+  border-radius: var(--radius-sharp);
+  box-shadow: var(--shadow-raised);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--pad-md) 0;
+  cursor: pointer;
+  transition: all var(--duration-micro) var(--ease-standard);
+  min-height: var(--touch-target-comfortable);
+}
+
+.numBtn:active:not(:disabled) {
+  transform: translate(var(--button-offset-lg), var(--button-offset-lg));
+  box-shadow: var(--shadow-pressed);
+}
+
+.numBtn:disabled {
+  opacity: var(--opacity-disabled);
+  pointer-events: none;
+  box-shadow: var(--shadow-pressed);
+  transform: translate(var(--button-offset-lg), var(--button-offset-lg));
+}
+
+.actionKey {
+  background-color: var(--color-game-slate-wash);
+  color: var(--color-text-primary);
+}
+
+.enterKey {
+  background-color: var(--color-text-primary);
+  color: var(--color-bg-primary);
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+/* ============================================
+   MODAL OVERLAY & CARD
+   ============================================ */
+
+.modalOverlay {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-modal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(242, 239, 233, 0.85);
+  backdrop-filter: blur(4px);
+  padding: var(--pad-lg);
+}
+
+.modalCard {
+  width: 100%;
+  max-width: var(--max-width-sm);
+  background-color: var(--color-bg-secondary);
+  border: var(--border-ink-regular);
+  border-radius: var(--radius-sharp);
+  box-shadow: var(--shadow-lifted);
+  padding: var(--pad-xl) var(--pad-lg);
+  text-align: center;
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.closeBtn {
+  position: absolute;
+  top: var(--pad-sm);
+  right: var(--pad-sm);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  padding: var(--space-1);
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+
+.closeBtn:hover {
+  color: var(--color-text-primary);
+}
+
+.modalTitle {
+  font-family: var(--font-serif);
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  margin: 0 0 var(--space-2) 0;
+  color: var(--color-text-primary);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+.modalDesc {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin: 0 0 var(--pad-lg) 0;
+  line-height: var(--line-height-normal);
+  font-family: var(--font-sans);
+}
+
+/* ============================================
+   SOLUTION DISPLAY
+   ============================================ */
+
+.solutionBox {
+  background-color: var(--color-game-slate-wash);
+  border: var(--border-ink-regular);
+  border-radius: var(--radius-sharp);
+  padding: var(--pad-md);
+  margin-bottom: var(--pad-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.solutionHeader {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-game-slate);
+  letter-spacing: var(--letter-spacing-wide);
+  margin: 0 0 var(--space-2) 0;
+  text-align: center;
+}
+
+.solutionCode {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  letter-spacing: var(--letter-spacing-wide);
+  background-color: var(--color-bg-secondary);
+  border: var(--border-ink-regular);
+  padding: var(--pad-sm) var(--pad-md) var(--pad-sm) var(--space-7);
+  border-radius: var(--radius-sharp);
+  margin: 0;
+}
+
+/* ============================================
+   ACTION BUTTONS
+   ============================================ */
+
+.modalActions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.actionsRow {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.actionBtn {
+  box-sizing: border-box;
+  text-decoration: none;
+  flex: 1;
+  padding: var(--pad-md);
+  border: var(--border-ink-regular);
+  border-radius: var(--radius-sharp);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: var(--shadow-raised);
+  transition: all var(--duration-micro) var(--ease-standard);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  width: 100%;
+  text-align: center;
+}
+
+.actionBtn:active:not(:disabled) {
+  transform: translate(var(--button-offset-lg), var(--button-offset-lg));
+  box-shadow: var(--shadow-pressed);
+}
+
+.actionBtn:disabled {
+  opacity: var(--opacity-disabled);
+  pointer-events: none;
+  box-shadow: var(--shadow-pressed);
+  transform: translate(var(--button-offset-lg), var(--button-offset-lg));
+}
+
+.actionBtnPrimary {
+  background-color: var(--color-text-primary);
+  color: var(--color-bg-primary);
+}
+
+.actionBtnSecondary {
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+}
+
+.actionBtnSuccess {
+  background-color: var(--color-game-slate);
+  color: var(--color-bg-primary);
+  border-color: var(--color-game-slate);
+}
+
+/* ============================================
+   LOADING & PLACEHOLDER STATES
+   ============================================ */
+
+.loadingScreen {
+  height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-bg-primary);
+  font-family: var(--font-serif);
+  color: var(--color-text-secondary);
+}
+
+.loadingPlaceholder {
+  padding: var(--pad-xl);
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-family: var(--font-sans);
+}
+
+/* ============================================
+   TIMER DISPLAY
+   ============================================ */
+
+.timerDisplay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--space-4);
+}
+
+/* ============================================
+   FEEDBACK BOX (Arena Rating)
+   ============================================ */
+
+.feedbackBox {
+  width: 100%;
+  padding: var(--pad-lg);
+  background-color: var(--color-bg-primary);
+  border-radius: var(--radius-md);
+  border: var(--border-ink-regular);
+  margin-bottom: var(--pad-lg);
+}
+
+.feedbackTitle {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+  margin: 0 0 var(--space-3) 0;
+  text-align: center;
+  opacity: 0.7;
+  color: var(--color-text-secondary);
+}
+
+.starsContainer {
+  display: flex;
+  gap: var(--space-2);
+  justify-content: center;
+}
+
+.starBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--space-1);
+  color: var(--color-text-primary);
+  transition: transform var(--duration-fast) var(--ease-standard);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.starBtn:hover {
+  transform: scale(1.1);
+}
+
+/* ============================================
+   CODE REVEAL BOX
+   ============================================ */
+
+.codeBox {
+  margin-bottom: var(--pad-lg);
+  padding: var(--pad-lg);
+  background-color: var(--color-bg-primary);
+  border-radius: var(--radius-md);
+  border: var(--border-ink-regular);
+}
+
+.codeLabel {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+  margin: 0 0 var(--space-3) 0;
+  text-align: center;
+  opacity: 0.7;
+  color: var(--color-text-secondary);
+}
+
+.codeDisplay {
+  display: flex;
+  justify-content: center;
+  background-color: var(--color-bg-secondary);
+  padding: var(--pad-lg);
+  border-radius: var(--radius-sharp);
+  border: var(--border-ink-regular);
+}
+
+.codeValue {
+  font-size: 32px;
+  font-family: var(--font-mono);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.3em;
+  padding-left: 0.3em;
+  color: var(--color-text-primary);
+}
+
+/* ============================================
+   HELP MODAL CONTENT
+   ============================================ */
+
+.helpContent {
+  text-align: left;
+  margin-bottom: var(--pad-xl);
+}
+
+.helpParagraph {
+  margin: 0 0 var(--space-3) 0;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-secondary);
+}
+
+.helpEmphasis {
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-semibold);
+}
+
+.helpEmphasisDanger {
+  color: var(--color-danger);
+  font-weight: var(--font-weight-bold);
+}

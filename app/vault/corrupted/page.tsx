@@ -111,7 +111,7 @@ export default function VaultCorrupted() {
     }
   };
 
-  if (!puzzle) return <div style={{ padding: '40px', textAlign: 'center' }}>Loading Prototype...</div>;
+  if (!puzzle) return <div className={styles.loadingPlaceholder}>Loading Prototype...</div>;
 
   return (
     <GameLayout title="Vault: Corrupted" subtitle="Experimental" rightActions={<><button onClick={handleRandomPuzzle} className={styles.iconBtn} title="Next Puzzle"><Dices size={18} /></button><button onClick={() => setShowHelp(true)} className={styles.iconBtn} title="Help"><HelpCircle size={18} /></button></>}>
@@ -164,21 +164,21 @@ export default function VaultCorrupted() {
               <h2 className={styles.modalTitle}>{isWin ? 'Unlocked!' : 'Locked Out'}</h2>
               <p className={styles.modalDesc}>{isWin ? `You saw through the deception.` : 'The corrupted data fooled you.'}</p>
               
-              <div style={{ marginBottom: '24px', padding: '16px', backgroundColor: 'var(--bg-paper)', borderRadius: 'var(--radius-md)', border: 'var(--border-ink)' }}>
-                <h3 style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '12px', textAlign: 'center', opacity: 0.7 }}>The Code Was</h3>
-                <div style={{ display: 'flex', justifyContent: 'center', backgroundColor: 'var(--bg-card)', padding: '16px', borderRadius: 'var(--radius-sm)', border: 'var(--border-ink)' }}>
-                  <div style={{ fontSize: '32px', fontFamily: 'var(--font-mono)', fontWeight: 700, letterSpacing: '0.3em', paddingLeft: '0.3em', color: 'var(--ink-main)' }}>{puzzle.code}</div>
+              <div className={styles.codeBox}>
+                <h3 className={styles.codeLabel}>The Code Was</h3>
+                <div className={styles.codeDisplay}>
+                  <div className={styles.codeValue}>{puzzle.code}</div>
                 </div>
               </div>
 
               <div className={styles.modalActions}>
                 {arenaPuzzleId && !feedbackSubmitted ? (
-                  <div style={{ width: '100%', padding: '16px', backgroundColor: 'var(--bg-paper)', borderRadius: 'var(--radius-md)', border: 'var(--border-ink)' }}>
-                    <p style={{ fontSize: '14px', fontWeight: 700, marginBottom: '12px', textAlign: 'center', color: 'var(--ink-main)' }}>Rate this Prototype</p>
-                    <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+                  <div className={styles.feedbackBox}>
+                    <p className={styles.feedbackTitle}>Rate this Prototype</p>
+                    <div className={styles.starsContainer}>
                       {[1, 2, 3, 4, 5].map(star => (
-                        <button key={star} onClick={() => handleSubmitRating(star)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--ink-main)' }}>
-                          <Star size={28} fill={arenaRating >= star ? 'var(--ink-main)' : 'none'} />
+                        <button key={star} onClick={() => handleSubmitRating(star)} className={styles.starBtn} aria-label={`Rate ${star} stars`}>
+                          <Star size={28} fill={arenaRating >= star ? 'var(--color-text-primary)' : 'none'} />
                         </button>
                       ))}
                     </div>
@@ -204,10 +204,10 @@ export default function VaultCorrupted() {
               <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className={styles.modalCard}>
                 <button onClick={() => setShowHelp(false)} className={styles.closeBtn}><X size={20} /></button>
                 <h2 className={styles.modalTitle}>Corrupted Protocol</h2>
-                <div className={styles.modalDesc} style={{ textAlign: 'left', marginBottom: '32px' }}>
-                  <p style={{marginBottom: '12px'}}>The rules are the same as Standard Protocol, with one critical exception:</p>
-                  <p style={{color: 'var(--accent-crimson)', fontWeight: 700}}>One of the six security clues is a lie.</p>
-                  <p>You must use logic to determine which clue is the red herring in order to deduce the true code.</p>
+                <div className={styles.helpContent}>
+                  <p className={styles.helpParagraph}>The rules are the same as Standard Protocol, with one critical exception:</p>
+                  <p className={`${styles.helpParagraph} ${styles.helpEmphasisDanger}`}>One of the six security clues is a lie.</p>
+                  <p className={styles.helpParagraph}>You must use logic to determine which clue is the red herring in order to deduce the true code.</p>
                 </div>
                 <button onClick={() => setShowHelp(false)} className={`${styles.actionBtn} ${styles.actionBtnPrimary}`}>
                   Understood

@@ -1,54 +1,407 @@
-.container { flex: 1; padding: 24px 20px; display: flex; flex-direction: column; min-height: 100%; }
+/**
+ * Shift Puzzle Game Styles
+ *
+ * Column-shifting puzzle with letter alignment
+ * Uses new design tokens system
+ */
 
-.iconBtn { padding: 8px; border-radius: var(--radius-sharp); border: var(--border-ink); background: transparent; color: var(--ink-main); cursor: pointer; transition: all 0.1s ease; display: flex; align-items: center; justify-content: center; box-shadow: 2px 2px 0px var(--ink-main); }
-.iconBtn:active { transform: translate(2px, 2px); box-shadow: var(--shadow-ink-pressed); }
+/* ============================================
+   MAIN CONTAINER
+   ============================================ */
 
-.modeToggle { display: flex; background: var(--bg-card); border: var(--border-ink); border-radius: var(--radius-sharp); padding: 4px; margin-bottom: 24px; box-shadow: var(--shadow-ink); flex-shrink: 0; }
-.modeBtn { flex: 1; padding: 8px; font-family: var(--font-mono); font-size: 12px; font-weight: 600; text-transform: uppercase; border: none; background: transparent; cursor: pointer; border-radius: 2px; color: var(--ink-light); transition: all 0.2s ease; }
-.modeBtnActive { background: var(--ink-main); color: var(--bg-paper); box-shadow: var(--shadow-ink-pressed); }
+.container {
+  flex: 1;
+  padding: var(--pad-lg) var(--pad-md);
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
 
-.instructions { text-align: center; margin-bottom: 24px; flex-shrink: 0; }
-.instructionTitle { font-family: var(--font-official); font-size: 24px; font-weight: 700; margin: 0 0 4px 0; color: var(--ink-main); }
-.instructionDesc { font-family: var(--font-ui); font-size: 13px; color: var(--ink-light); margin: 0; }
+/* ============================================
+   ICON BUTTONS
+   ============================================ */
 
-/* Shift-specific grid */
-.gridContainer { display: flex; justify-content: center; gap: 8px; flex: 1; align-items: center; margin-bottom: 24px; }
-.colGroup { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.iconBtn {
+  padding: var(--pad-sm);
+  border-radius: var(--radius-sharp);
+  border: var(--border-ink-regular);
+  background: transparent;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: all var(--duration-micro) var(--ease-standard);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-raised);
+  min-width: var(--touch-target-comfortable);
+  min-height: var(--touch-target-comfortable);
+}
 
-.arrowBtn { background: transparent; border: none; color: var(--ink-light); cursor: pointer; padding: 4px; display: flex; align-items: center; justify-content: center; transition: color 0.1s ease; }
-.arrowBtn:hover { color: var(--ink-main); }
-.arrowBtn:active { transform: translateY(2px); }
-.arrowBtn:disabled { opacity: 0.2; pointer-events: none; }
+.iconBtn:active {
+  transform: translate(var(--button-offset-sm), var(--button-offset-sm));
+  box-shadow: var(--shadow-pressed);
+}
 
-.colBackground { display: flex; flex-direction: column; gap: 6px; background-color: var(--wash-indigo); border: var(--border-ink); border-radius: var(--radius-sharp); padding: 6px; box-shadow: var(--shadow-ink); }
+/* ============================================
+   MODE TOGGLE
+   ============================================ */
 
-.letterBox { width: 44px; height: 44px; background-color: var(--bg-card); border: var(--border-ink); border-radius: var(--radius-sharp); display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 22px; font-weight: 700; color: var(--ink-main); transition: all 0.2s ease; }
-@media (min-width: 360px) { .letterBox { width: 48px; height: 48px; } }
-.letterBoxCorrect { background-color: var(--ink-main); color: var(--bg-paper); border-color: var(--ink-main); }
+.modeToggle {
+  display: flex;
+  background: var(--color-bg-secondary);
+  border: var(--border-ink-regular);
+  border-radius: var(--radius-sharp);
+  padding: var(--space-1);
+  margin-bottom: var(--pad-lg);
+  box-shadow: var(--shadow-raised);
+  flex-shrink: 0;
+}
 
-.bottomArea { margin-top: auto; display: flex; flex-direction: column; gap: 16px; padding-bottom: 16px; flex-shrink: 0; }
+.modeBtn {
+  flex: 1;
+  padding: var(--pad-sm);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 2px;
+  color: var(--color-text-secondary);
+  transition: all var(--duration-fast) var(--ease-standard);
+}
 
-.mistakesContainer { display: flex; align-items: center; justify-content: center; gap: 8px; }
-.mistakesLabel { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; font-weight: 600; color: var(--ink-light); margin-right: 4px; }
-.mistakeDot { width: 10px; height: 10px; border-radius: 50%; border: var(--border-ink); background-color: var(--bg-card); transition: all 0.3s ease; }
-.mistakeDotActive { background-color: var(--accent-indigo); border-color: var(--accent-indigo); }
+.modeBtnActive {
+  background: var(--color-text-primary);
+  color: var(--color-bg-primary);
+  box-shadow: var(--shadow-pressed);
+}
 
-.actionsRow { display: flex; gap: 12px; }
-.actionBtn { box-sizing: border-box; text-decoration: none; flex: 1; padding: 14px; border: var(--border-ink); border-radius: var(--radius-sharp); font-family: var(--font-mono); font-size: 14px; font-weight: 600; text-transform: uppercase; cursor: pointer; box-shadow: var(--shadow-ink); transition: all 0.1s ease; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; text-align: center; }
-.actionBtn:active:not(:disabled) { transform: translate(4px, 4px); box-shadow: var(--shadow-ink-pressed); }
-.actionBtn:disabled { opacity: 0.5; pointer-events: none; box-shadow: var(--shadow-ink-pressed); transform: translate(4px, 4px); }
-.actionBtnPrimary { background-color: var(--ink-main); color: var(--bg-paper); }
-.actionBtnSecondary { background-color: var(--bg-card); color: var(--ink-main); }
-.actionBtnSuccess { background-color: var(--accent-indigo); color: var(--bg-paper); border-color: var(--accent-indigo); }
+/* ============================================
+   INSTRUCTIONS
+   ============================================ */
 
-.modalOverlay { position: absolute; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; background-color: rgba(242, 239, 233, 0.85); backdrop-filter: blur(4px); padding: 20px; }
-.modalCard { width: 100%; max-width: 380px; background-color: var(--bg-card); border: var(--border-ink); border-radius: var(--radius-sharp); box-shadow: var(--shadow-ink); padding: 32px 24px; text-align: center; position: relative; max-height: 90vh; overflow-y: auto; }
-.closeBtn { position: absolute; top: 12px; right: 12px; background: transparent; border: none; cursor: pointer; color: var(--ink-light); padding: 4px; transition: color 0.2s ease; }
-.closeBtn:hover { color: var(--ink-main); }
+.instructions {
+  text-align: center;
+  margin-bottom: var(--pad-lg);
+  flex-shrink: 0;
+}
 
-.modalTitle { font-family: var(--font-official); font-size: 32px; font-weight: 700; margin: 0 0 8px 0; color: var(--ink-main); letter-spacing: -0.02em; }
-.modalDesc { font-size: 14px; color: var(--ink-light); margin: 0 0 24px 0; line-height: 1.5; font-family: var(--font-ui); }
-.solutionBox { background-color: var(--wash-indigo); border: var(--border-ink); border-radius: var(--radius-sharp); padding: 16px; margin-bottom: 24px; display: flex; flex-direction: column; gap: 8px; text-align: left; }
-.solutionHeader { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; font-weight: 600; color: var(--accent-indigo); letter-spacing: 0.1em; margin: 0 0 8px 0; text-align: center; }
-.targetWord { background-color: var(--bg-card); border: var(--border-ink); padding: 8px; border-radius: var(--radius-sharp); font-family: var(--font-mono); font-size: 16px; font-weight: 700; color: var(--ink-main); text-align: center; letter-spacing: 0.2em; text-transform: uppercase; }
-.modalActions { display: flex; flex-direction: column; gap: 12px; }
+.instructionTitle {
+  font-family: var(--font-serif);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  margin: 0 0 var(--space-1) 0;
+  color: var(--color-text-primary);
+}
+
+.instructionDesc {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+/* ============================================
+   SHIFT GAME GRID (Columns with letters)
+   ============================================ */
+
+.gridContainer {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-2);
+  flex: 1;
+  align-items: center;
+  margin-bottom: var(--pad-lg);
+}
+
+.colGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.arrowBtn {
+  background: transparent;
+  border: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  padding: var(--space-1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color var(--duration-micro) var(--ease-standard);
+  min-width: var(--touch-target-comfortable);
+  min-height: var(--touch-target-comfortable);
+}
+
+.arrowBtn:hover {
+  color: var(--color-text-primary);
+}
+
+.arrowBtn:active {
+  transform: translateY(var(--button-offset-sm));
+}
+
+.arrowBtn:disabled {
+  opacity: var(--opacity-disabled);
+  pointer-events: none;
+}
+
+.colBackground {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  background-color: var(--color-game-indigo-wash);
+  border: var(--border-ink-regular);
+  border-radius: var(--radius-sharp);
+  padding: var(--space-1);
+  box-shadow: var(--shadow-raised);
+}
+
+.letterBox {
+  width: 44px;
+  height: 44px;
+  background-color: var(--color-bg-secondary);
+  border: var(--border-ink-regular);
+  border-radius: var(--radius-sharp);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  transition: all var(--duration-fast) var(--ease-standard);
+}
+
+@media (min-width: 360px) {
+  .letterBox {
+    width: 48px;
+    height: 48px;
+  }
+}
+
+.letterBoxCorrect {
+  background-color: var(--color-text-primary);
+  color: var(--color-bg-primary);
+  border-color: var(--color-text-primary);
+}
+
+/* ============================================
+   BOTTOM ACTIONS AREA
+   ============================================ */
+
+.bottomArea {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding-bottom: var(--pad-md);
+  flex-shrink: 0;
+}
+
+.mistakesContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+}
+
+.mistakesLabel {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  margin-right: var(--space-1);
+}
+
+.mistakeDot {
+  width: var(--progress-dot-size);
+  height: var(--progress-dot-size);
+  border-radius: 50%;
+  border: var(--border-ink-regular);
+  background-color: var(--color-bg-secondary);
+  transition: all var(--duration-normal) var(--ease-standard);
+}
+
+.mistakeDotActive {
+  background-color: var(--color-game-indigo);
+  border-color: var(--color-game-indigo);
+}
+
+/* ============================================
+   ACTION BUTTONS
+   ============================================ */
+
+.actionsRow {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.actionBtn {
+  box-sizing: border-box;
+  text-decoration: none;
+  flex: 1;
+  padding: var(--pad-md);
+  border: var(--border-ink-regular);
+  border-radius: var(--radius-sharp);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: var(--shadow-raised);
+  transition: all var(--duration-micro) var(--ease-standard);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  width: 100%;
+  text-align: center;
+}
+
+.actionBtn:active:not(:disabled) {
+  transform: translate(var(--button-offset-lg), var(--button-offset-lg));
+  box-shadow: var(--shadow-pressed);
+}
+
+.actionBtn:disabled {
+  opacity: var(--opacity-disabled);
+  pointer-events: none;
+  box-shadow: var(--shadow-pressed);
+  transform: translate(var(--button-offset-lg), var(--button-offset-lg));
+}
+
+.actionBtnPrimary {
+  background-color: var(--color-text-primary);
+  color: var(--color-bg-primary);
+}
+
+.actionBtnSecondary {
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+}
+
+.actionBtnSuccess {
+  background-color: var(--color-game-indigo);
+  color: var(--color-bg-primary);
+  border-color: var(--color-game-indigo);
+}
+
+/* ============================================
+   MODAL OVERLAY & CARD
+   ============================================ */
+
+.modalOverlay {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-modal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(242, 239, 233, 0.85);
+  backdrop-filter: blur(4px);
+  padding: var(--pad-lg);
+}
+
+.modalCard {
+  width: 100%;
+  max-width: var(--max-width-sm);
+  background-color: var(--color-bg-secondary);
+  border: var(--border-ink-regular);
+  border-radius: var(--radius-sharp);
+  box-shadow: var(--shadow-lifted);
+  padding: var(--pad-xl) var(--pad-lg);
+  text-align: center;
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.closeBtn {
+  position: absolute;
+  top: var(--pad-sm);
+  right: var(--pad-sm);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  padding: var(--space-1);
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+
+.closeBtn:hover {
+  color: var(--color-text-primary);
+}
+
+.modalTitle {
+  font-family: var(--font-serif);
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  margin: 0 0 var(--space-2) 0;
+  color: var(--color-text-primary);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+.modalDesc {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin: 0 0 var(--pad-lg) 0;
+  line-height: var(--line-height-normal);
+  font-family: var(--font-sans);
+}
+
+/* ============================================
+   SOLUTION DISPLAY
+   ============================================ */
+
+.solutionBox {
+  background-color: var(--color-game-indigo-wash);
+  border: var(--border-ink-regular);
+  border-radius: var(--radius-sharp);
+  padding: var(--pad-md);
+  margin-bottom: var(--pad-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  text-align: left;
+}
+
+.solutionHeader {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-game-indigo);
+  letter-spacing: var(--letter-spacing-wide);
+  margin: 0 0 var(--space-2) 0;
+  text-align: center;
+}
+
+.targetWord {
+  background-color: var(--color-bg-secondary);
+  border: var(--border-ink-regular);
+  padding: var(--space-2);
+  border-radius: var(--radius-sharp);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  text-align: center;
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+}
+
+/* ============================================
+   MODAL ACTIONS
+   ============================================ */
+
+.modalActions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}

@@ -47,17 +47,17 @@
 }
 
 .intent-success {
-  background-color: #F0FDF4;
+  background-color: var(--color-wash-success);
   border-color: var(--color-success);
 }
 
 .intent-warning {
-  background-color: #FFFBEB;
+  background-color: var(--color-wash-warning);
   border-color: var(--color-warning);
 }
 
 .intent-danger {
-  background-color: #FEF2F2;
+  background-color: var(--color-wash-danger);
   border-color: var(--color-danger);
 }
 

@@ -159,7 +159,7 @@ export default function Vault() {
     }
   }, [isWin, user, isPlayTest]);
 
-  if (!mounted || !puzzle) return <div style={{ height: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--bg-paper)', fontFamily: 'var(--font-official)' }}>Loading...</div>;
+  if (!mounted || !puzzle) return <div className={styles.loadingScreen}>Loading...</div>;
 
   const leftActions = isTester ? (
     <button onClick={() => setShowFeedback(true)} className={styles.iconBtn} title="Give Feedback">
@@ -282,21 +282,21 @@ export default function Vault() {
               <h2 className={styles.modalTitle}>{isWin ? 'Unlocked!' : 'Locked Out'}</h2>
               <p className={styles.modalDesc}>{isWin ? `You cracked the code in ${attempts} attempt${attempts === 1 ? '' : 's'}.` : 'Security protocols triggered.'}</p>
               
-              <div style={{ marginBottom: '24px', padding: '16px', backgroundColor: 'var(--bg-paper)', borderRadius: 'var(--radius-md)', border: 'var(--border-ink)' }}>
-                <h3 style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '12px', textAlign: 'center', opacity: 0.7 }}>The Code Was</h3>
-                <div style={{ display: 'flex', justifyContent: 'center', backgroundColor: 'var(--bg-card)', padding: '16px', borderRadius: 'var(--radius-sm)', border: 'var(--border-ink)' }}>
-                  <div style={{ fontSize: '32px', fontFamily: 'var(--font-mono)', fontWeight: 700, letterSpacing: '0.3em', paddingLeft: '0.3em', color: 'var(--ink-main)' }}>{puzzle.code}</div>
+              <div className={styles.codeBox}>
+                <h3 className={styles.codeLabel}>The Code Was</h3>
+                <div className={styles.codeDisplay}>
+                  <div className={styles.codeValue}>{puzzle.code}</div>
                 </div>
               </div>
 
               <div className={styles.modalActions}>
                 {arenaPuzzleId && !feedbackSubmitted ? (
-                  <div style={{ width: '100%', padding: '16px', backgroundColor: 'var(--bg-paper)', borderRadius: 'var(--radius-md)', border: 'var(--border-ink)' }}>
-                    <p style={{ fontSize: '14px', fontWeight: 700, marginBottom: '12px', textAlign: 'center', color: 'var(--ink-main)' }}>Rate this Arena Variant</p>
-                    <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+                  <div className={styles.feedbackBox}>
+                    <p className={styles.feedbackTitle}>Rate this Arena Variant</p>
+                    <div className={styles.starsContainer}>
                       {[1, 2, 3, 4, 5].map(star => (
-                        <button key={star} onClick={() => handleSubmitRating(star)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--ink-main)' }}>
-                          <Star size={28} fill={arenaRating >= star ? 'var(--ink-main)' : 'none'} />
+                        <button key={star} onClick={() => handleSubmitRating(star)} className={styles.starBtn} aria-label={`Rate ${star} stars`}>
+                          <Star size={28} fill={arenaRating >= star ? 'var(--color-text-primary)' : 'none'} />
                         </button>
                       ))}
                     </div>
@@ -332,10 +332,10 @@ export default function Vault() {
                   <X size={20} />
                 </button>
                 <h2 className={styles.modalTitle}>How to Play</h2>
-                <div className={styles.modalDesc} style={{ textAlign: 'left', marginBottom: '32px' }}>
-                  <p style={{marginBottom: '12px'}}>You are a safecracker trying to deduce a 4-digit passcode.</p>
-                  <p style={{marginBottom: '12px'}}>Read the <strong style={{color: 'var(--ink-main)'}}>Security Protocols</strong> carefully. They provide absolute logical rules about the code.</p>
-                  <p>You have exactly <strong style={{color: 'var(--ink-main)'}}>3 chances</strong> to enter the correct combination before the vault locks down.</p>
+                <div className={styles.helpContent}>
+                  <p className={styles.helpParagraph}>You are a safecracker trying to deduce a 4-digit passcode.</p>
+                  <p className={styles.helpParagraph}>Read the <strong className={styles.helpEmphasis}>Security Protocols</strong> carefully. They provide absolute logical rules about the code.</p>
+                  <p className={styles.helpParagraph}>You have exactly <strong className={styles.helpEmphasis}>3 chances</strong> to enter the correct combination before the vault locks down.</p>
                 </div>
                 <button onClick={() => setShowHelp(false)} className={`${styles.actionBtn} ${styles.actionBtnPrimary}`}>
                   Got it

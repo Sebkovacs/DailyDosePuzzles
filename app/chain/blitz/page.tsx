@@ -117,13 +117,13 @@ export default function ChainBlitz() {
     }
   };
 
-  if (!puzzle) return <div style={{ padding: '40px', textAlign: 'center' }}>Loading Prototype...</div>;
+  if (!puzzle) return <div className={styles.loadingPlaceholder}>Loading Prototype...</div>;
 
   return (
     <GameLayout title="Chain Blitz" subtitle="Experimental" rightActions={<button onClick={handleRandomPuzzle} className={styles.iconBtn} title="Next Puzzle"><Dices size={18} /></button>}>
       <div className={styles.container}>
         <div className={styles.instructions}>
-          <div className={styles.instructionTitle} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', color: timeLeft <= 5 ? 'var(--accent-crimson)' : 'var(--ink-main)', fontSize: '24px', fontWeight: 'bold' }}>
+          <div className={styles.timerDisplay}>
             <Clock size={24} /> 0:{timeLeft.toString().padStart(2, '0')}
           </div>
         </div>
@@ -166,14 +166,14 @@ export default function ChainBlitz() {
             <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} className={styles.modalCard}>
               <h2 className={styles.modalTitle}>{isWin ? 'Chain Complete!' : (timeLeft <= 0 ? 'Time\'s Up!' : 'Broken Chain')}</h2>
               <p className={styles.modalDesc}>{isWin ? `You finished with ${timeLeft} seconds to spare!` : 'Better luck next time.'}</p>
-              <div className={styles.modalActions} style={{ flexDirection: 'row' }}>
+              <div className={styles.modalActions}>
                 {arenaPuzzleId && !feedbackSubmitted ? (
-                  <div style={{ width: '100%', padding: '16px', backgroundColor: 'var(--bg-paper)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-ink)' }}>
-                    <p style={{ fontSize: '14px', fontWeight: 700, marginBottom: '12px', textAlign: 'center' }}>Rate this Prototype</p>
-                    <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+                  <div className={styles.feedbackBox}>
+                    <p className={styles.feedbackTitle}>Rate this Prototype</p>
+                    <div className={styles.starsContainer}>
                       {[1, 2, 3, 4, 5].map(star => (
-                        <button key={star} onClick={() => handleSubmitRating(star)} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
-                          <Star size={28} fill={arenaRating >= star ? 'var(--ink-main)' : 'none'} />
+                        <button key={star} onClick={() => handleSubmitRating(star)} className={styles.starBtn} aria-label={`Rate ${star} stars`}>
+                          <Star size={28} fill={arenaRating >= star ? 'var(--color-text-primary)' : 'none'} />
                         </button>
                       ))}
                     </div>

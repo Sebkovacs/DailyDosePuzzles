@@ -127,11 +127,11 @@ export default function ChainVersus() {
     }
   };
 
-  if (!puzzle) return <div style={{ padding: '40px', textAlign: 'center' }}>Loading Prototype...</div>;
+  if (!puzzle) return <div className={styles.loadingMessage}>Loading Prototype...</div>;
 
   return (
     <GameLayout title="Chain Versus" subtitle="Experimental" rightActions={<button onClick={handleRandomPuzzle} className={styles.iconBtn} title="Next Puzzle"><Dices size={18} /></button>}>
-      <div className={styles.container} style={{ gap: 0 }}>
+      <div className={`${styles.container} ${styles.containerCompact}`}>
         <div className={styles.instructions}>
           <h2 className={styles.instructionTitle}>Race the AI!</h2>
           <p className={styles.instructionDesc}>Complete the chain before the bot does.</p>
@@ -179,14 +179,14 @@ export default function ChainVersus() {
             <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} className={styles.modalCard}>
               <h2 className={styles.modalTitle}>{isWin ? 'You Win!' : 'AI Wins!'}</h2>
               <p className={styles.modalDesc}>{isWin ? 'You outpaced the machine!' : 'The AI was too fast this time.'}</p>
-              <div className={styles.modalActions} style={{ flexDirection: 'row' }}>
+              <div className={`${styles.modalActions} ${styles.modalActionsRow}`}>
                 {arenaPuzzleId && !feedbackSubmitted ? (
-                  <div style={{ width: '100%', padding: '16px', backgroundColor: 'var(--bg-paper)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-ink)' }}>
-                    <p style={{ fontSize: '14px', fontWeight: 700, marginBottom: '12px', textAlign: 'center' }}>Rate this Prototype</p>
-                    <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+                  <div className={styles.feedbackBoxCompact}>
+                    <p className={styles.feedbackTitleCompact}>Rate this Prototype</p>
+                    <div className={styles.starsContainerCompact}>
                       {[1, 2, 3, 4, 5].map(star => (
-                        <button key={star} onClick={() => handleSubmitRating(star)} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
-                          <Star size={28} fill={arenaRating >= star ? 'var(--ink-main)' : 'none'} />
+                        <button key={star} onClick={() => handleSubmitRating(star)} className={styles.starBtnCompact} aria-label={`Rate ${star} stars`}>
+                          <Star size={28} fill={arenaRating >= star ? 'var(--color-text-primary)' : 'none'} />
                         </button>
                       ))}
                     </div>

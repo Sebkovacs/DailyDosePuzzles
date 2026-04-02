@@ -1,0 +1,142 @@
+/**
+ * BrutalButton Component - Neo-brutalist Letterpress Style
+ *
+ * More aggressive letterpress effect with prominent shadows
+ * Variants: primary, secondary, success, danger, warning
+ */
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+
+  /* Layout & Typography */
+  padding: var(--pad-sm) var(--pad-md);
+  font-family: var(--font-serif);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--letter-spacing-wide);
+
+  /* Geometry */
+  border: var(--border-width-regular);
+  border-radius: var(--radius-sharp);
+
+  /* Interaction */
+  cursor: pointer;
+  user-select: none;
+  transition: all var(--duration-fast) var(--ease-standard);
+
+  /* Accessibility */
+  outline: none;
+  min-height: var(--touch-target-comfortable);
+
+  /* Physical presence - stronger shadow than Button */
+  position: relative;
+  box-shadow: var(--shadow-lifted);
+}
+
+/* Hover: Shadow intensifies */
+.button:hover:not(:disabled) {
+  box-shadow: var(--shadow-floating);
+  transform: translate(calc(var(--button-offset-md) * -1), calc(var(--button-offset-md) * -1));
+}
+
+/* Active: Pressed down hard */
+.button:active:not(:disabled) {
+  box-shadow: var(--shadow-pressed);
+  transform: translate(var(--button-offset-lg), var(--button-offset-lg));
+}
+
+.button:focus:not(:disabled) {
+  box-shadow: var(--shadow-lifted), 0 0 0 var(--button-focus-ring-width) var(--color-bg-primary), 0 0 0 var(--button-focus-ring-gap) var(--color-accent-primary);
+}
+
+.button:disabled {
+  opacity: var(--opacity-disabled);
+  cursor: not-allowed;
+}
+
+/* Fullwidth variant */
+.fullWidth {
+  width: 100%;
+}
+
+/* ============================================
+   SEMANTIC VARIANTS
+   ============================================ */
+
+/* PRIMARY: Highest contrast, solid dark */
+.primary {
+  background-color: var(--color-text-primary);
+  color: var(--color-bg-primary);
+  border-color: var(--color-text-primary);
+}
+
+.primary:hover:not(:disabled) {
+  background-color: var(--color-text-secondary);
+  border-color: var(--color-text-secondary);
+}
+
+.primary:active:not(:disabled) {
+  background-color: var(--color-text-primary);
+}
+
+/* SECONDARY: Light paper, dark ink */
+.secondary {
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+  border-color: var(--color-text-primary);
+}
+
+.secondary:hover:not(:disabled) {
+  background-color: var(--color-bg-primary);
+  border-color: var(--color-text-secondary);
+}
+
+/* SUCCESS: Growth-oriented */
+.success {
+  background-color: var(--color-success);
+  color: var(--color-text-inverse);
+  border-color: var(--color-success);
+}
+
+.success:hover:not(:disabled) {
+  background-color: var(--button-success-hover);
+  border-color: var(--button-success-hover);
+}
+
+/* DANGER: Urgent, destructive */
+.danger {
+  background-color: var(--color-danger);
+  color: var(--color-text-inverse);
+  border-color: var(--color-danger);
+}
+
+.danger:hover:not(:disabled) {
+  background-color: var(--button-danger-hover);
+  border-color: var(--button-danger-hover);
+}
+
+/* WARNING: Attention required */
+.warning {
+  background-color: var(--color-warning);
+  color: var(--color-text-primary);
+  border-color: var(--color-warning);
+}
+
+.warning:hover:not(:disabled) {
+  background-color: var(--button-warning-hover);
+  border-color: var(--button-warning-hover);
+}
+
+/* ============================================
+   ICON HANDLING
+   ============================================ */
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}

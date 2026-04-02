@@ -35,10 +35,29 @@
   --color-accent-secondary: #195C5E;     /* Teal - cool contrast */
   --color-accent-tertiary: #4A2B4D;      /* Plum - mystique */
 
+  /* Game Theme Accents (specific game UI highlights) */
+  --color-game-viridian: #1B7F7D;        /* Viridian - calm, balance (Split) */
+  --color-game-pine: #2D6A4F;            /* Pine - depth, growth (Roots) */
+  --color-game-indigo: #3B5BA8;          /* Indigo - focus, clarity (Shift) */
+  --color-game-plum: #4A2B4D;            /* Plum - mystique, feedback (Stab) */
+  --color-game-ochre: #B8860B;           /* Deep ochre - warmth (Numbers) */
+  --color-game-viridian-wash: #E0F4F3;   /* Viridian wash - light background */
+  --color-game-pine-wash: #EFF5F0;       /* Pine wash - light background */
+  --color-game-indigo-wash: #EEF2FF;     /* Indigo wash - light background */
+  --color-game-plum-wash: #F3E8F5;       /* Plum wash - light background */
+  --color-game-ochre-wash: #FFF5E6;      /* Deep ochre wash - light background */
+  --color-game-slate: #8A8278;           /* Slate - neutral/absent state */
+  --color-game-slate-wash: #E8E6E1;      /* Slate wash - light background */
+
   /* Wash/Tint Layer (backgrounds for accents) */
   --color-wash-primary: #F9EAE7;         /* Sanguine wash */
   --color-wash-secondary: #E7F3F1;       /* Teal wash */
   --color-wash-tertiary: #EFE8F0;        /* Plum wash */
+  --color-wash-success: #F0FDF4;         /* Pine green wash - light background */
+  --color-wash-warning: #FFFBEB;         /* Ochre/warm wash - light background */
+  --color-wash-danger: #FEF2F2;          /* Crimson wash - light background */
+  --color-wash-info: #EEF2FF;            /* Indigo wash - light background */
+  --color-wash-ochre: #FFF5E6;           /* Ochre wash for Spectrum game */
 
   /* Borders */
   --color-border-primary: #181614;       /* Ink borders for emphasis */
@@ -188,6 +207,28 @@
   --touch-target-min: 44px;              /* Minimum touch target size */
   --touch-target-comfortable: 48px;      /* Recommended touch target */
   --touch-target-generous: 56px;         /* Generous spacing */
+
+  /* SVG & Icon Tokens */
+  --svg-progress-ring-size: 120px;       /* Progress ring SVG dimensions */
+  --svg-progress-ring-radius: 45px;      /* Circle radius for progress ring */
+  --svg-stroke-width: 6px;               /* Standard stroke width for SVG elements */
+
+  /* Progress Indicator Tokens */
+  --progress-bar-height: 8px;            /* Height of progress bar */
+  --progress-dot-size: 12px;             /* Size of progress dots */
+
+  /* Button Tokens */
+  --button-offset-sm: 2px;               /* Small offset for button press/hover */
+  --button-offset-md: 3px;               /* Medium offset for brutal button hover */
+  --button-offset-lg: 4px;               /* Large offset for button press */
+  --button-focus-ring-width: 2px;        /* Focus ring display width */
+  --button-focus-ring-gap: 4px;          /* Gap between button and outer focus ring */
+  --button-size-sm-height: 40px;         /* Small button min height */
+  --button-size-lg-height: 56px;         /* Large button min height */
+  --button-accent-hover: #A3472D;        /* Darker accent for hover state */
+  --button-success-hover: #245820;       /* Darker success for hover state */
+  --button-danger-hover: #5f1620;        /* Darker danger for hover state */
+  --button-warning-hover: #8a5a1a;       /* Darker warning for hover state */
 
   /* ========================================
      9. OPACITY TOKENS (Subtlety)

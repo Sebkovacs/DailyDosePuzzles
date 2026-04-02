@@ -1,9 +1,16 @@
+/**
+ * Home Page (Menu) Styles
+ *
+ * Main entry point with game list and user stats
+ * Uses new design tokens system
+ */
+
 .appContainer {
   height: 100dvh;
   overflow: hidden;
-  background-color: var(--bg-paper);
-  color: var(--ink-main);
-  font-family: var(--font-ui);
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -11,168 +18,182 @@
 
 .header {
   width: 100%;
-  max-width: 480px;
-  padding: max(3vh, 20px) 24px 16px;
+  max-width: var(--max-width-sm);
+  padding: max(3vh, 20px) var(--pad-lg) var(--pad-md);
   display: flex;
   flex-direction: column;
   align-items: center;
-  border-bottom: var(--border-ink);
-  background-color: var(--bg-paper);
+  border-bottom: var(--border-subtle);
+  background-color: var(--color-bg-primary);
   position: relative;
   flex-shrink: 0;
-  z-index: 10;
-  box-shadow: 0 4px 20px rgba(24, 22, 20, 0.04);
+  z-index: var(--z-fixed);
+  box-shadow: var(--shadow-soft);
 }
 
 .topActions {
   position: absolute;
-  top: 16px;
-  right: 24px;
+  top: var(--pad-md);
+  right: var(--pad-lg);
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-2);
 }
 
+/* Stats and Streak Pills */
 .statsPill {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 11px;
-  font-weight: 600;
+  gap: var(--space-1);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
   font-family: var(--font-mono);
   text-transform: uppercase;
-  color: var(--ink-main);
+  color: var(--color-text-primary);
   background-color: transparent;
-  border: var(--border-ink);
+  border: var(--border-ink-regular);
   border-radius: var(--radius-sharp);
-  padding: 4px 10px;
-  transition: all 0.2s ease;
+  padding: var(--space-1) var(--space-3);
+  transition: all var(--duration-fast) var(--ease-standard);
   text-decoration: none;
-  box-shadow: 2px 2px 0px var(--ink-main);
+  box-shadow: var(--shadow-raised);
 }
+
 .statsPill:hover {
-  background-color: var(--ink-main);
-  color: var(--bg-paper);
+  background-color: var(--color-text-primary);
+  color: var(--color-bg-primary);
 }
 
 .streakPill {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 11px;
-  font-weight: 600;
+  gap: var(--space-1);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
   font-family: var(--font-mono);
-  color: var(--bg-paper);
-  background-color: var(--ink-main);
-  border: var(--border-ink);
+  color: var(--color-bg-primary);
+  background-color: var(--color-text-primary);
+  border: var(--border-ink-regular);
   border-radius: var(--radius-sharp);
-  padding: 4px 10px;
-  box-shadow: 2px 2px 0px var(--ink-main);
+  padding: var(--space-1) var(--space-3);
+  box-shadow: var(--shadow-raised);
 }
 
 .iconBtn {
-  padding: 8px;
+  padding: var(--pad-sm);
   border-radius: 50%;
   border: none;
   background: transparent;
-  color: var(--ink-light);
+  color: var(--color-text-secondary);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--duration-fast) var(--ease-standard);
   display: flex;
   align-items: center;
   justify-content: center;
+  min-width: var(--touch-target-comfortable);
+  min-height: var(--touch-target-comfortable);
 }
+
 .iconBtn:hover {
-  background-color: var(--ink-main);
-  color: var(--bg-paper);
+  background-color: var(--color-text-primary);
+  color: var(--color-bg-primary);
 }
 
 .signInBtn {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 12px;
-  font-weight: 600;
+  gap: var(--space-2);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
   font-family: var(--font-mono);
   text-transform: uppercase;
-  background-color: var(--ink-main);
-  color: var(--bg-paper);
-  padding: 8px 20px;
-  border: var(--border-ink);
+  background-color: var(--color-text-primary);
+  color: var(--color-bg-primary);
+  padding: var(--pad-sm) var(--pad-md);
+  border: var(--border-ink-regular);
   border-radius: var(--radius-sharp);
-  box-shadow: var(--shadow-ink);
+  box-shadow: var(--shadow-raised);
   cursor: pointer;
-  transition: all 0.2s ease;
-}
-.signInBtn:active {
-  transform: translate(2px, 2px);
-  box-shadow: var(--shadow-ink-pressed);
+  transition: all var(--duration-fast) var(--ease-standard);
 }
 
+.signInBtn:active {
+  transform: translate(var(--button-offset-lg), var(--button-offset-lg));
+  box-shadow: var(--shadow-pressed);
+}
+
+/* ============================================
+   TITLE & STATISTICS
+   ============================================ */
+
 .title {
-  font-family: var(--font-official);
-  font-size: 44px;
-  font-weight: 600;
+  font-family: var(--font-serif);
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-semibold);
   font-style: italic;
-  letter-spacing: -0.02em;
-  color: var(--ink-main);
-  margin: 24px 0 0 0;
-  line-height: 1;
+  letter-spacing: var(--letter-spacing-tight);
+  color: var(--color-text-primary);
+  margin: var(--space-5) 0 0 0;
+  line-height: var(--line-height-tight);
 }
 
 .subtitle {
-  font-size: 13px;
-  color: var(--ink-light);
-  margin: 6px 0 0 0;
-  font-weight: 500;
-  font-family: var(--font-ui);
-  letter-spacing: 0.02em;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin: var(--space-1) 0 0 0;
+  font-weight: var(--font-weight-medium);
+  font-family: var(--font-sans);
+  letter-spacing: var(--letter-spacing-wide);
 }
 
 .streakStats {
-  margin-top: 20px;
+  margin-top: var(--pad-md);
   display: flex;
-  gap: 48px;
-  font-size: 11px;
-  font-weight: 600;
+  gap: var(--space-8);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
   text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--ink-light);
+  letter-spacing: var(--letter-spacing-wide);
+  color: var(--color-text-secondary);
 }
 
 .streakStatItem {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: var(--space-1);
 }
 
 .streakStatNumber {
-  color: var(--ink-main);
-  font-size: 24px;
-  font-weight: 500;
+  color: var(--color-text-primary);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-medium);
   font-family: var(--font-mono);
-  letter-spacing: -0.05em;
+  letter-spacing: var(--letter-spacing-tight);
 }
+
+/* ============================================
+   GAME LIST & CARDS
+   ============================================ */
 
 .gameList {
   width: 100%;
-  max-width: 480px;
+  max-width: var(--max-width-sm);
   flex: 1;
   display: grid;
   grid-template-columns: repeat(1, 1fr);
   grid-auto-rows: minmax(80px, 1fr);
-  gap: 16px;
-  padding: 24px 20px;
+  gap: var(--space-4);
+  padding: var(--pad-lg) var(--pad-md);
   overflow-y: auto;
 }
 
-/* Hero Card perfectly balances the 7 items */
+/* Hero Card (first item) spans full width */
 .gameCard:first-child {
   grid-column: 1 / -1;
 }
 
-/* If there's an even number of total cards, make the last one span full width to maintain symmetry */
+/* Last card spans full width if even number of total cards */
 .gameCard:last-child:nth-child(even) {
   grid-column: 1 / -1;
 }
@@ -182,46 +203,102 @@
   flex-direction: column;
   justify-content: center;
   background-color: var(--theme-wash);
-  border: var(--border-ink);
+  border: var(--border-ink-regular);
   border-radius: var(--radius-sharp);
-  box-shadow: var(--shadow-ink);
-  padding: 16px;
+  box-shadow: var(--shadow-raised);
+  padding: var(--pad-md);
   text-decoration: none;
   position: relative;
-  transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all var(--duration-fast) var(--ease-standard);
   overflow: hidden;
+  cursor: pointer;
+}
+
+.gameCard:hover:not(:active) {
+  box-shadow: var(--shadow-lifted);
+  transform: translate(calc(var(--button-offset-sm) * -1), calc(var(--button-offset-sm) * -1));
 }
 
 .gameCard:active {
-  transform: translate(4px, 4px);
-  box-shadow: var(--shadow-ink-pressed);
+  transform: translate(var(--button-offset-lg), var(--button-offset-lg));
+  box-shadow: var(--shadow-pressed);
 }
 
-.gameCardStrip { 
-  display: block; 
-  position: absolute; 
-  top: 0; 
-  left: 0; 
-  width: 100%; 
-  height: 6px; 
-  background-color: var(--theme-accent); 
-  border-bottom: var(--border-ink);
+.gameCardStrip {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 6px;
+  background-color: var(--theme-accent);
+  border-bottom: var(--border-ink-regular);
 }
 
-.gameCardContent { display: flex; flex-direction: column; z-index: 2; margin-top: 4px; }
-.gameTitle { font-family: var(--font-official); font-size: 24px; font-weight: 700; color: var(--ink-main); margin: 0 0 4px 0; letter-spacing: -0.01em; line-height: 1.1; }
-.gameCard:first-child .gameTitle { font-size: 32px; font-style: italic; }
-.gameDesc { font-size: 13px; color: var(--ink-main); opacity: 0.85; margin: 0; font-weight: 500; line-height: 1.3; }
-.playIcon { display: none; }
+.gameCardContent {
+  display: flex;
+  flex-direction: column;
+  z-index: 2;
+  margin-top: var(--space-1);
+}
 
-/* Classical Accent Themes */
-.themeChain { --theme-accent: var(--accent-sanguine); --theme-wash: var(--wash-sanguine); }
-.themeSplit { --theme-accent: var(--accent-viridian); --theme-wash: var(--wash-viridian); }
-.themeLayers { --theme-accent: var(--accent-crimson); --theme-wash: var(--wash-crimson); }
-.themeVault { --theme-accent: var(--accent-slate); --theme-wash: var(--wash-slate); }
-.themeShift { --theme-accent: var(--accent-indigo); --theme-wash: var(--wash-indigo); }
-.themeRoots { --theme-accent: var(--accent-pine); --theme-wash: var(--wash-pine); }
-.themeWeave { --theme-accent: var(--accent-copper); --theme-wash: var(--wash-copper); }
-.themeSpectrum { --theme-accent: var(--accent-ochre); --theme-wash: var(--wash-ochre); }
-.themeNumbers { --theme-accent: var(--accent-umber); --theme-wash: var(--wash-umber); }
-.themeLexicon { --theme-accent: var(--accent-teal); --theme-wash: var(--wash-teal); }
+.gameTitle {
+  font-family: var(--font-serif);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-1) 0;
+  letter-spacing: var(--letter-spacing-tight);
+  line-height: var(--line-height-tight);
+}
+
+.gameCard:first-child .gameTitle {
+  font-size: var(--font-size-3xl);
+  font-style: italic;
+}
+
+.gameDesc {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  opacity: 0.85;
+  margin: 0;
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-normal);
+}
+
+.playIcon {
+  display: none;
+}
+
+/* ============================================
+   GAME THEME COLORS (Game-specific accents)
+   ============================================ */
+
+/* Chain - Sanguine accent */
+.themeChain {
+  --theme-accent: var(--color-accent-primary);
+  --theme-wash: var(--color-wash-primary);
+}
+
+/* Lexicon - Teal accent */
+.themeLexicon {
+  --theme-accent: var(--color-accent-secondary);
+  --theme-wash: var(--color-wash-secondary);
+}
+
+/* Layers - Plum accent */
+.themeLayers {
+  --theme-accent: var(--color-accent-tertiary);
+  --theme-wash: var(--color-wash-tertiary);
+}
+
+/* Split, Roots, Vault, Shift, Spectrum, Numbers - extended palette */
+/* These colors are refined in the new system; using semantic accents as fallback */
+.themeSplit { --theme-accent: #2D5A27; --theme-wash: #F0FDF4; }
+.themeRoots { --theme-accent: #195C5E; --theme-wash: #E7F3F1; }
+.themeVault { --theme-accent: #4A2B4D; --theme-wash: #EFE8F0; }
+.themeShift { --theme-accent: var(--color-info); --theme-wash: var(--color-wash-info); }
+.themeSpectrum { --theme-accent: #A36F21; --theme-wash: #FFFBEB; }
+.themeNumbers { --theme-accent: #781D26; --theme-wash: #FEF2F2; }
+.themeStab { --theme-accent: #8A3626; --theme-wash: #F9EAE7; }
+.themeWeave { --theme-accent: #8A3626; --theme-wash: #F9EAE7; }

@@ -41,17 +41,17 @@
 /* Hover: Shadow deepens, text stays put (not scale) */
 .button:hover:not(:disabled) {
   box-shadow: var(--shadow-lifted);
-  transform: translate(-2px, -2px); /* Simulate lifting */
+  transform: translate(calc(var(--button-offset-sm) * -1), calc(var(--button-offset-sm) * -1)); /* Simulate lifting */
 }
 
 /* Active: Pressed down */
 .button:active:not(:disabled) {
   box-shadow: var(--shadow-pressed);
-  transform: translate(4px, 4px);
+  transform: translate(var(--button-offset-lg), var(--button-offset-lg));
 }
 
 .button:focus:not(:disabled) {
-  box-shadow: var(--shadow-raised), 0 0 0 2px var(--color-bg-primary), 0 0 0 4px var(--color-accent-primary);
+  box-shadow: var(--shadow-raised), 0 0 0 var(--button-focus-ring-width) var(--color-bg-primary), 0 0 0 var(--button-focus-ring-gap) var(--color-accent-primary);
 }
 
 .button:disabled {
@@ -146,7 +146,7 @@
 }
 
 .accent:hover:not(:disabled) {
-  background-color: #A3472D;
+  background-color: var(--button-accent-hover);
   box-shadow: var(--shadow-floating);
 }
 
@@ -157,14 +157,14 @@
 .sm {
   padding: var(--pad-sm) var(--pad-md);
   font-size: var(--font-size-sm);
-  min-height: 40px;
+  min-height: var(--button-size-sm-height);
   gap: var(--space-2);
 }
 
 .lg {
   padding: var(--pad-lg) var(--pad-xl);
   font-size: var(--font-size-lg);
-  min-height: 56px;
+  min-height: var(--button-size-lg-height);
   gap: var(--space-4);
 }
 

@@ -1,73 +1,158 @@
+/**
+ * GameLayout Component Styles
+ *
+ * Main shell for game pages
+ * Header with title/actions + scrollable content area
+ */
+
+/* ============================================
+   LAYOUT STRUCTURE
+   ============================================ */
+
 .layout {
   height: 100dvh;
   overflow: hidden;
-  background-color: var(--bg-paper);
-  color: var(--ink-main);
-  font-family: var(--font-ui);
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  font-family: var(--font-serif);
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
+/* ============================================
+   HEADER
+   ============================================ */
+
 .header {
   width: 100%;
-  max-width: 480px;
-  padding: 16px 20px;
+  max-width: var(--max-width-sm);
+  padding: var(--pad-md) var(--pad-lg);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: var(--border-ink);
-  background-color: var(--bg-paper);
+  border-bottom: var(--border-subtle);
+  background-color: var(--color-bg-primary);
   flex-shrink: 0;
-  z-index: 10;
+  z-index: var(--z-fixed);
+  gap: var(--space-3);
 }
 
-.headerSide { display: flex; align-items: center; gap: 8px; flex: 1; }
-.headerRight { justify-content: flex-end; }
-.headerCenter { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 2; text-align: center; }
+.headerSide {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex: 1;
+}
+
+.headerRight {
+  justify-content: flex-end;
+}
+
+.headerCenter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 2;
+  text-align: center;
+  gap: var(--space-1);
+}
+
+/* ============================================
+   HEADER BUTTONS & ICONS
+   ============================================ */
 
 .iconBtn {
-  padding: 8px;
+  padding: var(--pad-sm);
   border-radius: var(--radius-sharp);
-  border: var(--border-ink);
+  border: var(--border-ink-thin);
   background: transparent;
-  color: var(--ink-main);
+  color: var(--color-text-primary);
   cursor: pointer;
-  transition: all 0.1s ease;
+  transition: all var(--duration-micro) var(--ease-standard);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 2px 2px 0px var(--ink-main);
-}
-.iconBtn:active {
-  transform: translate(2px, 2px);
-  box-shadow: var(--shadow-ink-pressed);
+  box-shadow: var(--shadow-raised);
+  min-width: var(--touch-target-comfortable);
+  min-height: var(--touch-target-comfortable);
 }
 
+.iconBtn:hover:not(:disabled) {
+  box-shadow: var(--shadow-lifted);
+  transform: translate(-1px, -1px);
+}
+
+.iconBtn:active:not(:disabled) {
+  box-shadow: var(--shadow-pressed);
+  transform: translate(2px, 2px);
+}
+
+.iconBtn:disabled {
+  opacity: var(--opacity-disabled);
+  cursor: not-allowed;
+}
+
+/* ============================================
+   TITLE & SUBTITLE
+   ============================================ */
+
 .title {
-  font-family: var(--font-official);
-  font-size: 24px;
-  font-weight: 700;
+  font-family: var(--font-serif);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
   margin: 0;
   text-transform: uppercase;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--letter-spacing-tight);
+  line-height: var(--line-height-tight);
 }
 
 .subtitle {
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--ink-light);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: var(--letter-spacing-wide);
   font-family: var(--font-mono);
+  margin: 0;
 }
+
+/* ============================================
+   CONTENT AREA
+   ============================================ */
 
 .content {
   width: 100%;
-  max-width: 480px;
+  max-width: var(--max-width-sm);
   flex: 1;
   display: flex;
   flex-direction: column;
   position: relative;
   overflow-y: auto;
+  overflow-x: hidden;
+  padding: var(--pad-lg);
+}
+
+/* Smooth scrolling */
+.content {
+  scroll-behavior: smooth;
+}
+
+/* Scrollbar styling */
+.content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.content::-webkit-scrollbar-track {
+  background-color: var(--color-bg-primary);
+}
+
+.content::-webkit-scrollbar-thumb {
+  background-color: var(--color-border-secondary);
+  border-radius: var(--radius-sharp);
+}
+
+.content::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-border-primary);
 }

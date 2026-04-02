@@ -94,7 +94,7 @@ export default function AdminDashboard() {
     }
   };
 
-  if (loading) return <div style={{ padding: '40px', textAlign: 'center', fontFamily: 'var(--font-mono)' }}>Verifying credentials...</div>;
+  if (loading) return <div className={styles.loadingCredentials}>Verifying credentials...</div>;
 
   if (!isAdmin) {
     return (
@@ -165,13 +165,13 @@ export default function AdminDashboard() {
           </div>
 
           {/* Queue Status Display */}
-          <div className={styles.inputGroup} style={{ padding: '12px', borderRadius: 'var(--radius-sm)', backgroundColor: 'var(--bg-paper)', border: '1px solid var(--border-ink)', fontSize: '14px', fontFamily: 'var(--font-mono)' }}>
+          <div className={styles.queueStatusBox}>
             {fetchingQueueStats ? (
               <div>Checking queue status...</div>
             ) : queueStats ? (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <div><span style={{ fontWeight: 600 }}>Pending in Queue:</span> {queueStats.count}</div>
-                <div><span style={{ fontWeight: 600 }}>Last Generated:</span> {queueStats.lastGenerated || 'Never'}</div>
+              <div className={styles.queueStatsGrid}>
+                <div><span className={styles.queueStatLabel}>Pending in Queue:</span> {queueStats.count}</div>
+                <div><span className={styles.queueStatLabel}>Last Generated:</span> {queueStats.lastGenerated || 'Never'}</div>
               </div>
             ) : (
               <div>Could not load queue status.</div>
@@ -186,7 +186,7 @@ export default function AdminDashboard() {
             <input type="range" min="1" max="20" value={count} onChange={e => setCount(parseInt(e.target.value))} className={styles.rangeInput} />
           </div>
 
-          <div className={styles.inputGroup} style={{ marginBottom: '24px' }}>
+          <div className={`${styles.inputGroup} ${styles.inputGroupSpaced}`}>
             <label className={styles.label}>AI Constraints (Optional)</label>
             <textarea value={constraints} onChange={e => setConstraints(e.target.value)} placeholder="e.g. Make the definitions pirate-themed..." className={styles.textarea} />
           </div>
@@ -213,9 +213,9 @@ export default function AdminDashboard() {
           <div>
             <h3 className={styles.subheading}>Active Playtesters</h3>
             {fetchingUsers ? (
-              <div style={{ fontSize: '14px', opacity: 0.7 }}>Loading...</div>
+              <div className={styles.emptyMessage}>Loading...</div>
             ) : playtesters.length === 0 ? (
-              <div style={{ fontSize: '14px', opacity: 0.7 }}>No playtesters added.</div>
+              <div className={styles.emptyMessage}>No playtesters added.</div>
             ) : (
               <ul className={styles.userList}>
                 {playtesters.map(email => (

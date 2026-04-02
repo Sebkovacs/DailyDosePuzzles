@@ -1,0 +1,88 @@
+/**
+ * Chain Game Menu Styles
+ *
+ * Mode selector with semantic card layout
+ */
+
+.modeList {
+  max-width: var(--max-width-sm);
+  margin: 0 auto;
+  padding: var(--pad-lg) var(--pad-md);
+  font-family: var(--font-serif);
+}
+
+.modeContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.modeCard {
+  padding: var(--pad-lg);
+  background-color: var(--color-bg-secondary);
+  border: var(--border-ink-regular);
+  border-radius: var(--radius-sharp);
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  color: var(--color-text-primary);
+  text-decoration: none;
+  transition: all var(--duration-fast) var(--ease-standard);
+  cursor: pointer;
+}
+
+.modeCard:hover {
+  box-shadow: var(--shadow-lifted);
+  transform: translate(calc(var(--button-offset-sm) * -1), calc(var(--button-offset-sm) * -1));
+}
+
+.modeCard:active {
+  box-shadow: var(--shadow-pressed);
+  transform: translate(var(--button-offset-lg), var(--button-offset-lg));
+}
+
+.modeIcon {
+  padding: var(--pad-sm);
+  border-radius: var(--radius-sharp);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Icon backgrounds for each mode */
+.modeIcon.standard {
+  background-color: var(--color-wash-primary);
+  color: var(--color-accent-primary);
+}
+
+.modeIcon.blitz {
+  background-color: var(--color-wash-danger);
+  color: var(--color-danger);
+}
+
+.modeIcon.versus {
+  background-color: var(--color-wash-info);
+  color: var(--color-info);
+}
+
+.modeContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.modeTitle {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.modeDescription {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  opacity: 0.8;
+  font-family: var(--font-sans);
+  color: var(--color-text-primary);
+}

@@ -36,19 +36,19 @@
 }
 
 .variant-success {
-  background-color: #F0FDF4;
+  background-color: var(--color-wash-success);
   color: var(--color-success);
   border-color: var(--color-success);
 }
 
 .variant-warning {
-  background-color: #FFFBEB;
+  background-color: var(--color-wash-warning);
   color: var(--color-warning);
   border-color: var(--color-warning);
 }
 
 .variant-danger {
-  background-color: #FEF2F2;
+  background-color: var(--color-wash-danger);
   color: var(--color-danger);
   border-color: var(--color-danger);
 }
@@ -109,15 +109,15 @@
 
 .pill.variant-success {
   background-color: var(--color-success);
-  color: white;
+  color: var(--color-text-inverse);
 }
 
 .pill.variant-warning {
   background-color: var(--color-warning);
-  color: white;
+  color: var(--color-text-primary);
 }
 
 .pill.variant-danger {
   background-color: var(--color-danger);
-  color: white;
+  color: var(--color-text-inverse);
 }

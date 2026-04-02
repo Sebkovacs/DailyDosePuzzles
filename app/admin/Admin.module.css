@@ -1,91 +1,140 @@
+/**
+ * Admin Panel Styles
+ * Uses new design tokens system
+ */
+
+/* ============================================
+   MAIN CONTAINER
+   ============================================ */
+
 .container {
   max-width: 900px;
   margin: 0 auto;
-  padding: 24px;
-  font-family: var(--font-official);
+  padding: var(--pad-lg);
+  font-family: var(--font-serif);
 }
+
+/* ============================================
+   HEADER & NAVIGATION
+   ============================================ */
 
 .header {
   display: flex;
   align-items: center;
-  margin-bottom: 40px;
-  gap: 16px;
+  margin-bottom: var(--pad-xl);
+  gap: var(--space-4);
 }
 
 .backLink {
-  padding: 8px;
-  background-color: var(--bg-card);
+  padding: var(--pad-sm);
+  background-color: var(--color-bg-secondary);
   border-radius: var(--radius-sm);
-  color: var(--ink-main);
+  color: var(--color-text-primary);
   text-decoration: none;
   display: flex;
   align-items: center;
-  border: 1px solid var(--border-ink);
+  border: var(--border-ink-regular);
 }
 
 .title {
   margin: 0;
   display: flex;
   align-items: center;
-  gap: 12px;
-  font-size: 24px;
+  gap: var(--space-3);
+  font-size: var(--font-size-2xl);
+  color: var(--color-text-primary);
 }
+
+/* ============================================
+   GRID LAYOUT
+   ============================================ */
 
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 32px;
+  gap: var(--space-6);
 }
 
 .panel {
-  background-color: var(--bg-card);
-  padding: 24px;
+  background-color: var(--color-bg-secondary);
+  padding: var(--pad-lg);
   border-radius: var(--radius-md);
-  border: 1px solid var(--border-ink);
+  border: var(--border-ink-regular);
+  box-shadow: var(--shadow-raised);
 }
 
 .panelTitle {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-top: 0;
-  margin-bottom: 24px;
-  font-size: 18px;
+  gap: var(--space-2);
+  margin: 0 0 var(--pad-lg) 0;
+  font-size: var(--font-size-lg);
+  color: var(--color-text-primary);
 }
 
+/* ============================================
+   FORM ELEMENTS
+   ============================================ */
+
 .inputGroup {
-  margin-bottom: 20px;
+  margin-bottom: var(--space-5);
+}
+
+.inputGroupSpaced {
+  margin-bottom: var(--space-6);
 }
 
 .label {
   display: block;
-  margin-bottom: 8px;
-  font-weight: 600;
-  font-size: 14px;
+  margin-bottom: var(--space-2);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
 }
 
-.select {
+.select,
+.textarea,
+.emailInput {
   width: 100%;
-  padding: 12px;
+  padding: var(--pad-sm);
   border-radius: var(--radius-sm);
-  border: 1px solid var(--border-ink);
-  background-color: var(--bg-paper);
-  color: var(--ink-main);
+  border: var(--border-ink-regular);
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
   font-family: var(--font-mono);
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   outline: none;
+  transition: all var(--duration-fast) var(--ease-standard);
 }
+
+.select:focus,
+.textarea:focus,
+.emailInput:focus {
+  background-color: var(--color-bg-secondary);
+  border-color: var(--color-accent-primary);
+}
+
+.textarea {
+  min-height: 100px;
+  resize: vertical;
+  font-family: var(--font-mono);
+}
+
+/* ============================================
+   RANGE INPUT
+   ============================================ */
 
 .rangeLabel {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 8px;
-  font-weight: 600;
-  font-size: 14px;
+  margin-bottom: var(--space-2);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
 }
 
 .rangeValue {
-  color: var(--accent-crimson);
+  color: var(--color-danger);
 }
 
 .rangeInput {
@@ -93,105 +142,108 @@
   cursor: pointer;
 }
 
-.textarea {
-  width: 100%;
-  padding: 12px;
+/* ============================================
+   BUTTONS
+   ============================================ */
+
+.submitButton,
+.addButton {
   border-radius: var(--radius-sm);
-  border: 1px solid var(--border-ink);
-  background-color: var(--bg-paper);
-  color: var(--ink-main);
-  font-family: var(--font-mono);
-  font-size: 14px;
-  min-height: 100px;
-  resize: vertical;
-  outline: none;
+  border: none;
+  background-color: var(--color-text-primary);
+  color: var(--color-bg-primary);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  cursor: pointer;
+  transition: all var(--duration-micro) var(--ease-standard);
 }
 
 .submitButton {
   width: 100%;
-  padding: 14px;
-  border-radius: var(--radius-sm);
-  border: none;
-  background-color: var(--ink-main);
-  color: var(--bg-paper);
-  font-weight: 700;
-  font-size: 15px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  cursor: pointer;
-  transition: opacity 0.2s;
+  padding: var(--pad-md);
+}
+
+.submitButton:hover:not(:disabled) {
+  transform: translate(var(--button-offset-sm), var(--button-offset-sm));
+  box-shadow: var(--shadow-raised);
+}
+
+.submitButton:active:not(:disabled) {
+  transform: translate(var(--button-offset-md), var(--button-offset-md));
+  box-shadow: var(--shadow-pressed);
 }
 
 .submitButton:disabled {
   cursor: wait;
-  opacity: 0.7;
-}
-
-.message {
-  margin-top: 16px;
-  padding: 12px;
-  border-radius: var(--radius-sm);
-  font-size: 14px;
-  text-align: center;
-  font-family: var(--font-mono);
-}
-
-.messageSuccess {
-  background-color: var(--bg-paper);
-  color: var(--ink-main);
-  border: 1px solid var(--border-ink);
-}
-
-.messageError {
-  background-color: var(--accent-crimson);
-  color: #fff;
-  border: none;
+  opacity: var(--opacity-disabled);
+  box-shadow: var(--shadow-pressed);
+  transform: translate(var(--button-offset-md), var(--button-offset-md));
 }
 
 .addForm {
   display: flex;
-  gap: 8px;
-  margin-bottom: 24px;
-}
-
-.emailInput {
-  flex: 1;
-  padding: 12px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border-ink);
-  background-color: var(--bg-paper);
-  color: var(--ink-main);
-  font-family: var(--font-ui);
-  font-size: 14px;
-  outline: none;
+  gap: var(--space-2);
+  margin-bottom: var(--pad-lg);
 }
 
 .addButton {
-  padding: 0 16px;
-  border-radius: var(--radius-sm);
-  border: none;
-  background-color: var(--ink-main);
-  color: var(--bg-paper);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-weight: 600;
-  cursor: pointer;
+  padding: var(--pad-sm) var(--space-4);
+  flex-shrink: 0;
+}
+
+.addButton:hover:not(:disabled) {
+  transform: translate(var(--button-offset-sm), var(--button-offset-sm));
+  box-shadow: var(--shadow-raised);
 }
 
 .addButton:disabled {
   cursor: not-allowed;
-  opacity: 0.5;
+  opacity: var(--opacity-disabled);
+  box-shadow: var(--shadow-pressed);
+  transform: translate(var(--button-offset-md), var(--button-offset-md));
 }
 
+/* ============================================
+   MESSAGES
+   ============================================ */
+
+.message {
+  margin-top: var(--space-4);
+  padding: var(--pad-sm);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  text-align: center;
+  font-family: var(--font-mono);
+  transition: all var(--duration-fast) var(--ease-standard);
+}
+
+.messageSuccess {
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  border: var(--border-ink-regular);
+}
+
+.messageError {
+  background-color: var(--color-danger);
+  color: var(--color-text-inverse);
+  border: none;
+}
+
+/* ============================================
+   USER LISTS
+   ============================================ */
+
 .subheading {
-  font-size: 14px;
-  font-weight: 600;
-  margin-bottom: 12px;
-  border-bottom: 1px solid var(--border-ink);
-  padding-bottom: 8px;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--space-3);
+  border-bottom: var(--border-ink-regular);
+  padding-bottom: var(--space-2);
+  color: var(--color-text-primary);
 }
 
 .userList {
@@ -200,7 +252,7 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--space-2);
   max-height: 180px;
   overflow-y: auto;
 }
@@ -209,76 +261,143 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 12px;
-  background-color: var(--bg-paper);
+  padding: var(--space-2) var(--space-3);
+  background-color: var(--color-bg-primary);
   border-radius: var(--radius-sm);
-  border: 1px solid var(--border-ink);
+  border: var(--border-ink-regular);
 }
 
 .userEmail {
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   font-family: var(--font-mono);
+  color: var(--color-text-primary);
 }
 
 .removeButton {
   background: none;
   border: none;
-  color: var(--accent-crimson);
+  color: var(--color-danger);
   cursor: pointer;
-  padding: 4px;
+  padding: var(--space-1);
   display: flex;
   align-items: center;
+  transition: color var(--duration-micro) var(--ease-standard);
 }
+
+.removeButton:hover {
+  color: var(--color-danger);
+  opacity: 0.8;
+}
+
+/* ============================================
+   NAVIGATION SECTION
+   ============================================ */
 
 .linksSection {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: var(--pad-lg);
 }
 
 .navLink {
-  background-color: var(--bg-card);
-  padding: 24px;
+  background-color: var(--color-bg-secondary);
+  padding: var(--pad-lg);
   border-radius: var(--radius-md);
-  border: 1px solid var(--border-ink);
+  border: var(--border-ink-regular);
   text-decoration: none;
   color: inherit;
   display: block;
-  transition: transform 0.2s;
+  transition: all var(--duration-fast) var(--ease-standard);
+  box-shadow: var(--shadow-raised);
 }
 
 .navLink:hover {
-  transform: translateY(-2px);
+  transform: translateY(var(--button-offset-sm));
+  box-shadow: var(--shadow-lifted);
 }
 
 .navLinkDesc {
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   margin: 0;
   opacity: 0.8;
-  line-height: 1.5;
+  line-height: var(--line-height-normal);
   display: flex;
   align-items: center;
   justify-content: space-between;
+  color: var(--color-text-primary);
 }
 
+/* ============================================
+   DENIED STATE
+   ============================================ */
+
 .deniedContainer {
-  padding: 40px;
+  padding: var(--pad-xl);
   text-align: center;
   font-family: var(--font-mono);
+  color: var(--color-text-primary);
 }
 
 .deniedIcon {
-  margin: 0 auto 16px;
-  color: var(--accent-crimson);
+  margin: 0 auto var(--space-4);
+  color: var(--color-danger);
 }
 
 .deniedLink {
   display: inline-block;
-  margin-top: 20px;
-  padding: 12px 24px;
-  background-color: var(--bg-card);
-  color: var(--ink-main);
+  margin-top: var(--space-5);
+  padding: var(--pad-sm) var(--pad-lg);
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-primary);
   text-decoration: none;
   border-radius: var(--radius-md);
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
+  border: var(--border-ink-regular);
+  transition: all var(--duration-micro) var(--ease-standard);
+  box-shadow: var(--shadow-raised);
+}
+
+.deniedLink:hover {
+  transform: translate(var(--button-offset-sm), var(--button-offset-sm));
+  box-shadow: var(--shadow-lifted);
+}
+
+/* ============================================
+   LOADING & EMPTY STATES
+   ============================================ */
+
+.loadingCredentials {
+  padding: var(--pad-xl);
+  text-align: center;
+  font-family: var(--font-mono);
+  color: var(--color-text-secondary);
+}
+
+.emptyMessage {
+  font-size: var(--font-size-sm);
+  opacity: var(--opacity-disabled);
+  color: var(--color-text-secondary);
+}
+
+/* ============================================
+   QUEUE STATUS DISPLAY
+   ============================================ */
+
+.queueStatusBox {
+  padding: var(--pad-sm);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-bg-primary);
+  border: var(--border-ink-regular);
+  font-size: var(--font-size-sm);
+  font-family: var(--font-mono);
+}
+
+.queueStatsGrid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.queueStatLabel {
+  font-weight: var(--font-weight-semibold);
 }

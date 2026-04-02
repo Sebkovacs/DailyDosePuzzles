@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
+import { MOTION } from '@/styles/motions';
 import styles from './ProgressIndicator.module.css';
 
 type ProgressType = 'bar' | 'dots' | 'ring';
@@ -15,6 +16,11 @@ interface ProgressIndicatorProps {
   current?: number;
   animated?: boolean;
 }
+
+/* SVG Dimension Tokens (from CSS variables) */
+const DEFAULT_SVG_SIZE = 120;
+const DEFAULT_RADIUS = 45;
+const DEFAULT_STROKE_WIDTH = 6;
 
 export function ProgressBar({
   variant = 'default',
@@ -30,8 +36,8 @@ export function ProgressBar({
         initial={{ width: 0 }}
         animate={{ width: `${percentage}%` }}
         transition={{
-          duration: animated ? 0.6 : 0,
-          ease: 'easeOut',
+          duration: animated ? MOTION.duration.slow : MOTION.duration.instant,
+          ease: MOTION.ease.out,
         }}
       />
     </div>
@@ -50,7 +56,7 @@ export function ProgressDots({
           key={i}
           className={`${styles.dot} ${i < current ? styles.filled : styles.empty} ${styles[`variant-${variant}`]}`}
           animate={{ scale: i < current ? 1 : 0.8 }}
-          transition={{ duration: 0.2 }}
+          transition={{ duration: MOTION.duration.fast, ease: MOTION.ease.subtle }}
         />
       ))}
     </div>
@@ -62,42 +68,47 @@ export function ProgressRing({
   variant = 'default',
 }: Omit<ProgressIndicatorProps, 'type' | 'max' | 'current' | 'animated'>) {
   const percentage = Math.min(Math.max(value, 0), 100);
-  const radius = 45;
+  const radius = DEFAULT_RADIUS;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (percentage / 100) * circumference;
 
   return (
-    <svg className={styles.progressRing} width="120" height="120" viewBox="0 0 120 120">
+    <svg
+      className={styles.progressRing}
+      width={DEFAULT_SVG_SIZE}
+      height={DEFAULT_SVG_SIZE}
+      viewBox={`0 0 ${DEFAULT_SVG_SIZE} ${DEFAULT_SVG_SIZE}`}
+    >
       <circle
         className={styles.background}
-        cx="60"
-        cy="60"
+        cx={DEFAULT_SVG_SIZE / 2}
+        cy={DEFAULT_SVG_SIZE / 2}
         r={radius}
         fill="none"
-        strokeWidth="6"
+        strokeWidth={DEFAULT_STROKE_WIDTH}
       />
       <motion.circle
         className={`${styles.progress} ${styles[`variant-${variant}`]}`}
-        cx="60"
-        cy="60"
+        cx={DEFAULT_SVG_SIZE / 2}
+        cy={DEFAULT_SVG_SIZE / 2}
         r={radius}
         fill="none"
-        strokeWidth="6"
+        strokeWidth={DEFAULT_STROKE_WIDTH}
         strokeDasharray={circumference}
         strokeDashoffset={circumference}
         animate={{ strokeDashoffset: offset }}
-        transition={{ duration: 0.8, ease: 'easeInOut' }}
+        transition={{ duration: MOTION.duration.glacial, ease: MOTION.ease.standard }}
         strokeLinecap="round"
       />
       <text
         className={styles.text}
-        x="60"
-        y="65"
+        x={DEFAULT_SVG_SIZE / 2}
+        y={DEFAULT_SVG_SIZE / 2 + 5}
         textAnchor="middle"
         fontSize="16"
         fontWeight="600"
       >
-        {percentage}%
+        {Math.round(percentage)}%
       </text>
     </svg>
   );

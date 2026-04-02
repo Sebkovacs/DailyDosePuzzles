@@ -1,50 +1,403 @@
-.container { flex: 1; padding: 24px 20px; display: flex; flex-direction: column; min-height: 100%; }
+/**
+ * Roots Puzzle Game Styles
+ *
+ * Etymology/origin word guessing game with clues
+ * Uses new design tokens system
+ */
 
-.iconBtn { padding: 8px; border-radius: var(--radius-sharp); border: var(--border-ink); background: transparent; color: var(--ink-main); cursor: pointer; transition: all 0.1s ease; display: flex; align-items: center; justify-content: center; box-shadow: 2px 2px 0px var(--ink-main); }
-.iconBtn:active { transform: translate(2px, 2px); box-shadow: var(--shadow-ink-pressed); }
+/* ============================================
+   MAIN CONTAINER
+   ============================================ */
 
-.originCard { background-color: var(--wash-pine); border: var(--border-ink); border-radius: var(--radius-sharp); padding: 32px 24px; margin-bottom: 24px; text-align: center; box-shadow: var(--shadow-ink); flex-shrink: 0; }
-.originLanguage { font-family: var(--font-mono); font-size: 10px; font-weight: 700; color: var(--accent-pine); text-transform: uppercase; letter-spacing: 0.15em; margin: 0 0 12px 0; }
-.originTranslation { font-family: var(--font-official); font-size: 36px; font-weight: 700; font-style: italic; color: var(--ink-main); margin: 0; line-height: 1.1; }
+.container {
+  flex: 1;
+  padding: var(--pad-lg) var(--pad-md);
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
 
-.cluesArea { flex: 1; display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; overflow-y: auto; padding-right: 4px; }
-.clueItem { display: flex; gap: 12px; align-items: flex-start; background-color: var(--bg-card); border: var(--border-ink); border-radius: var(--radius-sharp); padding: 16px; box-shadow: 2px 2px 0 rgba(0,0,0,0.05); }
-.clueNumber { font-family: var(--font-mono); font-size: 14px; font-weight: 700; color: var(--accent-pine); }
-.clueText { font-family: var(--font-ui); font-size: 14px; font-weight: 500; color: var(--ink-main); line-height: 1.4; margin: 0; }
-.clueHidden { background-color: transparent; border: 2px dashed var(--ink-light); box-shadow: none; justify-content: center; align-items: center; padding: 12px; }
-.clueHiddenText { font-family: var(--font-mono); font-size: 10px; font-weight: 600; color: var(--ink-light); text-transform: uppercase; letter-spacing: 0.1em; margin: 0; }
+/* ============================================
+   ICON BUTTONS
+   ============================================ */
 
-.inputRow { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
-.wordInput { border: var(--border-ink); border-radius: var(--radius-sharp); padding: 16px; font-family: var(--font-mono); font-size: 18px; font-weight: 700; text-transform: uppercase; text-align: center; color: var(--ink-main); background-color: var(--bg-paper); outline: none; transition: all 0.2s ease; box-shadow: inset 2px 2px 0px rgba(0,0,0,0.05); width: 100%; letter-spacing: 0.1em; }
-.wordInput:focus { background-color: var(--bg-card); border-color: var(--accent-pine); box-shadow: inset 0 0 0 rgba(0,0,0,0); }
+.iconBtn {
+  padding: var(--pad-sm);
+  border-radius: var(--radius-sharp);
+  border: var(--border-ink-regular);
+  background: transparent;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: all var(--duration-micro) var(--ease-standard);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-raised);
+  min-width: var(--touch-target-comfortable);
+  min-height: var(--touch-target-comfortable);
+}
 
-.bottomArea { margin-top: auto; display: flex; flex-direction: column; gap: 16px; padding-bottom: 16px; }
-.mistakesContainer { display: flex; align-items: center; justify-content: center; gap: 8px; }
-.mistakesLabel { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; font-weight: 600; color: var(--ink-light); margin-right: 4px; }
-.mistakeDot { width: 10px; height: 10px; border-radius: 50%; border: var(--border-ink); background-color: var(--bg-card); transition: all 0.3s ease; }
-.mistakeDotActive { background-color: var(--accent-pine); border-color: var(--accent-pine); }
+.iconBtn:active {
+  transform: translate(var(--button-offset-sm), var(--button-offset-sm));
+  box-shadow: var(--shadow-pressed);
+}
 
-.actionsRow { display: flex; gap: 12px; }
-.actionBtn { box-sizing: border-box; text-decoration: none; flex: 1; padding: 14px; border: var(--border-ink); border-radius: var(--radius-sharp); font-family: var(--font-mono); font-size: 14px; font-weight: 600; text-transform: uppercase; cursor: pointer; box-shadow: var(--shadow-ink); transition: all 0.1s ease; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; }
-.actionBtn:active:not(:disabled) { transform: translate(4px, 4px); box-shadow: var(--shadow-ink-pressed); }
-.actionBtn:disabled { opacity: 0.5; pointer-events: none; box-shadow: var(--shadow-ink-pressed); transform: translate(4px, 4px); }
-.actionBtnPrimary { background-color: var(--ink-main); color: var(--bg-paper); }
-.actionBtnSecondary { background-color: var(--bg-card); color: var(--ink-main); }
-.actionBtnSuccess { background-color: var(--accent-pine); color: var(--bg-paper); border-color: var(--accent-pine); }
+/* ============================================
+   ORIGIN CARD (Etymology Display)
+   ============================================ */
 
-.modalOverlay { position: absolute; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; background-color: rgba(242, 239, 233, 0.85); backdrop-filter: blur(4px); padding: 20px; }
-.modalCard { width: 100%; max-width: 380px; background-color: var(--bg-card); border: var(--border-ink); border-radius: var(--radius-sharp); box-shadow: var(--shadow-ink); padding: 32px 24px; text-align: center; position: relative; max-height: 90vh; overflow-y: auto; }
-.closeBtn { position: absolute; top: 12px; right: 12px; background: transparent; border: none; cursor: pointer; color: var(--ink-light); padding: 4px; transition: color 0.2s ease; }
-.closeBtn:hover { color: var(--ink-main); }
+.originCard {
+  background-color: var(--color-game-pine-wash);
+  border: var(--border-ink-regular);
+  border-radius: var(--radius-sharp);
+  padding: var(--pad-xl) var(--pad-lg);
+  margin-bottom: var(--pad-lg);
+  text-align: center;
+  box-shadow: var(--shadow-raised);
+  flex-shrink: 0;
+}
 
-.modalTitle { font-family: var(--font-official); font-size: 32px; font-weight: 700; margin: 0 0 8px 0; color: var(--ink-main); letter-spacing: -0.02em; }
-.modalDesc { font-size: 14px; color: var(--ink-light); margin: 0 0 24px 0; line-height: 1.5; font-family: var(--font-ui); }
+.originLanguage {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-game-pine);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+  margin: 0 0 var(--space-3) 0;
+}
 
-.solutionBox { background-color: var(--wash-pine); border: var(--border-ink); border-radius: var(--radius-sharp); padding: 16px; margin-bottom: 24px; display: flex; flex-direction: column; gap: 8px; text-align: center; }
-.solutionHeader { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; font-weight: 600; color: var(--accent-pine); letter-spacing: 0.1em; margin: 0 0 4px 0; }
-.solutionWord { font-family: var(--font-mono); font-size: 24px; font-weight: 700; color: var(--ink-main); letter-spacing: 0.1em; margin: 0; }
+.originTranslation {
+  font-family: var(--font-serif);
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-bold);
+  font-style: italic;
+  color: var(--color-text-primary);
+  margin: 0;
+  line-height: var(--line-height-tight);
+}
 
-.starsRow { display: flex; justify-content: center; gap: 4px; margin-bottom: 24px; font-size: 28px; }
-.bigScore { font-family: var(--font-mono); font-size: 48px; font-weight: 700; color: var(--accent-pine); margin: 8px 0 24px 0; line-height: 1; }
+/* ============================================
+   CLUES AREA
+   ============================================ */
 
-.modalActions { display: flex; flex-direction: column; gap: 12px; }
+.cluesArea {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--pad-md);
+  margin-bottom: var(--pad-lg);
+  overflow-y: auto;
+  padding-right: var(--space-1);
+}
+
+.clueItem {
+  display: flex;
+  gap: var(--pad-md);
+  align-items: flex-start;
+  background-color: var(--color-bg-secondary);
+  border: var(--border-ink-regular);
+  border-radius: var(--radius-sharp);
+  padding: var(--pad-md);
+  box-shadow: var(--shadow-soft);
+}
+
+.clueNumber {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-game-pine);
+  flex-shrink: 0;
+}
+
+.clueText {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  line-height: var(--line-height-normal);
+  margin: 0;
+}
+
+.clueHidden {
+  background-color: transparent;
+  border: 2px dashed var(--color-text-secondary);
+  box-shadow: none;
+  justify-content: center;
+  align-items: center;
+  padding: var(--pad-sm);
+}
+
+.clueHiddenText {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+  margin: 0;
+}
+
+/* ============================================
+   WORD INPUT
+   ============================================ */
+
+.inputRow {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--pad-md);
+}
+
+.wordInput {
+  border: var(--border-ink-regular);
+  border-radius: var(--radius-sharp);
+  padding: var(--pad-md);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-primary);
+  outline: none;
+  transition: all var(--duration-fast) var(--ease-standard);
+  box-shadow: inset 2px 2px 0px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+.wordInput:focus {
+  background-color: var(--color-bg-secondary);
+  border-color: var(--color-game-pine);
+  box-shadow: inset 0 0 0 rgba(0, 0, 0, 0);
+}
+
+/* ============================================
+   BOTTOM ACTIONS AREA
+   ============================================ */
+
+.bottomArea {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding-bottom: var(--pad-md);
+}
+
+.mistakesContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+}
+
+.mistakesLabel {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  margin-right: var(--space-1);
+}
+
+.mistakeDot {
+  width: var(--progress-dot-size);
+  height: var(--progress-dot-size);
+  border-radius: 50%;
+  border: var(--border-ink-regular);
+  background-color: var(--color-bg-secondary);
+  transition: all var(--duration-normal) var(--ease-standard);
+}
+
+.mistakeDotActive {
+  background-color: var(--color-game-pine);
+  border-color: var(--color-game-pine);
+}
+
+/* ============================================
+   ACTION BUTTONS
+   ============================================ */
+
+.actionsRow {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.actionBtn {
+  box-sizing: border-box;
+  text-decoration: none;
+  flex: 1;
+  padding: var(--pad-md);
+  border: var(--border-ink-regular);
+  border-radius: var(--radius-sharp);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: var(--shadow-raised);
+  transition: all var(--duration-micro) var(--ease-standard);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  width: 100%;
+}
+
+.actionBtn:active:not(:disabled) {
+  transform: translate(var(--button-offset-lg), var(--button-offset-lg));
+  box-shadow: var(--shadow-pressed);
+}
+
+.actionBtn:disabled {
+  opacity: var(--opacity-disabled);
+  pointer-events: none;
+  box-shadow: var(--shadow-pressed);
+  transform: translate(var(--button-offset-lg), var(--button-offset-lg));
+}
+
+.actionBtnPrimary {
+  background-color: var(--color-text-primary);
+  color: var(--color-bg-primary);
+}
+
+.actionBtnSecondary {
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+}
+
+.actionBtnSuccess {
+  background-color: var(--color-game-pine);
+  color: var(--color-bg-primary);
+  border-color: var(--color-game-pine);
+}
+
+/* ============================================
+   MODAL OVERLAY & CARD
+   ============================================ */
+
+.modalOverlay {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-modal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(242, 239, 233, 0.85);
+  backdrop-filter: blur(4px);
+  padding: var(--pad-lg);
+}
+
+.modalCard {
+  width: 100%;
+  max-width: var(--max-width-sm);
+  background-color: var(--color-bg-secondary);
+  border: var(--border-ink-regular);
+  border-radius: var(--radius-sharp);
+  box-shadow: var(--shadow-lifted);
+  padding: var(--pad-xl) var(--pad-lg);
+  text-align: center;
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.closeBtn {
+  position: absolute;
+  top: var(--pad-sm);
+  right: var(--pad-sm);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  padding: var(--space-1);
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+
+.closeBtn:hover {
+  color: var(--color-text-primary);
+}
+
+.modalTitle {
+  font-family: var(--font-serif);
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  margin: 0 0 var(--space-2) 0;
+  color: var(--color-text-primary);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+.modalDesc {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin: 0 0 var(--pad-lg) 0;
+  line-height: var(--line-height-normal);
+  font-family: var(--font-sans);
+}
+
+/* ============================================
+   SOLUTION DISPLAY
+   ============================================ */
+
+.solutionBox {
+  background-color: var(--color-game-pine-wash);
+  border: var(--border-ink-regular);
+  border-radius: var(--radius-sharp);
+  padding: var(--pad-md);
+  margin-bottom: var(--pad-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  text-align: center;
+}
+
+.solutionHeader {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-game-pine);
+  letter-spacing: var(--letter-spacing-wide);
+  margin: 0 0 var(--space-1) 0;
+}
+
+.solutionWord {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  letter-spacing: var(--letter-spacing-wide);
+  margin: 0;
+}
+
+/* ============================================
+   SCORE DISPLAY
+   ============================================ */
+
+.starsRow {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-1);
+  margin-bottom: var(--pad-lg);
+  font-size: var(--font-size-2xl);
+}
+
+.bigScore {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-game-pine);
+  margin: var(--space-2) 0 var(--pad-lg) 0;
+  line-height: 1;
+}
+
+/* ============================================
+   MODAL ACTIONS
+   ============================================ */
+
+.modalActions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}

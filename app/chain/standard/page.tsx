@@ -202,7 +202,7 @@ export default function Chain() {
     }
   }, [isWin, user, isPlayTest]);
 
-  if (!mounted || !puzzle) return <div style={{ height: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--bg-paper)', fontFamily: 'var(--font-official)' }}>Loading...</div>;
+  if (!mounted || !puzzle) return <div className={styles.loadingScreen}>Loading...</div>;
 
   const leftActions = isTester ? <button onClick={() => setShowFeedback(true)} className={styles.iconBtn} title="Give Feedback"><MessageSquare size={18} /></button> : null;
   const rightActions = (
@@ -296,7 +296,7 @@ export default function Chain() {
                   <div className={styles.chainFlow}>
                     <span className={styles.chainWordEnd}>{puzzle.startWord}</span>
                     {puzzle.chain.map(word => (
-                      <div key={word} style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
+                      <div key={word} className={styles.chainFlexCenter}>
                         <span className={styles.chainArrow}>→</span>
                         <span className={styles.chainWord}>{word}</span>
                       </div>
@@ -308,12 +308,12 @@ export default function Chain() {
 
                 <div className={styles.modalActions}>
                   {arenaPuzzleId && !feedbackSubmitted ? (
-                    <div style={{ width: '100%', padding: '16px', backgroundColor: 'var(--bg-paper)', borderRadius: 'var(--radius-md)', border: 'var(--border-ink)' }}>
-                      <p style={{ fontSize: '14px', fontWeight: 700, marginBottom: '12px', textAlign: 'center', color: 'var(--ink-main)' }}>Rate this Arena Variant</p>
-                      <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+                    <div className={styles.ratingBox}>
+                      <p className={styles.ratingBoxTitle}>Rate this Arena Variant</p>
+                      <div className={styles.ratingBoxStars}>
                         {[1, 2, 3, 4, 5].map(star => (
-                          <button key={star} onClick={() => handleSubmitRating(star)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--ink-main)' }}>
-                            <Star size={28} fill={arenaRating >= star ? 'var(--ink-main)' : 'none'} />
+                          <button key={star} onClick={() => handleSubmitRating(star)} className={styles.starRatingBtn}>
+                            <Star size={28} fill={arenaRating >= star ? 'var(--color-text-primary)' : 'none'} />
                           </button>
                         ))}
                       </div>
@@ -350,12 +350,12 @@ export default function Chain() {
                   <X size={20} />
                 </button>
                 <h2 className={styles.modalTitle}>How to Play</h2>
-                <div className={styles.modalDesc} style={{textAlign: 'left', marginBottom: '32px'}}>
-                  <p style={{marginBottom: '12px'}}>Find the {puzzle.chain.length + 1}-step path from the <strong style={{color: 'var(--ink-main)'}}>Start</strong> word to the <strong style={{color: 'var(--ink-main)'}}>End</strong> word.</p>
-                  <p style={{marginBottom: '12px'}}>Each word in the chain must be strongly associated with the previous one to form a common compound word or phrase.</p>
-                  <p>Select words in the correct sequence to build your chain and submit to check your answer.</p>
+                <div className={styles.helpContent}>
+                  <p className={styles.helpParagraph}>Find the {puzzle.chain.length + 1}-step path from the <span className={styles.helpEmphasis}>Start</span> word to the <span className={styles.helpEmphasis}>End</span> word.</p>
+                  <p className={styles.helpParagraph}>Each word in the chain must be strongly associated with the previous one to form a common compound word or phrase.</p>
+                  <p className={styles.helpParagraph}>Select words in the correct sequence to build your chain and submit to check your answer.</p>
                 </div>
-                <button onClick={() => setShowHelp(false)} className={`${styles.actionBtn} ${styles.actionBtnPrimary}`} style={{width: '100%'}}>
+                <button onClick={() => setShowHelp(false)} className={`${styles.actionBtn} ${styles.actionBtnPrimary} ${styles.fullWidthBtn}`}>
                   Play
                 </button>
               </motion.div>
