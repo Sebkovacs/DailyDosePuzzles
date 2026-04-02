@@ -3,53 +3,58 @@
 **Status:** Consolidated  
 **Last Updated:** April 2, 2026
 
-This document is intentionally concise.
+## Purpose
 
-The active styling contract now lives in:
-- `documents/DESIGN_SYSTEM.md`
+This file exists as a concise reference for theming policy and styling migration.
 
-This file exists to preserve historical naming and migration context only.
+The full styling contract lives in `documents/DESIGN_SYSTEM.md`.
 
 ## Active Theme Model
-The active model is semantic-token-first:
-- Components consume semantic tokens only.
-- Theme packs map semantic tokens to concrete values.
-- Game-specific accents are implemented as scoped token overrides.
+
+Daily Dose uses a semantic-token-first model:
+
+- components consume semantic tokens
+- theme packs or scoped overrides provide concrete values
+- game identity is expressed through token overrides, not custom component logic
 
 Theme layers:
-1. Core semantic tokens (`/styles/tokens.css`)
-2. Optional route/game scoped token overrides
-3. Component CSS Modules consuming semantic tokens
 
-Do not skip layers by hardcoding values in component styles.
-
-## Deprecated References
-The following legacy variable families may still appear in old modules and should be migrated:
-- `--ink-*`
-- `--bg-*`
-- `--accent-*` (legacy naming)
-- `--wash-*` (legacy naming)
-- `--shadow-ink*`
-- `--border-ink` (without `-regular` or `-thin`)
+1. `/styles/tokens.css`
+2. scoped route or game overrides where necessary
+3. CSS Modules that consume those tokens
 
 ## Migration Policy
-- New UI work must use semantic token names from `/styles/tokens.css`.
-- Refactors should replace deprecated tokens in touched files.
-- Do not introduce new legacy aliases.
 
-Theme evolution policy:
-- Add new semantic tokens only when an existing token cannot express a reusable intent.
-- Prefer extending token scales (`--space-*`, `--color-*`) over introducing one-off names.
-- Document every new token family in `DESIGN_SYSTEM.md`.
+For any touched file:
 
-Experiment policy:
-- Test theme changes through token overrides first.
-- If a test requires structural layout change, isolate it at feature composition level.
+- remove legacy token usage where practical
+- do not introduce new legacy aliases
+- move static inline styles into CSS Modules
+- prefer semantic token names over one-off values
+
+## Deprecated Token Families
+
+The following legacy families should be phased out:
+
+- `--ink-*`
+- `--bg-*`
+- `--accent-*` in old naming
+- `--wash-*` in old naming
+- `--shadow-ink*`
+- `--border-ink` without the current semantic suffixes
+
+## Experiment Policy
+
+For styling experiments:
+
+- prefer token remapping first
+- isolate structural layout tests at the feature level
+- do not fork the theme system for one-off tests
 
 ## Enforcement
-Run:
-- `npm run lint:styles`
 
-Then verify:
+Run:
+
+- `npm run lint:styles`
 - `npx tsc --noEmit`
 - `npm run lint`

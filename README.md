@@ -1,144 +1,65 @@
 # Daily Dose
-**The world’s most engaging daily puzzle ritual**
 
-Daily Dose is a premium puzzle platform designed as a **shared daily battle** for the mind.
+Daily Dose is a premium daily puzzle product built around three pillars:
 
-It combines:
-- **Universal daily challenges** (everyone plays the same puzzles),
-- **Personalised mastery modes** (puzzles tuned to each player),
-- and **seasonal social competition** (tribes that battle together without burnout).
+- Universal Daily: a shared puzzle ritual that everyone can play.
+- Forge Mode: personalized difficulty and progression for premium users.
+- Tribes: asynchronous social competition designed to increase return without burnout.
 
-Daily Dose is built to be:
-- deeply satisfying to play,
-- socially shareable,
-- powered by AI but governed by logic,
-- and financially sustainable as a lean, high‑margin business.
+The product is designed to be:
 
----
+- fair and intellectually satisfying
+- operationally lean
+- scalable without real-time infrastructure
+- adaptable through strong documentation, deterministic systems, and modular UI
 
-## Why Daily Dose Exists
+## Repository Purpose
 
-Great puzzles don’t just test intelligence — they create *moments*.
+This repository contains the application code, product specifications, UI system, and execution roadmap for Daily Dose.
 
-Daily Dose is built around a simple belief:
+The documentation is structured so each file has a clear role:
 
-> **People return every day when puzzles feel fair, meaningful, and socially alive.**
+- `documents/TECHNICAL_SPEC.md`: authoritative engineering contract and document precedence
+- `documents/SYSTEMS.md`: architecture and operational design
+- `documents/Games.md`: game portfolio and design standards
+- `documents/Business.md`: business model and strategic constraints
+- `documents/DESIGN_SYSTEM.md`: UI engineering contract
+- `documents/COMPONENT_LIBRARY.md`: reusable component rules
+- `documents/THEME_AND_STYLING_SPEC.md`: styling migration and token policy
+- `documents/TODO.md`: execution roadmap
 
-That means:
-- clarity over complexity,
-- mastery over randomness,
-- healthy competition over endless grind,
-- and shared experience over isolated play.
+If documents conflict, follow the precedence in `documents/TECHNICAL_SPEC.md`.
 
----
+## Product Summary
 
-## The Core Experience
+Daily Dose is not a single puzzle mechanic stretched across many surfaces. It is a portfolio of puzzle systems that support:
 
-Each day, players can engage with Daily Dose in three ways:
+- a high-quality daily habit
+- measurable progression
+- selective social competition
+- premium monetization without pay-to-win behavior
 
-### 1. Universal Daily Challenge (Free)
-- The same puzzle set for every player worldwide.
-- The social heartbeat of the app.
-- Drives sharing, streaks, and friendly comparison.
-- Used for tribe scoring and seasonal competitions.
+AI is used as a content accelerator, not as a source of truth. Code validates. Humans approve.
 
-### 2. Forge Mode (Premium)
-- Personalised puzzle difficulty and selection.
-- Focused on flow, improvement, and mastery.
-- AI‑curated but strictly validated.
-- Primary retention and revenue engine.
+## Product Principles
 
-### 3. Tribal Warfare (Seasonal)
-- Optional 2–4 week seasons.
-- Players form or join tribes.
-- Competition is **asynchronous** (no real‑time pressure).
-- Success depends on collective consistency, not grinding.
-- Rewards are identity‑based, not pay‑to‑win.
-
----
-
-## The Games
-
-Daily Dose is built around **multiple distinct puzzle systems**, not a single mechanic stretched thin.
-
-Each game:
-- teaches itself naturally,
-- scales from easy to expert,
-- supports multiple variants,
-- and contributes to a complete “mental gym”.
-
-Puzzle families include:
-- Logic & deduction
-- Language & semantics
-- Pattern recognition
-- Numerical reasoning
-- Spatial and transformational puzzles
-
-Every game is a first‑class citizen.
-
----
-
-## AI, But Built Responsibly
-
-Daily Dose uses AI as a **creative accelerator**, not a truth source.
-
-Our philosophy:
-- AI may *create* puzzles,
-- but **code validates them**,
-- a single evaluator judges quality,
-- and humans approve final publication.
-
-Multiple AI models may compete to generate puzzles,
-but **deterministic rules enforce correctness**.
-
-No puzzle is published unless it:
-- is solvable,
-- has a clear logical structure,
-- matches a defined difficulty band,
-- and passes fairness checks.
-
----
+- Retention over acquisition
+- Clarity over complexity
+- Determinism over AI authority
+- Asynchronous systems over live operational risk
+- Quality over content volume
 
 ## Technology Stack
 
-- **Frontend:** Next.js, React, TypeScript  
-- **Backend:** Firebase (Firestore, Authentication)  
-- **Hosting:** Vercel  
-- **AI:** Competitive multi‑model generation + deterministic validation  
+- Frontend: Next.js, React, TypeScript
+- Backend: Firebase Authentication, Firestore, scheduled jobs
+- Hosting: Vercel
+- AI: batch generation and evaluation behind deterministic validators
 
-The system is engineered to:
-- be inexpensive to operate,
-- scale without real‑time servers,
-- and remain maintainable by a solo founder with AI support.
+## Current Focus
 
----
-
-## Business Philosophy
-
-Daily Dose is not a growth‑at‑all‑costs product.
-
-It is designed to become:
-- a trusted daily habit,
-- a respected puzzle brand,
-- and a lean business capable of generating
-  **$200k+ AUD net annually**.
-
-We optimise for:
-- retention over acquisition,
-- simplicity over hype,
-- quality over volume,
-- and profitability by design.
-
----
+Current work is focused on hardening the UI system, consolidating documentation, and moving the codebase toward a modular, token-driven, experiment-ready standard.
 
 ## Status
 
-This repository contains the core logic, systems, and experiments
-used to build Daily Dose.
-
-It is under active development.
-
----
-
-**Daily Dose**  
-_Train your mind. Share the battle. Return tomorrow._
+The product is under active development. Documentation is intended to function as an operating system for product, engineering, and design decisions.

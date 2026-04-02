@@ -1,40 +1,59 @@
-# Daily Dose — Technical Specification
+# Daily Dose - Technical Specification
 
-## 1. Purpose
+**Status:** Active  
+**Last Updated:** April 2, 2026
 
-This document defines the **authoritative technical contract** for Daily Dose.
+## Purpose
 
-It specifies:
-- data models
-- system boundaries
-- invariants
-- and lifecycle guarantees
+This document is the authoritative technical contract for Daily Dose.
 
-Any code that contradicts this document is considered incorrect,
-regardless of whether it “works”.
+It defines:
 
----
+- system invariants
+- document precedence
+- domain entities
+- storage expectations
+- publication rules
+- experimentation constraints
 
-## 2. Core Architectural Invariants
+If code or another document conflicts with this file, this file wins.
 
-These rules are non‑negotiable.
+## Document Precedence
 
-1. No puzzle may be published without passing deterministic validation.
-2. AI systems may never assert truth; only code can.
-3. Universal Daily puzzles must be identical for all users.
-4. Personalisation may only select from pre‑validated puzzles.
-5. Social systems must be asynchronous.
-6. Daily publication must succeed even if AI pipelines fail.
+When documents conflict, follow this order:
 
----
+1. `TECHNICAL_SPEC.md`
+2. `SYSTEMS.md`
+3. `DESIGN_SYSTEM.md`
+4. `GAMES.md`
+5. `COMPONENT_LIBRARY.md`
+6. `Business.md`
+7. `TODO.md`
+8. `README.md`
+9. code comments and local notes
 
-## 3. Domain Entities
+`TODO.md` is the execution roadmap, not the top-level authority.
 
-### 3.1 Puzzle
+## Core Invariants
+
+These rules are non-negotiable:
+
+1. No puzzle may be published without deterministic validation.
+2. AI may propose or score content, but may not assert correctness.
+3. Universal Daily puzzles must be identical for all users in the same release window.
+4. Personalized delivery may only select from pre-validated puzzle inventory.
+5. Social systems must remain asynchronous by default.
+6. Daily publication must continue even if AI systems fail.
+7. Core gameplay must not depend on experiments, flags, or external analytics availability.
+
+## Domain Entities
+
+### Puzzle
 
 A puzzle is immutable after publication.
 
-**Required Fields**
+Required fields:
+
 - `id`
 - `gameType`
 - `variant`
@@ -44,223 +63,186 @@ A puzzle is immutable after publication.
 - `difficultyBand`
 - `rulesetId`
 - `metadata`
+- `status`
 
-**Lifecycle State**
-draft → validated → approved → scheduled → published → archived
+Lifecycle:
 
+`draft -> validated -> approved -> scheduled -> published -> archived`
 
-A puzzle may only move forward in this sequence.
+A puzzle may only move forward through this sequence.
 
----
+### GameType
 
-### 3.2 GameType
+A game type defines:
 
-A GameType defines:
-- valid rules
 - valid variants
-- required validators
+- rules and constraints
+- validation requirements
+- scoring expectations where applicable
 
-GameTypes are versioned.
-Breaking changes require a new version.
+Breaking ruleset changes require a new version.
 
----
+### User
 
-### 3.3 User
+User state should be append-only where practical.
 
-User state is append‑only where possible.
+Core fields:
 
-**Key Attributes**
+- `id`
 - `streak`
 - `performanceSummary`
 - `difficultyTolerance`
 - `forgePreferences`
 - `tribeMemberships`
+- `entitlements`
 
-Raw interaction logs are not stored indefinitely.
+Raw event logs should not be retained indefinitely.
 
----
+### Tribe
 
-### 3.4 Tribe
+Tribes are time-bound social entities.
 
-Tribes are time‑bound social entities.
+Core fields:
 
-**Properties**
 - `id`
 - `seasonId`
 - `memberIds`
 - `createdAt`
 - `status`
 
-Tribes may not span seasons.
+Tribes may not span seasons unless an explicit migration model is defined.
 
----
+### Season
 
-### 3.5 Season
+A season defines a bounded competition window.
 
-A Season defines a fixed competition window.
+Core fields:
 
-**Properties**
 - `id`
 - `startDate`
 - `endDate`
 - `status`
 
-Scores are computed only within these bounds.
+Score computation must be reproducible within that window.
 
----
+## Storage Model
 
-## 4. Data Storage Model (Firestore)
-
-### 4.1 Collections (Canonical Names)
+Canonical collections:
 
 - `/puzzles`
 - `/publishedPuzzles`
 - `/users`
 - `/dailyStats`
+- `/gameStats`
 - `/tribes`
 - `/seasons`
 - `/tribeScores`
 
-Collection names are stable.
-Documents may evolve via versioning.
+Collection names are stable. Documents may evolve through explicit versioning.
 
----
+## Validation Contract
 
-## 5. Puzzle Validation System
-
-Each GameType must provide:
+Each game type must implement deterministic validation functions appropriate to its rules. The minimum contract is:
 
 - `validateSchema(puzzle)`
 - `validateRules(puzzle)`
 - `validateSolvability(puzzle)`
-- `validateUniqueness(puzzle)` (if applicable)
+- `validateUniqueness(puzzle)` where uniqueness matters
 
-Validation functions:
+Validation rules:
+
 - must be deterministic
-- must return machine‑readable failure reasons
-- must never call AI services
+- must return machine-readable failure reasons
+- must not call AI services
+- must be executable in automation
 
----
+## Publication Flow
 
-## 6. AI Pipeline Contract
+Publication flow:
 
-AI systems are **stateless helpers**.
+1. select approved puzzle inventory
+2. re-run safety validation
+3. write published record for the target date
+4. expose content to delivery systems
+5. archive historical records as needed
 
-### Allowed Responsibilities
-- generating candidate content
-- scoring or ranking proposals
-- formatting into schemas
+Publication must not depend on:
 
-### Forbidden Responsibilities
-- determining correctness
-- asserting solution validity
-- bypassing validation
-- publishing content
-
-AI output is treated as **untrusted input**.
-
----
-
-## 7. Daily Publication Flow
-
-1. Scheduler selects `approved` puzzle(s).
-2. Validator re‑runs checks (safety guard).
-3. Puzzle is written to `/publishedPuzzles/{date}`.
-4. Old daily puzzles are archived.
-
-At no point may publication depend on:
 - live AI calls
-- user input
-- external services
+- player input
+- unstable third-party services
 
----
-
-## 8. Universal vs Forge Delivery Rules
+## Universal and Forge Rules
 
 ### Universal Daily
-- Created once per day per game.
-- Served identically to all users.
-- Source of truth for:
-  - streaks
-  - sharing
-  - tribe scoring
+
+- produced once per game per day
+- shared by all players
+- used for streaks, sharing, and tribe scoring
 
 ### Forge Mode
-- Selects puzzles from validated pool.
-- Must respect user difficulty tolerance.
-- May never influence Universal puzzles.
 
----
+- selects from validated puzzle inventory
+- uses player performance and preference signals
+- must not change or influence Universal Daily output
 
-## 9. Tribal Scoring Logic
+## Social and Scoring Rules
 
-Scores are computed via scheduled jobs.
+Tribal scoring must be reproducible from stored data.
 
-Allowed inputs:
-- completion time
+Allowed scoring inputs:
+
 - completion rate
-- puzzle difficulty
+- completion time
+- difficulty-adjusted performance
+- consistency over time
 
-Forbidden inputs:
+Forbidden scoring inputs:
+
 - premium status
-- absolute playtime
-- late submissions
+- arbitrary manual boosts
+- late mutable data that breaks reproducibility
 
-Scoring must be reproducible from stored stats.
-
----
-
-## 10. Versioning & Migration
-
-Breaking changes require:
-- schemaVersion increment
-- migration plan
-- backward compatibility window where feasible
-
----
-
-## 11. Observability & Safety
+## Observability and Safety
 
 The system must surface:
+
 - validation failure rates
 - publication failures
-- AI generation rejection rates
-- abnormal difficulty spikes
+- AI rejection rates
+- unusual difficulty spikes
+- missing content or scheduling failures
 
 Silent failure is unacceptable.
 
----
+## UI Experimentation Invariants
 
-## 11.1 UI Experimentation Invariants
+Experiments must obey these constraints:
 
-UI experiments must follow these constraints:
-
-1. Control experience must always be available as fallback.
-2. Experiment assignment must not break core gameplay flows.
-3. Exposure events must be logged before outcome events are evaluated.
+1. A control experience must always exist.
+2. Experiments must not break core puzzle playability.
+3. Exposure should be recorded before outcome evaluation.
 4. Variant naming must be stable and machine-readable.
 5. Losing variants must be removable without component rewrite.
 
-UI experiments may optimize:
+Experiments may optimize:
+
 - retention
 - completion
 - conversion
 
-They may not compromise:
+Experiments may not weaken:
+
 - accessibility baseline
-- puzzle fairness
 - deterministic game logic
+- fairness or scoring integrity
 
----
+## Definition of Technical Done
 
-## 12. Enforcement Rule
+A feature is not technically done unless:
 
-When documents conflict, precedence is:
-
-1. TECHNICAL_SPEC.md
-2. SYSTEMS.md
-3. GAMES.md
-4. README.md
-5. CODE
-
-If code violates this spec, fix the code.
+- it satisfies this specification
+- deterministic validation exists where required
+- failure handling is defined
+- storage and entity impact are explicit
+- relevant docs are updated

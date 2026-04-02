@@ -1,87 +1,114 @@
 # Daily Dose - Component Library
 
-**Status:** Active and evolving  
+**Status:** Active  
 **Last Updated:** April 2, 2026
 
 ## Purpose
-Define reusable UI building blocks that keep the product consistent, testable, and easy to evolve.
-The library exists to maximize UI quality and iteration speed at the same time.
+
+This document defines the reusable component model for Daily Dose.
+
+The goal is to keep the UI:
+
+- consistent
+- modular
+- testable
+- easy to improve without large rewrites
 
 ## Library Layers
-1. Primitives
+
+### Primitives
+
+Small, reusable building blocks with minimal policy.
+
+Current examples:
+
 - `Text`
 - `Button`
 - `Surface`
 - `IconButton`
 - `Divider`
 
-2. Foundations
+### Foundations
+
+Composed patterns built from primitives.
+
+Current examples:
+
 - `Card`
 - `Badge`
 - `Pill`
-- `ProgressIndicator` (`ProgressBar`, `ProgressDots`, `ProgressRing`)
+- `ProgressIndicator`
 
-3. Feature components
-- Domain-specific components live outside the base library and compose primitives/foundations.
+### Feature Components
+
+Domain-specific components that belong to a route or product area rather than the shared library.
 
 ## Rules
-- CSS Modules only.
-- Semantic variants only (`primary`, `secondary`, `danger`, `success`, `warning`, `accent`).
-- Design tokens only from `/styles/tokens.css`.
-- No inline style props for static styling.
-- Motion must use `/styles/motions.ts` presets or token-aligned values.
 
-Strategic rules:
-- Keep primitives small and strict; place flexibility at composition boundaries.
-- Prefer extending variants/tokens over creating new bespoke components.
-- Avoid "prop explosion"; if a component needs many visual knobs, split responsibilities.
+- CSS Modules only
+- semantic variants only
+- token-driven styling only
+- no static inline styles
+- no feature-specific props in base primitives
 
-## Public API Guidance
-- Keep component props small and intention-revealing.
-- Avoid exposing visual implementation knobs unless required.
-- Prefer variant enums over raw color/size strings.
-- Preserve accessibility defaults in every primitive.
+## API Guidance
 
-Recommended primitive API shape:
-- `variant`: semantic intent (`primary`, `secondary`, etc.)
-- `size`: standardized scale (`sm`, `md`, `lg`)
-- `state`: behavioral state (`default`, `loading`, `disabled`, `error`)
-- `as`/`asChild` only when semantic element swapping is needed
+Base components should expose intention, not raw styling knobs.
 
-Avoid in base components:
-- Raw `color`, `bg`, `padding`, `shadow` props
-- One-off booleans that duplicate variant/state semantics
-- Feature-specific props (keep those in feature components)
+Preferred prop categories:
 
-## Experiment-Friendly Composition
-Rules for A/B testing without destabilizing the library:
-- Experiments must be composed in feature modules/pages, not primitives.
-- Use stable wrapper selectors (`data-component`, `data-variant`) for analytics and testing.
-- Keep control and variant branches close together and minimal.
-- Prefer a small number of reusable experiment-ready layouts over one-off test components.
+- `variant`
+- `size`
+- `state`
+- `as` or `asChild` only where semantic element switching is needed
 
-## Testing Guidance
-For library changes, validate:
-1. Rendering and variant behavior
-2. Disabled/focus/keyboard behavior
-3. Token-driven appearance (no hardcoded visual values)
-4. No regressions in consuming pages
-5. Contract stability (existing props remain backward-compatible unless versioned)
-6. Visual regression snapshots for high-impact primitives/foundations
+Avoid:
 
-## When to Add a New Base Component
-Add to base library only when all are true:
-1. Needed in at least two feature areas
-2. Represents a stable interaction pattern
-3. Can be domain-agnostic
+- raw color props
+- raw spacing props
+- raw shadow props
+- boolean prop sprawl that duplicates semantic variants
 
-Otherwise keep it feature-local.
+## Composition Guidance
+
+Use this decision rule:
+
+- if it is reused across multiple product areas and is domain-agnostic, it may belong in the library
+- if it is specific to a game, admin flow, tribe flow, or other feature area, keep it local
+
+Start local by default. Promote to the library only when reuse and stability are clear.
+
+## Experimentation Guidance
+
+Experiments should not be embedded into primitives.
+
+Rules:
+
+- keep experiment logic at the page or feature level
+- map variants onto existing component APIs where possible
+- avoid creating throwaway components for every test
+
+The library should enable experimentation, not become entangled with it.
+
+## Testing Expectations
+
+For shared components, validate:
+
+1. visual variants
+2. disabled and focus behavior
+3. keyboard and accessibility behavior
+4. token-driven styling
+5. backward compatibility of the public API
+
+High-impact shared components should eventually have visual regression coverage.
 
 ## Quality Checklist
-- Component has explicit props and default behavior.
-- Component has module CSS with semantic class names.
-- Accessibility behavior is documented and verified.
-- Usage examples compile and avoid inline styling.
-- No token drift or legacy aliases in new code.
-- Story/demo includes at least control + one alternative variant.
-- Test IDs/selectors are stable only where automation needs them.
+
+A shared component is ready when:
+
+- props are explicit and intention-revealing
+- CSS class names are semantic
+- accessibility behavior is verified
+- examples compile
+- no legacy token usage is introduced
+- the component is easier to extend than the ad hoc code it replaces

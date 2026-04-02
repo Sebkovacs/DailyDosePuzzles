@@ -1,343 +1,159 @@
-# **Daily Dose — System Architecture**
+# Daily Dose - System Architecture
 
-***
+**Status:** Active  
+**Last Updated:** April 2, 2026
 
-## 1. Purpose of the System Architecture
+## Purpose
 
-Daily Dose is designed to deliver **high‑quality daily puzzles at scale** while remaining:
+This document explains how Daily Dose is structured operationally.
 
-*   operationally lean
-*   financially predictable
-*   robust against AI failure
-*   friendly to iterative experimentation
-*   maintainable by a single founder
+It exists to make architecture decisions understandable, maintainable, and consistent with the technical specification.
 
-The architecture prioritises **clarity, determinism, and separation of concerns** over novelty or complexity.
+## Architectural Goals
 
-***
+The system is designed to be:
 
-## 2. Core Architectural Principles
+- lean to operate
+- robust under failure
+- maintainable by a solo founder with AI assistance
+- easy to evolve without destabilizing the daily ritual
 
-### 2.1 Determinism Over AI Authority
+## Core Principles
 
-AI is a generator, not a judge.
+### Determinism over AI authority
 
-*   AI may propose puzzles.
-*   **Code validates puzzles.**
-*   AI may evaluate quality.
-*   **Humans approve publication.**
+AI can generate candidate content and evaluate quality signals. AI cannot define truth. Deterministic code remains the authority for correctness.
 
-No puzzle ships without deterministic verification.
+### Asynchronous by default
 
-***
+The product should avoid real-time dependencies unless a feature proves substantial value. This keeps infrastructure simple and failure modes contained.
 
-### 2.2 Asynchronous by Default
+### Universal first
 
-Daily Dose avoids real‑time systems unless absolutely necessary.
+Universal Daily is the social anchor. Personalized systems build on top of it but do not replace it.
 
-*   No live multiplayer
-*   No sockets
-*   No synchronous dependency loops
-*   No timing pressure on players
+### Failure-tolerant workflows
 
-This keeps infra cheap, stable, and predictable.
+If an AI job fails, publication still proceeds. If telemetry is partial, aggregation continues later. If a content batch underperforms, reserve inventory is used.
 
-***
+## High-Level Flow
 
-### 2.3 Universal First, Personalised Second
+Core content flow:
 
-The system always supports:
+1. candidate puzzles are authored by humans or AI
+2. deterministic validators reject invalid puzzles
+3. remaining candidates may be scored or ranked
+4. humans approve publishable inventory
+5. scheduler assigns dates and modes
+6. delivery systems expose the content
 
-1.  **Universal Daily puzzles** – same for everyone
-2.  **Personalised puzzles** – curated per user
+## Content Pipeline
 
-The Universal layer is the social anchor.  
-The Personalised layer drives retention and revenue.
+### Generation
 
-***
+Generation may use multiple creator profiles or models. Diversity is useful only at candidate creation time.
 
-### 2.4 Design for Failure
+### Validation
 
-Every critical workflow must fail gracefully.
+Validation is deterministic and game-specific. Invalid puzzles are discarded immediately.
 
-*   Missed AI job → fallback puzzle pool
-*   Invalid puzzle → discard, regenerate
-*   Partial telemetry → ignore, aggregate later
+### Evaluation
 
-A single failure should **never block daily publication**.
+Evaluation helps rank candidate quality. It does not replace validation or human approval.
 
-***
+### Approval
 
-## 3. High‑Level System Overview
+Approval remains a deliberate control point. No automatic publication from AI output.
 
-    [ Puzzle Creators (AI) ]
-              |
-              v
-    [ Deterministic Validators (TS) ]
-              |
-              v
-    [ Evaluator (Single Model) ]
-              |
-              v
-    [ Human Approval ]
-              |
-              v
-    [ Scheduler ]
-              |
-              v
-    [ Universal / Personalised Delivery ]
+## Delivery Systems
 
-***
+### Universal Daily
 
-## 4. Puzzle Lifecycle
+Universal Daily should be:
 
-Every puzzle passes through the same lifecycle:
+- shared across all users
+- cache-friendly
+- simple to retrieve
+- reliable enough to support streaks, sharing, and tribe scoring
 
-1.  **Generated** (AI or human authored)
-2.  **Validated** (deterministic logic)
-3.  **Evaluated** (quality scoring)
-4.  **Approved** (human decision)
-5.  **Scheduled** (date + mode)
-6.  **Published**
-7.  **Archived**
+### Forge Mode
 
-This lifecycle is immutable.
+Forge Mode should:
 
-***
+- select from pre-validated inventory
+- use player performance and preference signals
+- create clear premium value without increasing operational chaos
 
-## 5. AI Puzzle Pipeline (Lean Competitive Model)
+## Social Layer
 
-### 5.1 Competitive Generation
+Tribes are designed as asynchronous seasonal competition.
 
-*   2–4 *creator profiles*
-*   Each profile uses a different prompt style or model
-*   Outputs multiple candidate puzzles
-*   Generation runs in parallel
+Requirements:
 
-Competition happens **only at creation time**.
+- no real-time multiplayer dependency
+- no pay-to-win scoring
+- no participation penalties that punish casual users
+- strong identity and return incentives
 
-***
+## Analytics Strategy
 
-### 5-2 Deterministic Validation (Critical)
+### Always-on metrics
 
-Validation is **never performed by AI**.
+Capture low-cost product signals:
 
-Validators are implemented in TypeScript and check:
+- completion
+- win/loss
+- time to complete
+- streak activity
+- mode usage
 
-*   puzzle schema integrity
-*   rule compliance
-*   solvability
-*   unique solution (where required)
-*   bounds and constraints
+### Sampled deep telemetry
 
-Invalid puzzles are immediately discarded.
+Use sampled or playtester-only telemetry for richer analysis:
 
-No debate. No retries. No exceptions.
+- wrong guesses
+- action sequences
+- hesitation patterns
 
-***
+Deep telemetry should be short-lived and aggregated when possible.
 
-### 5.3 Centralised Evaluation
+## Infrastructure
 
-After validation, remaining puzzles are evaluated by **one trusted model**.
+Current stack:
 
-The evaluator scores:
+- Next.js and React for product UI
+- TypeScript for application and validation logic
+- Firebase Authentication and Firestore for user and content data
+- Vercel for hosting and scheduled execution
 
-*   clarity
-*   perceived difficulty
-*   fairness
-*   novelty
-*   engagement likelihood
-*   suitability for:
-    *   Universal Daily
-    *   Personalised Forge Mode
-    *   Tribal Warfare
+This stack is chosen for low operational overhead and fast iteration, not novelty.
 
-A single evaluator ensures **consistent scoring over time**.
+## Operational Model
 
-***
+### Daily
 
-### 5.4 Formatting & Storage
+- verify scheduled content
+- review analytics summary
+- watch for publication or runtime failures
 
-Selected puzzles are:
+### Weekly
 
-*   normalised into a canonical JSON schema
-*   enriched with metadata
-*   stored in Firestore
+- review puzzle quality
+- review retention and completion signals
+- tune difficulty or routing policies
 
-Formatting can be:
+### Monthly
 
-*   deterministic, or
-*   handled by a fast, cheap AI model
+- ship one meaningful improvement
+- reassess pricing, packaging, or social mechanics
+- remove low-value complexity
 
-***
+## Success Criteria
 
-### 5.5 Human Approval
+The architecture is successful if:
 
-No puzzle publishes automatically.
-
-Admin approval includes:
-
-*   sanity check
-*   schedule assignment
-*   variant selection
-*   mode assignment
-
-***
-
-## 6. Modes & Delivery Systems
-
-### 6.1 Universal Daily Delivery
-
-*   One puzzle document per game per day
-*   Shared by all users
-*   Cache‑friendly
-*   Zero personalisation cost
-
-This mode powers:
-
-*   sharing
-*   streaks
-*   tribe scoring
-*   social discussion
-
-***
-
-### 6.2 Forge Mode (Personalised Delivery)
-
-Forge Mode generates a **daily puzzle set per user** using:
-
-*   recent performance
-*   completion times
-*   failure patterns
-*   difficulty tolerance
-*   game preferences
-
-Personalised selection happens **after puzzle creation**, not during generation.
-
-The system never generates puzzles *just* for one user unless required.
-
-***
-
-## 7. Tribal Warfare System
-
-### 7.1 Seasonal Structure
-
-*   Seasons last 2–4 weeks
-*   Participation is optional
-*   Tribes are time‑bound entities
-
-***
-
-### 7.2 Scoring Model
-
-Tribal scores are computed **asynchronously** based on Universal Daily puzzles:
-
-*   completion rate
-*   median solve time
-*   difficulty‑adjusted performance
-*   consistency across days
-
-No real‑time competitive dependency exists.
-
-***
-
-### 7.3 Rewards
-
-Rewards are:
-
-*   cosmetic
-*   identity‑driven
-*   persistent achievements
-
-There is **no pay‑to‑win advantage**.
-
-***
-
-## 8. Analytics & Telemetry Strategy
-
-### 8.1 Tier 1 — Always On (Cheap)
-
-Collected for all users:
-
-*   completions
-*   time‑to‑complete
-*   win/loss
-*   streak state
-*   mode usage
-
-***
-
-### 8.2 Tier 2 — Deep Telemetry (Sampled)
-
-Collected only for:
-
-*   playtesters
-*   limited samples
-
-Includes:
-
-*   action timelines
-*   hesitation patterns
-*   wrong‑guess structures
-
-Raw logs are short‑lived and aggregated.
-
-***
-
-## 9. Infrastructure Stack
-
-*   **Frontend:** Next.js, React, TypeScript
-*   **Backend:** Firebase (Firestore, Authentication)
-*   **Hosting:** Vercel (serverless + scheduled jobs)
-*   **AI:** Multi‑model generation, single evaluator, deterministic validation
-
-The stack is chosen for:
-
-*   minimal DevOps
-*   predictable billing
-*   excellent developer ergonomics
-
-***
-
-## 10. Cost & Risk Containment
-
-Key cost guards:
-
-*   AI only generates in batches
-*   Validators discard early
-*   No real‑time infra
-*   No per‑user puzzle generation by default
-*   Limited deep telemetry retention
-
-The system is explicitly designed to remain profitable at moderate scale.
-
-***
-
-## 11. Founder Operating Model
-
-Daily Dose assumes:
-
-*   one primary human decision‑maker
-*   AI coding tools as the development team
-*   documentation as the control plane
-*   automation as assistance, not dependency
-
-You are the **systems director**, not a bricklayer.
-
-***
-
-## 12. System Success Criteria
-
-The system is successful if:
-
-*   puzzles publish daily without manual stress
-*   AI improves quality over time, not chaos
-*   users trust puzzle fairness
-*   social systems encourage return, not burnout
-*   operational costs remain flat as usage grows
-
-***
-
-**This system exists to protect quality, sanity, and margin.**
-
-***
+- daily publication is calm and predictable
+- puzzle fairness is trusted
+- AI reduces work without introducing instability
+- social systems improve return without operational burden
+- costs remain controlled as usage grows

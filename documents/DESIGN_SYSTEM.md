@@ -1,151 +1,176 @@
 # Daily Dose - Design System
 
-**Status:** Active hardening (in progress)  
+**Status:** Active hardening  
 **Last Updated:** April 2, 2026  
 **Motto:** Slow is smooth, smooth is fast.
 
 ## Purpose
+
 This document is the authoritative UI engineering contract for Daily Dose.
 
 It defines:
-- the only accepted styling architecture
-- token and component usage rules
-- quality gates required before merge
 
-If code and docs disagree, this file is the source of truth for styling and component quality.
+- the styling architecture
+- token rules
+- component composition rules
+- experimentation constraints
+- UI quality gates
 
-## Strategic UI Goals
-Daily Dose UI must be:
-- Premium: visually deliberate, polished interactions, high readability.
-- Adaptable: rapid UI evolution without large rewrites.
-- Experimentable: safe A/B testing with clear measurement.
-- Operable: predictable rules that a small team can sustain.
+If UI code and UI docs conflict, this file wins unless the technical specification says otherwise.
 
-Product-level success metrics:
-- Faster iteration: most UI changes contained to component variants and tokens.
-- Safer rollout: visual/system regressions caught before release.
-- Better outcomes: experiment velocity improves retention/conversion metrics.
+## Strategic Goals
+
+The UI system must support all of the following at the same time:
+
+- premium presentation
+- fast iteration
+- safe experimentation
+- low rewrite cost
+- strong accessibility and maintainability
+
+The system should make UI changes cheaper over time, not more expensive.
 
 ## Architecture
-All UI follows this stack, in order:
 
-1. Design tokens: `/styles/tokens.css`
-2. Global base styles: `/styles/globals.css`
-3. Scoped component/page styles: `*.module.css`
-4. Component logic and motion: `.tsx` + `/styles/motions.ts`
+All UI follows this stack:
+
+1. design tokens in `/styles/tokens.css`
+2. global base styles in `/styles/globals.css`
+3. scoped CSS Modules
+4. component logic and motion in `.tsx` and `/styles/motions.ts`
 
 Rules:
-- No Tailwind.
-- No shared utility CSS files outside global base styles.
-- No inline style objects except true runtime values that cannot be represented as class variants (for example dynamic width percentages).
-- No hard-coded hex/rgb/hsl color values in components or page CSS.
-- No undeclared custom properties; all tokens must exist in `tokens.css`.
 
-Strategic rule:
-- Visual behavior is configured, not hardcoded. Prefer token updates, semantic variants, and composition-level switches over one-off CSS.
+- no Tailwind
+- no shared utility CSS outside the global base layer
+- no inline style objects except true runtime-only values
+- no hard-coded color values in component or page styles
+- no undeclared custom properties
 
 ## Token Contract
-Semantic token families in use:
-- Colors: `--color-*`
-- Typography: `--font-*`, `--line-height-*`, `--letter-spacing-*`
-- Spacing and size: `--space-*`, `--pad-*`, `--max-width-*`
-- Border and radius: `--border-*`, `--radius-*`
-- Elevation and shadow: `--shadow-*`
-- Motion: `--ease-*`, `--duration-*`
-- Interaction: `--touch-target-*`, `--opacity-*`, `--z-*`
 
-Migration note:
-- Legacy aliases like `--ink-main`, `--bg-card`, `--accent-*`, `--wash-*`, `--shadow-ink` are deprecated and must be removed during refactors.
-- New or refactored UI must use semantic `--color-*` and current token families only.
+Token families:
 
-Theme strategy:
-- Keep a stable semantic layer (`--color-text-primary`, `--color-bg-primary`, etc.) consumed by components.
-- Map game/brand themes by changing token values, not component internals.
-- Add new themes by extending token definitions in `tokens.css`; avoid per-page visual forks.
+- `--color-*`
+- `--font-*`
+- `--line-height-*`
+- `--letter-spacing-*`
+- `--space-*`
+- `--pad-*`
+- `--max-width-*`
+- `--border-*`
+- `--radius-*`
+- `--shadow-*`
+- `--ease-*`
+- `--duration-*`
+- `--touch-target-*`
+- `--opacity-*`
+- `--z-*`
+
+Rules:
+
+- components consume semantic tokens, not visual constants
+- new tokens must represent reusable intent
+- legacy aliases should be removed during refactors
+
+Deprecated token families include:
+
+- `--ink-*`
+- `--bg-*`
+- `--accent-*` in old naming
+- `--wash-*` in old naming
+- `--shadow-ink*`
+
+## Theme Model
+
+Daily Dose should use a semantic-token-first theme system.
+
+Theme layers:
+
+1. core semantic tokens
+2. route or game scoped token overrides where needed
+3. CSS Modules consuming those tokens
+
+Theme rules:
+
+- components should not know concrete brand or game colors directly
+- game identity should be expressed through token overrides
+- theme experiments should prefer token remapping before structural divergence
 
 ## Component Standards
+
 Component layers:
-1. Primitives: typography, button, surface, icon button, divider
-2. Foundations: card, badge, pill, progress indicators
-3. Feature components: game/admin/social components built from primitives/foundations
 
-Implementation standards:
-- Each component owns its own `*.module.css`.
-- Variant names are semantic (`primary`, `danger`, `success`) not visual (`red`, `big`, `fancy`).
-- Accessibility is non-negotiable: visible focus states, minimum touch target, semantic markup, aria labels for icon-only actions.
-- Motion uses `MOTION` presets or token-aligned timing/easing values.
+1. primitives
+2. foundations
+3. feature components
 
-Composition standards:
-- Primitives never know about experiments.
-- Foundations may expose semantic variants only.
-- Feature components/pages own experiment wiring and choose variants.
-- Prefer additive variant APIs (`tone`, `size`, `emphasis`, `state`) over raw class-name injection.
+Rules:
+
+- each component owns its own CSS Module
+- variant names are semantic, not visual
+- accessibility is mandatory
+- motion uses token-aligned timing and easing
+
+Composition rules:
+
+- primitives should remain strict and reusable
+- foundations may expose semantic variants only
+- feature modules own page-specific behavior and experiment branching
+- prefer variants and composition over one-off component forks
 
 ## Experimentation Contract
-To support fast A/B testing without codebase churn:
 
-1. Experiment ownership:
-- Experiments are wired at route/feature composition level, not inside primitives.
+Experiments must support fast testing without destabilizing the component system.
 
-2. Stable targeting:
-- Use stable experiment keys and `data-*` hooks on top-level feature containers.
-- Avoid CSS selectors coupled to DOM depth.
+Rules:
 
-3. Variant design:
-- Each experiment variant should map to existing component variants/tokens where possible.
-- Introduce new tokens/variants only when reusable beyond one test.
+1. Experiments belong in feature composition, not primitives.
+2. A control fallback must always exist.
+3. Stable experiment keys and `data-*` hooks should be used for analytics and QA.
+4. Prefer token and variant changes over large structural forks.
+5. Losing variants should be removable with low effort.
 
-4. Safety:
-- Every experiment has a control fallback.
-- Experiments must degrade gracefully if flags fail.
-- Never gate core puzzle playability behind client-only experiment logic.
+Primary UI experiment metrics may include:
 
-5. Measurement:
-- Define primary metric before shipping the variant (retention, completion, conversion, etc.).
-- Log exposure and outcome events with consistent naming.
-- Remove losing variants quickly to reduce maintenance load.
+- retention
+- completion
+- conversion
+- click-through on high-impact surfaces
 
 ## Quality Gates
-A PR touching UI passes only if all checks below pass:
 
-1. Static style audit:
-   - no `style={{` unless runtime-only value
-   - no Tailwind utility class strings
-   - no unknown CSS variable usage
-2. Type checks pass (`npx tsc --noEmit`).
-3. Lint passes (`npm run lint`).
-4. Manual review confirms:
-   - token usage is semantic and consistent
-   - component composition is clean
-   - accessibility and interaction behavior are preserved
-5. If experiment-related:
-   - control fallback exists
-   - exposure event is emitted once per view
-   - success metric and stop condition are documented
+A UI change is not done unless all relevant checks pass:
+
+1. `npm run lint:styles`
+2. `npx tsc --noEmit`
+3. `npm run lint`
+4. manual review for accessibility, composition, and interaction quality
+
+If the change is experiment-related, also require:
+
+- a defined control
+- a defined success metric
+- explicit cleanup expectations
 
 ## Refactor Workflow
-For large styling migrations:
 
-1. Stabilize tokens and class structure in target module.
-2. Remove inline styles and move rules to module CSS.
-3. Replace legacy token names with semantic tokens.
-4. Validate no behavior regressions.
-5. Run style audit and type/lint checks.
-6. Consolidate repeated patterns into primitives/foundations.
-7. Document any new token/variant decisions.
+For styling or component refactors:
 
-Target order for this repository:
-1. Admin and stats pages
-2. Shared route menus
-3. Remaining game page wrappers and modal copy blocks
-4. Legacy token cleanup across modules
-5. Experimentation hooks on high-impact funnels (home, onboarding, premium surfaces)
+1. stabilize structure and intent first
+2. move static styling into CSS Modules
+3. replace legacy tokens with semantic tokens
+4. consolidate repeated patterns into primitives or foundations
+5. validate behavior and quality gates
+6. update the docs if new variants or tokens are introduced
 
-## Definition of Done (UI)
-A page/module is "done" when:
+## Definition of Done
+
+A UI surface is done when:
+
 - it uses CSS Modules only
 - it uses semantic tokens only
 - it has no stale aliases or magic values
 - it passes style audit, type check, and lint
-- it remains readable and easy to extend
-- experiments (if present) are reversible, measurable, and isolated
+- it is readable and easy to extend
+- experiments, if present, are isolated and reversible

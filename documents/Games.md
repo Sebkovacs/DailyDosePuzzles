@@ -1,391 +1,190 @@
-# **Daily Dose — Game Systems & Puzzle Design**
+# Daily Dose - Game Systems
 
-***
+**Status:** Active  
+**Last Updated:** April 2, 2026
 
-## 1. Philosophy of the Games
+## Purpose
 
-Daily Dose is not a single puzzle stretched thin.
+This document defines the game portfolio, shared design standards, and the role each game plays in the product.
 
-It is a **portfolio of distinct puzzle systems**, each designed to:
+It is a product design reference, not a low-level implementation spec.
 
-*   teach itself naturally,
-*   scale in difficulty,
-*   reward clarity and insight,
-*   and contribute meaningfully to the daily ritual.
+## Portfolio Thesis
 
-Each game is a **first‑class system**, not a mini‑mode.
+Daily Dose is a portfolio of distinct puzzle systems. The goal is not superficial variety. The goal is complementary mental challenge across multiple forms of reasoning.
 
-> The goal is not variety for novelty —  
-> the goal is *complementary mental training*.
+Each game must justify its place through clarity, replayability, and fit with the Daily Dose ritual.
 
-***
+## Standards for Every Game
 
-## 2. Design Standards (Applies to All Games)
+Every game must satisfy these standards before it is considered core:
 
-Every Daily Dose game must satisfy:
+- understandable without heavy tutorial dependence
+- grounded in deterministic logic
+- clear about win and fail states
+- scalable in difficulty without sudden spikes
+- suitable for Universal Daily and Forge Mode
+- compatible with measurable validation and quality review
 
-*   **Zero tutorial dependency**  
-    Players learn by playing.
+If a game cannot meet these standards, it should not ship broadly.
 
-*   **Deterministic logic**  
-    No guessing, no ambiguity.
+## Game Catalog
 
-*   **Clear win and fail states**  
-    Completion must feel earned.
+### Chain
 
-*   **Difficulty curves, not spikes**  
-    Flow > frustration.
+Core idea: connect a start concept to an end concept using valid intermediate logic.
 
-*   **Variant compatibility**  
-    Each game supports multiple rule variants.
+Strengths:
 
-*   **Universal + Personal Fit**  
-    Works equally well in shared and personalised modes.
+- high clarity
+- strong social comparison
+- good candidate for a flagship daily format
 
-If a game cannot meet these standards, it does not ship.
+Common variants:
 
-***
+- Standard
+- Blitz
+- Reverse
+- Versus
 
-## 3. The Core Games
+### Lexicon
 
-All games below are **core** — no “secondary” or “experimental” status.
+Core idea: solve word-based problems driven by meaning, constraint, or deception.
 
-***
+Strengths:
 
-### 3.1 Chain
+- broad accessibility
+- strong shareability
+- frequent aha moments
 
-**Core Idea**  
-Build a valid logical chain between a start and end concept using permitted transformations.
+Common variants:
 
-**Cognitive Focus**
+- Standard
+- Reverse
+- Persona
+- Blitz
 
-*   deductive reasoning
-*   sequencing
-*   constraint management
+### Vault
 
-**Why It Works**
+Core idea: infer hidden rules or locks from constrained feedback.
 
-*   strong sense of progress
-*   extremely clear moment‑to‑moment feedback
-*   excellent for social comparison
+Strengths:
 
-**Variants**
+- strong mastery loop
+- high ceiling for expert players
+- premium-feeling challenge
 
-*   Standard
-*   Blitz (time‑pressure)
-*   Reverse (work backward)
+Common variants:
 
-**Universal Role**
-High social discussion:  
-“Where did you diverge in the chain?”
+- Standard
+- Corrupted
+- Blitz
 
-***
+### Stab
 
-### 3.2 Lexicon
+Core idea: identify a hidden target through elimination under attempt pressure.
 
-**Core Idea**  
-Deduce or construct words based on linguistic constraints, definitions, or deceptive cues.
+Strengths:
 
-**Cognitive Focus**
+- fast rounds
+- immediate tension
+- strong streak anchor potential
 
-*   vocabulary
-*   semantics
-*   flexible thinking
+### Spectrum
 
-**Why It Works**
+Core idea: order items correctly along a hidden or abstract dimension.
 
-*   instant “aha” moments
-*   naturally shareable
-*   broad appeal
+Strengths:
 
-**Variants**
+- intuitive interaction
+- elegant difficulty scaling
+- satisfying placement feedback
 
-*   Standard
-*   Reverse (definition first)
-*   Persona (themed semantics)
+### Numbers
 
-**Universal Role**
-Perfect for sharing without spoilers.
+Core idea: solve numerical relationships, targets, or transformations.
 
-***
+Strengths:
 
-### 3.3 Vault
+- precise feedback
+- broad analytical appeal
+- easy to measure mastery
 
-**Core Idea**  
-Break layered logical locks by inferring rules from partial feedback.
+### Split
 
-**Cognitive Focus**
+Core idea: group or partition elements into valid structures.
 
-*   rule induction
-*   pattern generalisation
-*   error correction
+Strengths:
 
-**Why It Works**
+- satisfying resolution
+- combines language and logic well
 
-*   high satisfaction after struggle
-*   very strong mastery curve
-*   ideal for experts
+### Layers
 
-**Variants**
+Core idea: solve across stacked constraints or states.
 
-*   Standard
-*   Corrupted (misleading signals)
-*   Blitz
+Strengths:
 
-**Forge Role**
-Primary progression and “skill flex” game.
+- deep strategic feel
+- strong expert appeal
 
-***
+### Roots
 
-### 3.4 Stab
+Core idea: infer a modern or visible outcome from deeper origin clues.
 
-**Core Idea**  
-Identify a hidden target using minimal attempts and deductive elimination.
+Strengths:
 
-**Cognitive Focus**
+- distinctive mental framing
+- elegant reverse reasoning
 
-*   probabilistic reasoning
-*   risk evaluation
-*   decision confidence
+### Shift
 
-**Why It Works**
+Core idea: transform a configuration to a target state through allowed moves.
 
-*   high tension per action
-*   extremely fast rounds
-*   clear improvement curve
+Strengths:
 
-**Variants**
+- tactile feel
+- strong timed-variant potential
 
-*   Standard
-*   Limited Attempts
-*   Expanded Grid
+## Product Roles
 
-**Universal Role**
-Great daily warm‑up and streak anchor.
+Not every game needs the same job. The portfolio should be balanced across roles:
 
-***
+- social anchor games
+- broad-access games
+- mastery-oriented games
+- premium differentiation games
 
-### 3.5 Spectrum
+At least one game should clearly serve each role.
 
-**Core Idea**  
-Order items correctly along an abstract or quantitative spectrum.
+## Current Product Guidance
 
-**Cognitive Focus**
+The long-term product is multi-game. The short-term execution should still focus on the few games that best prove retention and quality.
 
-*   comparative reasoning
-*   ordering
-*   conceptual nuance
+Current priority candidates for early hardening:
 
-**Why It Works**
+- Chain
+- Lexicon
+- Vault
 
-*   visually and mentally satisfying
-*   each correct placement feels rewarding
-*   scales elegantly in complexity
+These offer the best mix of clarity, differentiation, and variant potential.
 
-**Variants**
+## Quality Gate for Publishable Puzzles
 
-*   Standard
-*   Timed
-*   Multi‑dimension
+A puzzle is publishable only if:
 
-***
+- it passes deterministic validation
+- ambiguity is ruled out
+- difficulty is within the intended band
+- evaluator and human review both accept it
+- it fits the intended mode and audience
 
-### 3.6 Numbers
+## Anti-Patterns
 
-**Core Idea**  
-Solve numerical relationships, sequences, or transformations.
+Do not ship games that depend on:
 
-**Cognitive Focus**
-
-*   arithmetic intuition
-*   pattern recognition
-*   precision under pressure
-
-**Why It Works**
-
-*   extremely clear feedback
-*   measurable improvement
-*   appeals to analytical players
-
-**Variants**
-
-*   Standard
-*   Reverse (target first)
-*   Speed Run
-
-***
-
-### 3.7 Split
-
-**Core Idea**  
-Partition elements into valid groups based on hidden or explicit rules.
-
-**Cognitive Focus**
-
-*   categorisation
-*   decomposition
-*   synthesis
-
-**Why It Works**
-
-*   satisfying “everything clicks” moment
-*   bridges language and logic domains
-
-**Variants**
-
-*   Standard
-*   Reverse
-*   Themed
-
-***
-
-### 3.8 Layers
-
-**Core Idea**  
-Manage stacked constraints across multiple states.
-
-**Cognitive Focus**
-
-*   working memory
-*   multi‑step planning
-*   abstraction
-
-**Why It Works**
-
-*   deep sense of mastery
-*   rewards careful thinking
-*   strong expert appeal
-
-**Variants**
-
-*   Standard
-*   Locked Layers
-*   Timed
-
-***
-
-### 3.9 Roots
-
-**Core Idea**  
-Trace outcomes back to their hidden origins.
-
-**Cognitive Focus**
-
-*   reverse reasoning
-*   hierarchical inference
-*   causal structure
-
-**Why It Works**
-
-*   feels intellectually elegant
-*   unique mental framing
-
-**Variants**
-
-*   Standard
-*   Chain Roots
-*   Multi‑Tier
-
-***
-
-### 3.10 Shift
-
-**Core Idea**  
-Transform a state through allowed moves to reach a target configuration.
-
-**Cognitive Focus**
-
-*   spatial reasoning
-*   move efficiency
-*   transformation logic
-
-**Why It Works**
-
-*   highly tactile and “gamey”
-*   excellent for time‑pressure variants
-
-**Variants**
-
-*   Standard
-*   Restricted Moves
-*   Timed
-
-***
-
-### 3.11 Tribes (Puzzle Form)
-
-**Core Idea**  
-Deduce hidden group memberships or classifications.
-
-**Cognitive Focus**
-
-*   hypothesis testing
-*   classification
-*   logical exclusion
-
-**Why It Works**
-
-*   naturally maps to social systems
-*   thematic and flexible
-
-**Variants**
-
-*   Standard
-*   Versus
-*   Hidden Identity
-
-***
-
-### 3.12 Arena (Meta‑System)
-
-**Role**
-Not a player puzzle.
-
-Arena powers:
-
-*   puzzle testing
-*   variant experiments
-*   playtester routing
-*   evaluator feedback
-*   scheduling
-
-Arena is the **engine that keeps the games sharp**.
-
-***
-
-## 4. Game Modes Compatibility Matrix
-
-All games must support:
-
-*   Universal Daily Challenge
-*   Forge Mode (personalised)
-*   Tribal Warfare seasons
-
-A game that fails one layer must be adjusted, not sidelined.
-
-***
-
-## 5. Quality Assurance for Games
-
-A game puzzle is publishable only if:
-
-*   it has passed deterministic validation
-*   ambiguity is ruled out
-*   difficulty is within target band
-*   evaluator score passes threshold
-*   human approval is given
-
-Game quality is non‑negotiable.
-
-***
-
-## 6. Design Ethos Summary
-
-Daily Dose games are:
-
-*   fair, not tricksy
-*   challenging, not punishing
-*   diverse, not scattered
-*   deep, not bloated
-
-Each game exists because it **earns its place**.
+- guesswork disguised as logic
+- unclear failure states
+- excessive explanation
+- novelty without repeat value
+- variants that exist only to inflate surface area
