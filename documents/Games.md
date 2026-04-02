@@ -15,6 +15,11 @@ Daily Dose is a portfolio of distinct puzzle systems. The goal is not superficia
 
 Each game must justify its place through clarity, replayability, and fit with the Daily Dose ritual.
 
+Portfolio target:
+
+- 10 core games
+- up to 3 live variants per game where that surface area earns its keep
+
 ## Standards for Every Game
 
 Every game must satisfy these standards before it is considered core:
@@ -25,6 +30,8 @@ Every game must satisfy these standards before it is considered core:
 - scalable in difficulty without sudden spikes
 - suitable for Universal Daily and Forge Mode
 - compatible with measurable validation and quality review
+- playable comfortably on a phone without vertical scrolling on the core game screen
+- interesting enough to spark conversation, sharing, or co-play
 
 If a game cannot meet these standards, it should not ship broadly.
 
@@ -154,6 +161,18 @@ Not every game needs the same job. The portfolio should be balanced across roles
 - broad-access games
 - mastery-oriented games
 - premium differentiation games
+
+## Variant Strategy
+
+Variants are not content padding. They exist to test and improve the game family.
+
+Rules:
+
+- each game family should have a clear standard form
+- challenger variants may test pacing, framing, feedback, or rule emphasis
+- variants should be disposable if they do not improve fun, retention, or shareability
+- if a challenger variant wins consistently, it may replace the standard
+- if only part of a variant works, that learning should feed back into the core game
 
 At least one game should clearly serve each role.
 

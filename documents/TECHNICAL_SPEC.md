@@ -25,7 +25,7 @@ When documents conflict, follow this order:
 1. `TECHNICAL_SPEC.md`
 2. `SYSTEMS.md`
 3. `DESIGN_SYSTEM.md`
-4. `GAMES.md`
+4. `Games.md`
 5. `COMPONENT_LIBRARY.md`
 6. `Business.md`
 7. `TODO.md`
@@ -45,6 +45,20 @@ These rules are non-negotiable:
 5. Social systems must remain asynchronous by default.
 6. Daily publication must continue even if AI systems fail.
 7. Core gameplay must not depend on experiments, flags, or external analytics availability.
+8. Core gameplay surfaces must work in a mobile-first, no-scroll default viewport.
+9. Anyone may access core puzzle play, but verification is required for higher-trust social and stats features.
+10. Sensitive or profile data may not be used in ways that create unfair scoring, exclusion, or degrading social treatment.
+
+## Product Shape Constraints
+
+The target product shape is:
+
+- 10 core games over time
+- up to 3 live variants per game where justified
+- standard players normally receive 1 puzzle per live variant
+- playtest cohorts may receive up to 3 puzzles per variant
+
+Variants are an experimentation and freshness mechanism. They must remain removable without destabilizing the core game family.
 
 ## Domain Entities
 
@@ -95,8 +109,17 @@ Core fields:
 - `forgePreferences`
 - `tribeMemberships`
 - `entitlements`
+- `verificationStatus`
 
 Raw event logs should not be retained indefinitely.
+
+Optional profile fields may exist in a separate profile record where required for segmentation or product analysis, but must follow these rules:
+
+- they must be optional
+- they must have a clear user-facing purpose
+- they should prefer coarse categories over sensitive raw detail
+- precise location is disallowed by default unless a future feature clearly requires it
+- protected attributes must never influence score computation or fairness-sensitive ranking
 
 ### Tribe
 
@@ -132,8 +155,11 @@ Canonical collections:
 - `/puzzles`
 - `/publishedPuzzles`
 - `/users`
+- `/userProfiles`
 - `/dailyStats`
 - `/gameStats`
+- `/eventAggregates`
+- `/experimentExposures`
 - `/tribes`
 - `/seasons`
 - `/tribeScores`
@@ -155,6 +181,23 @@ Validation rules:
 - must return machine-readable failure reasons
 - must not call AI services
 - must be executable in automation
+
+## AI Generation and Selection Contract
+
+AI generation is allowed only within this structure:
+
+1. one or more generator profiles produce draft candidates
+2. deterministic validators reject invalid content
+3. ranking logic scores surviving candidates
+4. approval policy decides auto-approval or escalation
+5. only approved inventory may be scheduled
+
+Rules:
+
+- at least one deterministic validator pass is required before ranking-based selection
+- generator outputs must be attributable to a generator profile and version
+- approval decisions must be auditable
+- publication must not rely on model self-certification
 
 ## Publication Flow
 
@@ -186,6 +229,13 @@ Publication must not depend on:
 - uses player performance and preference signals
 - must not change or influence Universal Daily output
 
+### Variant Rules
+
+- variants may differ in pacing, framing, or rule emphasis
+- variants must preserve the core identity of the game family
+- disposable variants are encouraged, but they must obey shared analytics and publishing contracts
+- a variant that underperforms should be replaceable without rewriting the underlying game system
+
 ## Social and Scoring Rules
 
 Tribal scoring must be reproducible from stored data.
@@ -202,6 +252,13 @@ Forbidden scoring inputs:
 - premium status
 - arbitrary manual boosts
 - late mutable data that breaks reproducibility
+- protected attributes or sensitive profile data
+
+Verification rules:
+
+- verification is required for tribe membership, scoreboards, and richer player stats
+- unverified users may play but should not gain access to higher-trust social systems
+- verification state must be explicit and machine-readable
 
 ## Observability and Safety
 
@@ -212,6 +269,9 @@ The system must surface:
 - AI rejection rates
 - unusual difficulty spikes
 - missing content or scheduling failures
+- variant underperformance
+- telemetry pipeline failures
+- approval escalations and auto-approval rates
 
 Silent failure is unacceptable.
 

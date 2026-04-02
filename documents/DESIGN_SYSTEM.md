@@ -27,6 +27,7 @@ The UI system must support all of the following at the same time:
 - safe experimentation
 - low rewrite cost
 - strong accessibility and maintainability
+- mobile-first play with no-scroll gameplay surfaces
 
 The system should make UI changes cheaper over time, not more expensive.
 
@@ -46,6 +47,12 @@ Rules:
 - no inline style objects except true runtime-only values
 - no hard-coded color values in component or page styles
 - no undeclared custom properties
+
+Viewport rules:
+
+- core gameplay routes are designed for phone-first viewports before desktop enhancement
+- the default supported mobile viewport must not require vertical scrolling during active play
+- status, primary interaction area, and submission controls must remain visible together
 
 ## Token Contract
 
