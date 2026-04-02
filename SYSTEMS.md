@@ -1,50 +1,343 @@
-# System Architecture Deep Dive
+# **Daily Dose — System Architecture**
 
-This document provides a technical overview of the core systems that power the Puzzlesaurs platform.
+***
 
-## Tech Stack
+## 1. Purpose of the System Architecture
 
--   **Frontend:** Next.js, React, TypeScript, CSS Modules
--   **Backend & Database:** Firebase (Firestore, Authentication)
--   **Hosting & Serverless:** Vercel (including Vercel Cron Jobs)
--   **AI:** Large Language Models (e.g., Google's Gemini) via API for generation and evaluation.
+Daily Dose is designed to deliver **high‑quality daily puzzles at scale** while remaining:
 
----
+*   operationally lean
+*   financially predictable
+*   robust against AI failure
+*   friendly to iterative experimentation
+*   maintainable by a single founder
 
-## Core System Breakdown
+The architecture prioritises **clarity, determinism, and separation of concerns** over novelty or complexity.
 
-### 1. The Disposable Prototype System
+***
 
--   **Structure:** Game prototypes are organized by directory: `/app/[game]/[variant]/page.tsx`. This allows for rapid creation and testing of new ideas (e.g., `/vault/blitz`, `/lexicon/reverse`).
--   **Function:** This A/B/C testing framework is the engine of our innovation. We can deploy dozens of experimental variants to playtesters, gather data on what is most engaging, and promote only the "best" variants to the general user base.
+## 2. Core Architectural Principles
 
-### 2. The AI Generator (`/api/arena/generate`)
+### 2.1 Determinism Over AI Authority
 
--   **Trigger:** Can be triggered manually from the Admin Dashboard or automatically by a cron job.
--   **Process:**
-    1.  Receives a `gameName` (e.g., `VaultCorrupted`), a `count`, and optional `constraints` (e.g., "theme should be sci-fi").
-    2.  Sends a structured prompt to the LLM API to generate a batch of puzzles that conform to the game's rules and constraints.
-    3.  Parses the LLM's response and saves each new puzzle as a document in the `arenaPuzzles` collection in Firestore with a `status` of `pending`.
+AI is a generator, not a judge.
 
-### 3. The Playtesting & Feedback Loop
+*   AI may propose puzzles.
+*   **Code validates puzzles.**
+*   AI may evaluate quality.
+*   **Humans approve publication.**
 
--   **Serving Puzzles:** When a user with the `tester` role plays a game, the system first attempts to fetch a `pending` puzzle from the `arenaPuzzles` collection for that game variant.
--   **Collecting Feedback:** Upon completion, the playtester's results (`won`, `mistakes`, `timeToComplete`) and their explicit star rating are saved back into that puzzle's document in Firestore. The puzzle's `status` is updated to `completed`.
+No puzzle ships without deterministic verification.
 
-### 4. High-Fidelity Analytics (`saveGameStats`)
+***
 
--   **Data Points:** For every game played (by testers and regular users), we save a rich data object to the `gameStats` collection.
--   **Key Metrics:**
-    -   `actionTimeline`: A timestamped array of every single interaction (clicks, keypresses, submissions). This is the most valuable data for the AI.
-    -   `wrongGuesses`: A structured array of incorrect final answers. This directly feeds our "Trap Metric" analysis.
-    -   `timeToFirstAction`: The number of seconds a user hesitates before their first interaction. A powerful proxy for a puzzle's initial "comprehension difficulty."
+### 2.2 Asynchronous by Default
 
-### 5. The AI Evaluator (`/api/cron/evaluate`)
+Daily Dose avoids real‑time systems unless absolutely necessary.
 
--   **Trigger:** A nightly cron job.
--   **Process:**
-    1.  Fetches all `completed` playtest data from the last 24 hours.
-    2.  Groups the data by `gameName`.
-    3.  For each game, it analyzes the telemetry to find correlations. For example: "Puzzles with 7-letter words have a 20% higher abandonment rate," or "The most common wrong guess for puzzle X was Y."
-    4.  It formulates a "thesis" based on these findings and generates a new set of `constraints` for the AI Generator.
-    5.  This creates a fully automated, self-improving loop where the AI learns from player behavior to create better and more engaging puzzles each night.
+*   No live multiplayer
+*   No sockets
+*   No synchronous dependency loops
+*   No timing pressure on players
+
+This keeps infra cheap, stable, and predictable.
+
+***
+
+### 2.3 Universal First, Personalised Second
+
+The system always supports:
+
+1.  **Universal Daily puzzles** – same for everyone
+2.  **Personalised puzzles** – curated per user
+
+The Universal layer is the social anchor.  
+The Personalised layer drives retention and revenue.
+
+***
+
+### 2.4 Design for Failure
+
+Every critical workflow must fail gracefully.
+
+*   Missed AI job → fallback puzzle pool
+*   Invalid puzzle → discard, regenerate
+*   Partial telemetry → ignore, aggregate later
+
+A single failure should **never block daily publication**.
+
+***
+
+## 3. High‑Level System Overview
+
+    [ Puzzle Creators (AI) ]
+              |
+              v
+    [ Deterministic Validators (TS) ]
+              |
+              v
+    [ Evaluator (Single Model) ]
+              |
+              v
+    [ Human Approval ]
+              |
+              v
+    [ Scheduler ]
+              |
+              v
+    [ Universal / Personalised Delivery ]
+
+***
+
+## 4. Puzzle Lifecycle
+
+Every puzzle passes through the same lifecycle:
+
+1.  **Generated** (AI or human authored)
+2.  **Validated** (deterministic logic)
+3.  **Evaluated** (quality scoring)
+4.  **Approved** (human decision)
+5.  **Scheduled** (date + mode)
+6.  **Published**
+7.  **Archived**
+
+This lifecycle is immutable.
+
+***
+
+## 5. AI Puzzle Pipeline (Lean Competitive Model)
+
+### 5.1 Competitive Generation
+
+*   2–4 *creator profiles*
+*   Each profile uses a different prompt style or model
+*   Outputs multiple candidate puzzles
+*   Generation runs in parallel
+
+Competition happens **only at creation time**.
+
+***
+
+### 5-2 Deterministic Validation (Critical)
+
+Validation is **never performed by AI**.
+
+Validators are implemented in TypeScript and check:
+
+*   puzzle schema integrity
+*   rule compliance
+*   solvability
+*   unique solution (where required)
+*   bounds and constraints
+
+Invalid puzzles are immediately discarded.
+
+No debate. No retries. No exceptions.
+
+***
+
+### 5.3 Centralised Evaluation
+
+After validation, remaining puzzles are evaluated by **one trusted model**.
+
+The evaluator scores:
+
+*   clarity
+*   perceived difficulty
+*   fairness
+*   novelty
+*   engagement likelihood
+*   suitability for:
+    *   Universal Daily
+    *   Personalised Forge Mode
+    *   Tribal Warfare
+
+A single evaluator ensures **consistent scoring over time**.
+
+***
+
+### 5.4 Formatting & Storage
+
+Selected puzzles are:
+
+*   normalised into a canonical JSON schema
+*   enriched with metadata
+*   stored in Firestore
+
+Formatting can be:
+
+*   deterministic, or
+*   handled by a fast, cheap AI model
+
+***
+
+### 5.5 Human Approval
+
+No puzzle publishes automatically.
+
+Admin approval includes:
+
+*   sanity check
+*   schedule assignment
+*   variant selection
+*   mode assignment
+
+***
+
+## 6. Modes & Delivery Systems
+
+### 6.1 Universal Daily Delivery
+
+*   One puzzle document per game per day
+*   Shared by all users
+*   Cache‑friendly
+*   Zero personalisation cost
+
+This mode powers:
+
+*   sharing
+*   streaks
+*   tribe scoring
+*   social discussion
+
+***
+
+### 6.2 Forge Mode (Personalised Delivery)
+
+Forge Mode generates a **daily puzzle set per user** using:
+
+*   recent performance
+*   completion times
+*   failure patterns
+*   difficulty tolerance
+*   game preferences
+
+Personalised selection happens **after puzzle creation**, not during generation.
+
+The system never generates puzzles *just* for one user unless required.
+
+***
+
+## 7. Tribal Warfare System
+
+### 7.1 Seasonal Structure
+
+*   Seasons last 2–4 weeks
+*   Participation is optional
+*   Tribes are time‑bound entities
+
+***
+
+### 7.2 Scoring Model
+
+Tribal scores are computed **asynchronously** based on Universal Daily puzzles:
+
+*   completion rate
+*   median solve time
+*   difficulty‑adjusted performance
+*   consistency across days
+
+No real‑time competitive dependency exists.
+
+***
+
+### 7.3 Rewards
+
+Rewards are:
+
+*   cosmetic
+*   identity‑driven
+*   persistent achievements
+
+There is **no pay‑to‑win advantage**.
+
+***
+
+## 8. Analytics & Telemetry Strategy
+
+### 8.1 Tier 1 — Always On (Cheap)
+
+Collected for all users:
+
+*   completions
+*   time‑to‑complete
+*   win/loss
+*   streak state
+*   mode usage
+
+***
+
+### 8.2 Tier 2 — Deep Telemetry (Sampled)
+
+Collected only for:
+
+*   playtesters
+*   limited samples
+
+Includes:
+
+*   action timelines
+*   hesitation patterns
+*   wrong‑guess structures
+
+Raw logs are short‑lived and aggregated.
+
+***
+
+## 9. Infrastructure Stack
+
+*   **Frontend:** Next.js, React, TypeScript
+*   **Backend:** Firebase (Firestore, Authentication)
+*   **Hosting:** Vercel (serverless + scheduled jobs)
+*   **AI:** Multi‑model generation, single evaluator, deterministic validation
+
+The stack is chosen for:
+
+*   minimal DevOps
+*   predictable billing
+*   excellent developer ergonomics
+
+***
+
+## 10. Cost & Risk Containment
+
+Key cost guards:
+
+*   AI only generates in batches
+*   Validators discard early
+*   No real‑time infra
+*   No per‑user puzzle generation by default
+*   Limited deep telemetry retention
+
+The system is explicitly designed to remain profitable at moderate scale.
+
+***
+
+## 11. Founder Operating Model
+
+Daily Dose assumes:
+
+*   one primary human decision‑maker
+*   AI coding tools as the development team
+*   documentation as the control plane
+*   automation as assistance, not dependency
+
+You are the **systems director**, not a bricklayer.
+
+***
+
+## 12. System Success Criteria
+
+The system is successful if:
+
+*   puzzles publish daily without manual stress
+*   AI improves quality over time, not chaos
+*   users trust puzzle fairness
+*   social systems encourage return, not burnout
+*   operational costs remain flat as usage grows
+
+***
+
+**This system exists to protect quality, sanity, and margin.**
+
+***
