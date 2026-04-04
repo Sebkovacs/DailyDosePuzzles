@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { getDailyVault, generateRandomVault, VaultPuzzle } from '@/lib/vault';
+import { getDailyVault, generateRandomVault } from '@/lib/vault';
+import { VaultPuzzle } from '@/types/vault';
 import { HelpCircle, Share2, X, Delete, MessageSquare, Dices, Star } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth } from '@/lib/useAuth';
@@ -93,7 +94,7 @@ export default function Vault() {
   const handleKeyPress = (key: string) => {
     if (isGameOver || !puzzle) return;
     
-    const codeLength = puzzle.code.length;
+    const codeLength = puzzle.content.combinationLength;
 
     if (key === 'delete') {
       setActionTimeline(prev => [...prev, { time: Date.now() - startTime, type: 'delete' }]);
@@ -104,7 +105,8 @@ export default function Vault() {
       const newAttempts = attempts + 1;
       setAttempts(newAttempts);
 
-      const isCorrect = input === puzzle.code;
+      const targetCode = puzzle.solution.combination.join('');
+      const isCorrect = input === targetCode;
       const currentTimeline = [...actionTimeline, { time: Date.now() - startTime, type: 'submit', guess: input, isCorrect }];
       setActionTimeline(currentTimeline);
 
@@ -198,10 +200,10 @@ export default function Vault() {
             <div className={styles.rulesBox}>
               <h2 className={styles.rulesHeader}>Security Protocols</h2>
               <ul className={styles.ruleList}>
-                {puzzle.rules.map((rule, idx) => (
+                {puzzle.content.clues.map((clue, idx) => (
                   <li key={idx} className={styles.ruleItem}>
                     <span className={styles.ruleBullet}>■</span>
-                    <span>{rule}</span>
+                    <span>{clue.textOverride || `Attempt ${clue.attempt.join('')}: ${clue.feedback.correctCount} correct, ${clue.feedback.presentCount} misplaced`}</span>
                   </li>
                 ))}
               </ul>
@@ -212,7 +214,7 @@ export default function Vault() {
                 transition={{ duration: 0.4 }}
                 className={styles.codeDisplay}
               >
-                {Array.from({ length: puzzle.code.length }).map((_, idx) => (
+                {Array.from({ length: puzzle.content.combinationLength }).map((_, idx) => (
                   <div 
                     key={idx} 
                     className={`${styles.codeSlot} ${
@@ -241,7 +243,7 @@ export default function Vault() {
                 <button
                   key={num}
                   onClick={() => handleKeyPress(num)}
-                  disabled={input.length >= puzzle.code.length || isWin}
+                  disabled={input.length >= puzzle.content.combinationLength || isWin}
                   className={styles.numBtn}
                 >
                   {num}
@@ -256,14 +258,14 @@ export default function Vault() {
               </button>
               <button
                 onClick={() => handleKeyPress('0')}
-                disabled={input.length >= puzzle.code.length || isWin}
+                disabled={input.length >= puzzle.content.combinationLength || isWin}
                 className={styles.numBtn}
               >
                 0
               </button>
               <button
                 onClick={() => handleKeyPress('submit')}
-                disabled={input.length !== puzzle.code.length || isWin}
+                disabled={input.length !== puzzle.content.combinationLength || isWin}
                 className={`${styles.numBtn} ${styles.enterKey}`}
               >
                 Enter
@@ -285,7 +287,7 @@ export default function Vault() {
               <div className={styles.codeBox}>
                 <h3 className={styles.codeLabel}>The Code Was</h3>
                 <div className={styles.codeDisplay}>
-                  <div className={styles.codeValue}>{puzzle.code}</div>
+                  <div className={styles.codeValue}>{puzzle.solution.combination.join('')}</div>
                 </div>
               </div>
 

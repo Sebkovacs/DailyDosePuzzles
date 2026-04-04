@@ -7,6 +7,8 @@
 
 This document defines the business model, strategic constraints, and commercial priorities for Daily Dose.
 
+**Motto:** Slow is smooth, smooth is fast.
+
 It should keep product and engineering decisions aligned with margin, retention, and long-term sustainability.
 
 ## Business Objective
@@ -19,7 +21,7 @@ Target outcome:
 - low fixed cost base
 - strong product trust
 - sustainable founder workload
-- founder net income greater than 200,000 per year after business expenses, tax planning, retained profit, and reinvestment
+- founder net income greater than $200,000 per year after business expenses, tax planning, retained profit, and reinvestment
 
 ## Strategic Positioning
 
@@ -39,7 +41,7 @@ The differentiation is structural:
 
 ## Product Ambition
 
-The product ambition is to compete directly with the best-known daily word and logic games, then exceed them on:
+The product ambition is to rival and far surpass the best-known daily games (like NYT Wordle and Connections), delivering a rewarding neurotransmitter feast for players. We will exceed them on:
 
 - breadth of high-quality game systems
 - replay value through controlled variants
@@ -49,9 +51,9 @@ The product ambition is to compete directly with the best-known daily word and l
 
 Target long-term portfolio:
 
-- 10 core games
+- 12 core games (potentially rotating on a 10-day cycle for normal users)
 - up to 3 live variants per game
-- a standard player track and a richer playtest track
+- a standard player track (1 puzzle per variant) and a richer playtest track (3 puzzles per variant)
 
 ## Revenue Model
 
@@ -74,7 +76,8 @@ It should provide:
 - archive access
 - richer stats and insight
 - stronger identity for committed players
-- the ability to create tribes, subject to anti-spam and safety rules
+- the exclusive ability to create tribes (verified free users can only join via invite, acting as an anti-spam gate and revenue incentive)
+- playtester status: access to 3 puzzles per variant (while normal users get 1 puzzle), driving the AI feedback loop
 
 ### Pricing intent
 
@@ -84,7 +87,7 @@ Current target range:
 
 - AUD 39 to AUD 59 per year
 
-Monetization is still exploratory. Near-term strategy should be:
+Monetization is still exploratory (brand new to cloud/AI API costs). Near-term strategy should be:
 
 - validate habit and retention before aggressive pricing work
 - test premium packaging before adding secondary monetization
@@ -97,7 +100,7 @@ The product should be designed so costs stay flat relative to engagement growth.
 Cost controls:
 
 - batch AI generation
-- model competition with deterministic filtering before ranking
+- 2-3 different AI models compete to generate and select the best daily puzzles
 - deterministic rejection before human review
 - no default per-user content generation
 - no real-time infrastructure requirement
@@ -114,7 +117,7 @@ Primary loops:
 - streak momentum
 - social invitation through tribes
 - periodic seasonal hooks
-- warm co-play and discussion between friends, couples, families, and groups
+- warm co-play and discussion between friends, couples, families, and groups (inspired by playing Wordle/Connections at the beach, in bed, or sharing in PT group Facebook messenger chats)
 
 The product should spread because the ritual is compelling, not because the funnel is aggressive.
 
@@ -128,7 +131,7 @@ Highest risks:
 - growing surface area faster than the codebase and docs can support
 - collecting sensitive user data without a clear value, consent model, or compliance plan
 - building manipulative reward systems that damage trust or trigger platform, policy, or legal problems
-- creating a 10-game vision without an operating model that can ship calmly
+- creating a 12-game vision without an operating model that can ship calmly
 
 ## Data and Trust Boundary
 
@@ -137,12 +140,11 @@ Daily Dose may use profile and behavioral data to improve relevance, segmentatio
 Rules:
 
 - profile collection must be optional, clearly explained, and tied to user value
-- collect coarse and useful data, not maximum possible data
-- do not require sensitive demographics for core play
-- do not use protected traits to demean, exclude, or algorithmically disadvantage users
+- demographic collection (age, occupation, gender, interests, location) is a core business asset for marketing, Tribal War segmentation, and advanced social status for players. It must be safely handled.
+- data must be used to motivate, encourage, and provide fun social insights—never to belittle anyone.
 - do not use precise location by default
-- tribe, ranking, and social systems must motivate without humiliating users
-- analytics and insight should help users feel progress, mastery, and connection, not addiction by design
+- tribe, ranking, and social systems must facilitate warm, shared experiences similar to discussing Wordle with a spouse or friend group
+- player analytics should provide super-rich insight to drive neurotransmitter rewards, making the app a fun and long-term habit, rather than using dark patterns for addiction
 
 ## Business Rules
 

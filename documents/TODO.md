@@ -79,11 +79,12 @@ Goal: harden the strongest game loops before expanding further.
 
 Tasks:
 
-- [ ] identify the primary quality focus games
+- [ ] identify the primary quality focus games across the 12-game portfolio (Vault, Numbers, Lexicon, Root, Chain, Stab, Layers, Spectrum, Split, Shift, Dilemma, Blind)
 - [ ] ensure those games meet the current UI and engineering standard
 - [ ] standardize result states, feedback, and telemetry capture
 - [ ] verify that the daily experience feels fair and finishable
 - [ ] validate warm shareability and pass-and-play quality
+- [ ] explore a 12-day cycle of games for normal users
 
 Recommended early focus:
 
@@ -171,11 +172,12 @@ Goal: use AI to reduce production cost without giving up control.
 Tasks:
 
 - [ ] batch-generate candidate puzzle inventory
+- [ ] run 2-3 different AI models against each other to select the best puzzles
 - [ ] run deterministic validation automatically
 - [ ] score surviving candidates
 - [ ] keep human oversight focused on exceptions, policy, and periodic audit
 - [ ] compare generator profiles and retire weak ones
-- [ ] feed telemetry findings back into prompt and ranking revisions
+- [ ] feed player telemetry and analytics findings back into prompt and ranking revisions to evolve variants
 
 Exit criteria:
 

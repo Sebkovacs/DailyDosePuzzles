@@ -51,7 +51,7 @@ Rules:
 Viewport rules:
 
 - core gameplay routes are designed for phone-first viewports before desktop enhancement
-- the default supported mobile viewport must not require vertical scrolling during active play
+- the default supported mobile viewport MUST NOT require vertical scrolling during active play (absolutely no scrolling on any game screens)
 - status, primary interaction area, and submission controls must remain visible together
 
 ## Token Contract

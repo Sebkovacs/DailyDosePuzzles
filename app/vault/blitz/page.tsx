@@ -9,9 +9,10 @@ import { saveGameStats } from '@/lib/firebase';
 import { getNextArenaPuzzle, submitArenaFeedback } from '@/lib/arena';
 import { GameLayout } from '@/components/GameLayout';
 import styles from '../Vault.module.css';
+import { VaultPuzzle } from '@/types/vault';
 
 export default function VaultBlitz() {
-  const [puzzle, setPuzzle] = useState<any>(null);
+  const [puzzle, setPuzzle] = useState<VaultPuzzle | null>(null);
   const [input, setInput] = useState<string>('');
   const [attempts, setAttempts] = useState(0);
   const [isGameOver, setIsGameOver] = useState(false);
@@ -84,7 +85,7 @@ export default function VaultBlitz() {
 
   const handleKeyPress = (key: string) => {
     if (isGameOver || !puzzle) return;
-    const codeLength = puzzle.code.length;
+    const codeLength = puzzle.content.combinationLength;
 
     if (key === 'delete') {
       setInput(prev => prev.slice(0, -1));
@@ -94,7 +95,8 @@ export default function VaultBlitz() {
       const newAttempts = attempts + 1;
       setAttempts(newAttempts);
 
-      const isCorrect = input === puzzle.code;
+      const targetCode = puzzle.solution.combination.join('');
+      const isCorrect = input === targetCode;
       const currentTimeline = [...actionTimeline, { time: Date.now() - startTime, type: 'submit', guess: input, isCorrect }];
       setActionTimeline(currentTimeline);
 
@@ -139,14 +141,14 @@ export default function VaultBlitz() {
 
             <div className={styles.rulesBox}>
               <ul className={styles.ruleList}>
-                {puzzle.rules.map((rule: string, idx: number) => (
-                  <li key={idx} className={styles.ruleItem}><span className={styles.ruleBullet}>■</span><span>{rule}</span></li>
+                {puzzle.content.clues.map((clue, idx) => (
+                  <li key={idx} className={styles.ruleItem}><span className={styles.ruleBullet}>■</span><span>{clue.textOverride || `Attempt ${clue.attempt.join('')}: ${clue.feedback.correctCount} correct, ${clue.feedback.presentCount} misplaced`}</span></li>
                 ))}
               </ul>
             </div>
 
             <motion.div animate={shake ? { x: [-10, 10, -10, 10, 0] } : {}} transition={{ duration: 0.4 }} className={styles.codeDisplay}>
-              {Array.from({ length: puzzle.code.length }).map((_, idx) => (
+              {Array.from({ length: puzzle.content.combinationLength }).map((_, idx) => (
                 <div key={idx} className={`${styles.codeSlot} ${input[idx] ? styles.codeSlotFilled : styles.codeSlotEmpty} ${isWin ? styles.codeSlotWin : ''}`}>
                   {input[idx] || '0'}
                 </div>
@@ -155,11 +157,11 @@ export default function VaultBlitz() {
 
             <div className={styles.numpad}>
               {['1', '2', '3', '4', '5', '6', '7', '8', '9'].map((num) => (
-                <button key={num} onClick={() => handleKeyPress(num)} disabled={input.length >= puzzle.code.length || isWin} className={styles.numBtn}>{num}</button>
+                <button key={num} onClick={() => handleKeyPress(num)} disabled={input.length >= puzzle.content.combinationLength || isWin} className={styles.numBtn}>{num}</button>
               ))}
               <button onClick={() => handleKeyPress('delete')} disabled={input.length === 0 || isWin} className={`${styles.numBtn} ${styles.actionKey}`}><Delete className="w-5 h-5" /></button>
-              <button onClick={() => handleKeyPress('0')} disabled={input.length >= puzzle.code.length || isWin} className={styles.numBtn}>0</button>
-              <button onClick={() => handleKeyPress('submit')} disabled={input.length !== puzzle.code.length || isWin} className={`${styles.numBtn} ${styles.enterKey}`}>Enter</button>
+              <button onClick={() => handleKeyPress('0')} disabled={input.length >= puzzle.content.combinationLength || isWin} className={styles.numBtn}>0</button>
+              <button onClick={() => handleKeyPress('submit')} disabled={input.length !== puzzle.content.combinationLength || isWin} className={`${styles.numBtn} ${styles.enterKey}`}>Enter</button>
             </div>
           </>
         ) : (
@@ -171,7 +173,7 @@ export default function VaultBlitz() {
               <div className={styles.codeBox}>
                 <h3 className={styles.codeLabel}>The Code Was</h3>
                 <div className={styles.codeDisplay}>
-                  <div className={styles.codeValue}>{puzzle.code}</div>
+                  <div className={styles.codeValue}>{puzzle.solution.combination.join('')}</div>
                 </div>
               </div>
 
