@@ -204,11 +204,11 @@ export default function Chain() {
 
   if (!mounted || !puzzle) return <div className={styles.loadingScreen}>Loading...</div>;
 
-  const leftActions = isTester ? <button onClick={() => setShowFeedback(true)} className={styles.iconBtn} title="Give Feedback"><MessageSquare size={18} /></button> : null;
+  const leftActions = isTester ? <button onClick={() => setShowFeedback(true)} className={styles.iconBtn} title="Give Feedback" aria-label="Give Feedback"><MessageSquare size={18} /></button> : null;
   const rightActions = (
     <>
-      {isTester && <button onClick={handleRandomPuzzle} className={styles.iconBtn} title="Random Puzzle"><Dices size={18} /></button>}
-      <button onClick={() => setShowHelp(true)} className={styles.iconBtn} title="Help"><HelpCircle size={18} /></button>
+      {isTester && <button onClick={handleRandomPuzzle} className={styles.iconBtn} title="Random Puzzle" aria-label="Random Puzzle"><Dices size={18} /></button>}
+      <button onClick={() => setShowHelp(true)} className={styles.iconBtn} title="Help" aria-label="Help"><HelpCircle size={18} /></button>
     </>
   );
 
@@ -346,7 +346,7 @@ export default function Chain() {
                 initial={{ scale: 0.95, opacity: 0, y: 10 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.95, opacity: 0, y: 10 }}
                 className={styles.modalCard}
               >
-                <button onClick={() => setShowHelp(false)} className={styles.closeBtn}>
+                <button onClick={() => setShowHelp(false)} className={styles.closeBtn} aria-label="Close help modal">
                   <X size={20} />
                 </button>
                 <h2 className={styles.modalTitle}>How to Play</h2>
