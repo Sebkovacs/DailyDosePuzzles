@@ -77,36 +77,34 @@ export default function NumbersGame() {
     return () => clearInterval(timer);
   }, [gameMode, isWin, timeLeft]);
 
-  useEffect(() => {
-    // Exact Match Auto-Win
-    if (!isWin && puzzle && gameMode !== 'select' && availableNumbers.some(n => n.value === puzzle.target)) {
-      setIsWin(true);
-      const steps = history.length;
-      setFinalResult(puzzle.target);
-      
-      if (gameMode === 'blitz') {
-        const timeBonus = Math.floor(timeLeft / 5); // Reward for speed
-        setScore(10 + timeBonus);
-      } else {
-        const earnedStars = steps <= 3 ? 3 : steps === 4 ? 2 : 1;
-        setStars(earnedStars);
-      }
+  const checkWinCondition = (targetValue: number, stepsCount: number) => {
+    if (!puzzle || isWin || gameMode === 'select') return;
 
-      saveGameStats(user?.uid || null, {
-        gameName: 'Numbers',
-        date: dateString,
-        mode: gameMode,
-        won: true,
-        mistakes: 0,
-        attempts: steps,
-        timeToComplete: Math.floor((Date.now() - startTime) / 1000),
-        isPlayTest
-      });
-      if (user && !isPlayTest) {
-        updateStreak(user.uid).catch(console.error);
-      }
+    setIsWin(true);
+    setFinalResult(puzzle.target);
+
+    if (gameMode === 'blitz') {
+      const timeBonus = Math.floor(timeLeft / 5); // Reward for speed
+      setScore(10 + timeBonus);
+    } else {
+      const earnedStars = stepsCount <= 3 ? 3 : stepsCount === 4 ? 2 : 1;
+      setStars(earnedStars);
     }
-  }, [availableNumbers, isWin, puzzle, user, dateString, history.length, startTime, isPlayTest, gameMode, timeLeft]);
+
+    saveGameStats(user?.uid || null, {
+      gameName: 'Numbers',
+      date: dateString,
+      mode: gameMode,
+      won: true,
+      mistakes: 0,
+      attempts: stepsCount,
+      timeToComplete: Math.floor((Date.now() - startTime) / 1000),
+      isPlayTest
+    });
+    if (user && !isPlayTest) {
+      updateStreak(user.uid).catch(console.error);
+    }
+  };
 
   const startGame = (mode: 'blitz' | 'zen') => {
     setGameMode(mode);
@@ -163,10 +161,15 @@ export default function NumbersGame() {
       const resultItem: NumberItem = { id: `res-${Date.now()}`, value: resVal };
       const newStep: Step = { id: `step-${Date.now()}`, num1, op: selectedOp, num2, result: resultItem };
       
-      setHistory([...history, newStep]);
+      const newHistory = [...history, newStep];
+      setHistory(newHistory);
       setAvailableNumbers([...availableNumbers.filter(n => n.id !== num1.id && n.id !== num2.id), resultItem]);
       setSelectedNum1(null);
       setSelectedOp(null);
+
+      if (puzzle && resVal === puzzle.target) {
+        checkWinCondition(resVal, newHistory.length);
+      }
     } else {
       // Change selected num1
       setSelectedNum1(num);
