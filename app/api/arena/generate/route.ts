@@ -3,7 +3,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import { adminDb } from '@/lib/firebase-admin';
 import { Timestamp } from 'firebase-admin/firestore';
 
-const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY || process.env.GEMINI_API_KEY || '');
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 
 export async function POST(req: Request) {
   try {
@@ -12,6 +12,10 @@ export async function POST(req: Request) {
 
     if (!gameName) {
       return NextResponse.json({ error: 'gameName is required' }, { status: 400 });
+    }
+
+    if (typeof count !== 'number' || !Number.isInteger(count) || count < 1 || count > 10) {
+      return NextResponse.json({ error: 'count must be an integer between 1 and 10' }, { status: 400 });
     }
 
     const model = genAI.getGenerativeModel({
